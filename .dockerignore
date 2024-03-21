@@ -1,0 +1,9 @@
+node_modules
+dist/**
+tmp
+deploy
+.git
+.github
+.nx
+.vscode
+apps/**/.next

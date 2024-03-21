@@ -1,0 +1,41 @@
+image:
+  pullPolicy: Always # because the tag will always be staging
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 'staging'
+
+ingress:
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: tera
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:975049885146:certificate/56f88bfe-9d29-4906-abc6-6469c4d95c94
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    external-dns.alpha.kubernetes.io/hostname: admin.luxe.systems
+  hosts:
+    - host: admin.luxe.systems
+      paths:
+        - path: /
+          pathType: Prefix
+
+env:
+  - name: API_URL
+    value: https://api.luxe.systems
+  - name: BASE_URL
+    value: https://admin.luxe.systems
+  - name: AUTH_URL
+    value: https://admin.luxe.systems/api/auth
+  - name: AUTH_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: admin
+        key: auth_secret
+  - name: AUTH_GOOGLE_ID
+    valueFrom:
+      secretKeyRef:
+        name: admin
+        key: auth_google_id
+  - name: AUTH_GOOGLE_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: admin
+        key: auth_google_secret
