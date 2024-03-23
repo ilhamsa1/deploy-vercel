@@ -2,20 +2,15 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import type { Metadata } from 'next'
 
-import { auth } from '../config/auth'
-
 export const metadata: Metadata = {
-  title: 'Luxe Dashboard',
-  description: 'Admin dashboard to luxe systems',
+  title: 'Luxe Dashboard | Profile',
 }
 
-export default async function Index() {
-  const session = await auth()
-
+export default async function IndexPage() {
   return (
     <Box>
       <Box>
-        <Typography>Hi {session?.user?.name}!</Typography>
+        <Typography>Bank Scan</Typography>
       </Box>
     </Box>
   )

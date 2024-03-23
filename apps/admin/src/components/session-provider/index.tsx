@@ -1,4 +1,6 @@
-import { auth } from '../../config/auth'
+import { redirect } from 'next/navigation'
+
+import { createClient } from '../../utils/supabase/server'
 import WrapperProvider from '../wrapper'
 
 export default async function SessionProvider({
@@ -6,9 +8,11 @@ export default async function SessionProvider({
 }: {
   children: React.ReactNode
 }) {
-  const session = await auth()
+  const supabase = createClient()
+  const { data, error } = await supabase.auth.getUser()
+  if ((error || !data?.user)) {
+    redirect('/login')
+  }
 
-  if (!session) return null
-
-  return <WrapperProvider session={session}>{children}</WrapperProvider>
+  return <WrapperProvider user={data?.user}>{children}</WrapperProvider>
 }

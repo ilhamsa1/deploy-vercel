@@ -1,11 +1,20 @@
-export { auth as default } from './config/auth'
+import { type NextRequest } from 'next/server'
 
-// Optionally, don't invoke Middleware on some paths
+import { updateSession } from './utils/supabase/middleware'
+
+export async function middleware(request: NextRequest) {
+  return await updateSession(request)
+}
+
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-  unstable_allowDynamic: [
-    '**/node_modules/saml2-js/**',
-    '**/node_modules/underscore/**',
-    '**/node_modules/xmlbuilder2/**',
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

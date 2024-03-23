@@ -1,11 +1,8 @@
 import type { Metadata } from 'next'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 
-import SessionProvider from '../components/session-provider'
-
 export const metadata: Metadata = {
   title: 'Luxe Admin',
-  description: 'The best stablecoin company',
 }
 
 export default function RootLayout({
@@ -26,7 +23,7 @@ export default function RootLayout({
       </head>
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <SessionProvider>{children}</SessionProvider>
+          {children}
         </AppRouterCacheProvider>
       </body>
     </html>

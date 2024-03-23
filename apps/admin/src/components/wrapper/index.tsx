@@ -2,8 +2,6 @@
 
 import { ComponentProps, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
-import type { Session } from 'next-auth'
-import { signOut } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import { SharedProvider } from '@luxe/ui'
 import { LIST_SIDEMENU } from '../../config/sidemenu'
@@ -13,10 +11,10 @@ type SideMenuItem = ComponentProps<typeof Layout>['sideMenuItems'][0]
 
 const WrapperProvider = ({
   children,
-  session,
+  user,
 }: {
   children: React.ReactNode
-  session?: Session
+  user?: any
 }) => {
   const pathname = usePathname()
   const router = useRouter()
@@ -27,7 +25,7 @@ const WrapperProvider = ({
 
   const onClickBack = isBack ? router.back : undefined
   const onSignOut = async () => {
-    await signOut()
+    // supabase signout
   }
 
   const isActive = (itemUrl: string) => {
