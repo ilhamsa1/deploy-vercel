@@ -24,10 +24,15 @@ const WrapperProvider = ({ children, user }: { children: React.ReactNode; user?:
   }
 
   const isActive = (itemUrl: string) => {
-    return (
-      (pathname.length === 1 && itemUrl?.length === 1) ||
-      (pathname.indexOf(itemUrl) >= 0 && itemUrl?.length !== 1)
-    )
+    // will update this logic after we have dynamic url page
+    // split the path url first to get the name of the page
+    const splitSlashPathname = pathname.split(/\//)
+    const splitSlashItemUrl = itemUrl.split(/\//)
+    // then try to get the last url name
+    const lastPathname = splitSlashPathname.pop()
+    const lastItemUrl = splitSlashItemUrl.pop()
+
+    return lastPathname === lastItemUrl
   }
 
   const sideMenuItems = LIST_SIDEMENU.map((menuItem) => {
