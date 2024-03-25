@@ -26,8 +26,19 @@ const WrapperProvider = ({ children, user }: { children: React.ReactNode; user?:
   const isActive = (itemUrl: string) => {
     // will update this logic after we have dynamic url page
     // split the path url first to get the name of the page
-    const splitSlashPathname = pathname.split(/\//)
-    const splitSlashItemUrl = itemUrl.split(/\//)
+    const splitSlashPathname = pathname.split(/\//).filter((url) => {
+      const isEmptyString = url === '' // is Url empty string
+      const isUrlContainsNumbers = /\d/.test(url) // check is url contains numbers
+
+      return !isEmptyString && !isUrlContainsNumbers
+    })
+    const splitSlashItemUrl = itemUrl.split(/\//).filter((url) => {
+      const isEmptyString = url === '' // is Url empty string
+      const isUrlContainsNumbers = /\d/.test(url) // check is url contains numbers
+
+      return !isEmptyString && !isUrlContainsNumbers
+    })
+
     // then try to get the last url name
     const lastPathname = splitSlashPathname.pop()
     const lastItemUrl = splitSlashItemUrl.pop()
