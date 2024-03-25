@@ -1,21 +1,16 @@
 'use client'
 
-import { ComponentProps, useState } from 'react'
+import React, { ComponentProps, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { usePathname, useRouter } from 'next/navigation'
 import { SharedProvider } from '@luxe/ui'
 import { LIST_SIDEMENU } from '../../config/sidemenu'
 import { Layout } from '../layout'
+import { logout } from './actions'
 
 type SideMenuItem = ComponentProps<typeof Layout>['sideMenuItems'][0]
 
-const WrapperProvider = ({
-  children,
-  user,
-}: {
-  children: React.ReactNode
-  user?: any
-}) => {
+const WrapperProvider = ({ children, user }: { children: React.ReactNode; user?: any }) => {
   const pathname = usePathname()
   const router = useRouter()
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -25,7 +20,7 @@ const WrapperProvider = ({
 
   const onClickBack = isBack ? router.back : undefined
   const onSignOut = async () => {
-    // supabase signout
+    await logout()
   }
 
   const isActive = (itemUrl: string) => {

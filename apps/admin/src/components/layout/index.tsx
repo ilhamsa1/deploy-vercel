@@ -10,9 +10,7 @@ import {
   RootContainer,
 } from './styled'
 
-type Props = ComponentProps<typeof SideMenu> &
-  ComponentProps<typeof Header> &
-  ComponentProps<'div'>
+type Props = ComponentProps<typeof SideMenu> & ComponentProps<typeof Header> & ComponentProps<'div'>
 
 export const Layout: ComponentType<Props> = ({
   children,

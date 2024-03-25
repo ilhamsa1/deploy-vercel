@@ -1,3 +1,4 @@
+import React from 'react'
 import type { Metadata } from 'next'
 
 import SessionProvider from '../../components/session-provider'
@@ -11,9 +12,5 @@ export default function TenantsLayout({
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <SessionProvider>
-      {children}
-    </SessionProvider>
-  )
+  return <SessionProvider>{children}</SessionProvider>
 }

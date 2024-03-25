@@ -1,3 +1,4 @@
+import React from 'react'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -75,7 +76,10 @@ export function Header({
           </IconButton>
 
           {onClickBack && (
-            <IconButton sx={{ mr: { xs: 1.5, md: 3 } }} onClick={onClickBack}>
+            <IconButton
+              sx={{ mr: { xs: 1.5, md: 3 } }}
+              onClick={onClickBack}
+            >
               <ArrowBackIosIcon />
             </IconButton>
           )}
@@ -92,7 +96,11 @@ export function Header({
           </Typography>
         </Stack>
 
-        <Stack direction="row" alignItems="center" gap={1}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          gap={1}
+        >
           {onClickNotification && (
             <IconButtonBadge
               iconName="notifications"
@@ -102,7 +110,10 @@ export function Header({
               onClick={onClickNotification}
             />
           )}
-          <Tooltip title="Account settings" enterDelay={1000}>
+          <Tooltip
+            title="Account settings"
+            enterDelay={1000}
+          >
             <IconButton
               onClick={handleClick}
               size="small"
