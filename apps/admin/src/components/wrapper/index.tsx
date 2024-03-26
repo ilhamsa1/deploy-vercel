@@ -5,7 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { usePathname, useRouter } from 'next/navigation'
 import { SharedProvider } from '@luxe/ui'
 import { LIST_SIDEMENU } from '../../config/sidemenu'
-import { Layout } from '../layout'
+import Layout from '../layout'
 import { logout } from './actions'
 
 type SideMenuItem = ComponentProps<typeof Layout>['sideMenuItems'][0]

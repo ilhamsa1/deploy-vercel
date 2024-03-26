@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { SyntheticEvent, useState } from 'react'
+
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -8,10 +9,11 @@ import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { global, IconButtonBadge } from '@luxe/ui'
-import { SyntheticEvent, useState } from 'react'
 
-import { ProfileMenu } from './profile-menu'
+import IconButtonBadge from '../icon-button-badge'
+import { global } from '../../theme'
+
+import ProfileMenu from './profile-menu'
 
 interface HeaderProps {
   title: string
@@ -22,7 +24,7 @@ interface HeaderProps {
   onSignOut: () => void
 }
 
-export function Header({
+export default function Header({
   title,
   onOpenDrawer,
   onClickBack,

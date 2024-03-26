@@ -12,7 +12,7 @@ interface ProfileMenuProps {
   onSignOut: () => void
 }
 
-export function ProfileMenu({ anchorEl, handleClose, onSignOut }: ProfileMenuProps) {
+export default function ProfileMenu({ anchorEl, handleClose, onSignOut }: ProfileMenuProps) {
   return (
     <Menu
       anchorEl={anchorEl}

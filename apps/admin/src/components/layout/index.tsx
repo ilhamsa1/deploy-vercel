@@ -1,7 +1,7 @@
-import { SideMenu } from '@luxe/ui'
+import { SideMenu } from '../sidemenu'
 import { ComponentProps, ComponentType } from 'react'
 
-import { Header } from '../header'
+import Header from '../header'
 import {
   AppContainer,
   ContainerDetail,
@@ -12,7 +12,7 @@ import {
 
 type Props = ComponentProps<typeof SideMenu> & ComponentProps<typeof Header> & ComponentProps<'div'>
 
-export const Layout: ComponentType<Props> = ({
+const Layout: ComponentType<Props> = ({
   children,
   title,
   onClickBack,
@@ -45,3 +45,5 @@ export const Layout: ComponentType<Props> = ({
     </RootContainer>
   )
 }
+
+export default Layout
