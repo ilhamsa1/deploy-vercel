@@ -3,7 +3,7 @@
 import React, { ComponentProps, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { usePathname, useRouter } from 'next/navigation'
-import { SharedProvider } from '@luxe/ui'
+import SharedProvider from '../shared-provider'
 import { LIST_SIDEMENU } from '../../config/sidemenu'
 import Layout from '../layout'
 import { logout } from './actions'
