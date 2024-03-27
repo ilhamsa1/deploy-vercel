@@ -44,10 +44,6 @@ export default function LoginPage() {
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
 
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-  }
-
   const form = useForm<zod.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -142,8 +138,6 @@ export default function LoginPage() {
                               <IconButton
                                 aria-label="toggle password visibility"
                                 onClick={handleClickShowPassword}
-                                onMouseDown={handleMouseDownPassword}
-                                edge="end"
                               >
                                 {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                               </IconButton>
