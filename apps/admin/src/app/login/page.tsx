@@ -102,12 +102,6 @@ export default function LoginPage() {
                           variant="filled"
                           placeholder="example@gmail.com"
                           fullWidth
-                          inputProps={{
-                            style: { padding: '13px 16px' },
-                          }}
-                          InputProps={{
-                            sx: { borderRadius: 0 },
-                          }}
                           {...field}
                           type="email"
                           onChange={field.onChange}
@@ -127,12 +121,6 @@ export default function LoginPage() {
                         <FilledInput
                           placeholder="password"
                           fullWidth
-                          inputProps={{
-                            style: { padding: '13px 16px' },
-                          }}
-                          sx={{
-                            borderRadius: 0,
-                          }}
                           endAdornment={
                             <InputAdornment position="end">
                               <IconButton
@@ -167,7 +155,6 @@ export default function LoginPage() {
                   </Link>
                 </Stack>
                 <Button
-                  color="primary"
                   type="submit"
                   isLoading={isLoading}
                 >
