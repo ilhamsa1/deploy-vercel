@@ -20,7 +20,7 @@ interface HeaderProps {
   onOpenDrawer?: () => void
   onClickBack?: () => void
   notificationCount?: string | number
-  onClickNotification?: (event: SyntheticEvent<HTMLElement>) => void
+  onClickNotification?: (_event: SyntheticEvent<HTMLElement>) => void
   onSignOut: () => void
 }
 
