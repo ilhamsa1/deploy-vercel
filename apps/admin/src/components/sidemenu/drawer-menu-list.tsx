@@ -52,7 +52,6 @@ const DrawerMenuList: ComponentType<DrawerProps> = ({ sideMenuItems, setOpenDraw
               key={menuItem.key}
               href={menuItem.url}
               color="inherit"
-              withoutUnderline
             >
               <MenuItem
                 sx={{

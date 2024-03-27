@@ -15,9 +15,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-
-// import AppleIcon from '@mui/icons-material/Apple'
-// import GoogleIcon from '@mui/icons-material/Google'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
@@ -171,10 +168,7 @@ export default function LoginPage() {
                     control={<Checkbox />}
                     label="Remember me"
                   />
-                  <Link
-                    href="/"
-                    withoutUnderline
-                  >
+                  <Link href="/">
                     <Typography variant="body2">Forgot Password?</Typography>
                   </Link>
                 </Stack>
@@ -186,28 +180,6 @@ export default function LoginPage() {
                   Log In
                 </Button>
               </Stack>
-              {/* Will use buttons below to use provider oauth in the future
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                gap={2}
-              >
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<GoogleIcon />}
-                >
-                  Log in with Google
-                </Button>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<AppleIcon />}
-                >
-                  Log in with Apple
-                </Button>
-              </Stack> */}
               <Divider />
             </Stack>
           </form>
