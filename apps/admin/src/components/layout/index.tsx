@@ -1,7 +1,7 @@
-import { SideMenu } from '@luxe/ui'
+import { SideMenu } from '../sidemenu'
 import { ComponentProps, ComponentType } from 'react'
 
-import { Header } from '../header'
+import Header from '../header'
 import {
   AppContainer,
   ContainerDetail,
@@ -12,9 +12,10 @@ import {
 
 type Props = ComponentProps<typeof SideMenu> &
   ComponentProps<typeof Header> &
-  ComponentProps<'div'>
+  ComponentProps<'div'> & { user: any }
 
-export const Layout: ComponentType<Props> = ({
+const Layout: ComponentType<Props> = ({
+  user,
   children,
   title,
   onClickBack,
@@ -27,11 +28,13 @@ export const Layout: ComponentType<Props> = ({
   return (
     <RootContainer>
       <ContentContainer>
-        <SideMenu
-          sideMenuItems={sideMenuItems}
-          openDrawer={openDrawer}
-          setOpenDrawer={setOpenDrawer}
-        />
+        {!!user && (
+          <SideMenu
+            sideMenuItems={sideMenuItems}
+            openDrawer={openDrawer}
+            setOpenDrawer={setOpenDrawer}
+          />
+        )}
         <AppContainer>
           <PageContainer>
             <Header
@@ -47,3 +50,5 @@ export const Layout: ComponentType<Props> = ({
     </RootContainer>
   )
 }
+
+export default Layout

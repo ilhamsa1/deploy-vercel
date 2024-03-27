@@ -1,3 +1,5 @@
+import React, { SyntheticEvent, useState } from 'react'
+
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -7,21 +9,22 @@ import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { global, IconButtonBadge } from '@luxe/ui'
-import { SyntheticEvent, useState } from 'react'
 
-import { ProfileMenu } from './profile-menu'
+import IconButtonBadge from '../icon-button-badge'
+import { global } from '../../theme'
+
+import ProfileMenu from './profile-menu'
 
 interface HeaderProps {
   title: string
   onOpenDrawer?: () => void
   onClickBack?: () => void
   notificationCount?: string | number
-  onClickNotification?: (event: SyntheticEvent<HTMLElement>) => void
+  onClickNotification?: (_event: SyntheticEvent<HTMLElement>) => void
   onSignOut: () => void
 }
 
-export function Header({
+export default function Header({
   title,
   onOpenDrawer,
   onClickBack,
@@ -75,7 +78,10 @@ export function Header({
           </IconButton>
 
           {onClickBack && (
-            <IconButton sx={{ mr: { xs: 1.5, md: 3 } }} onClick={onClickBack}>
+            <IconButton
+              sx={{ mr: { xs: 1.5, md: 3 } }}
+              onClick={onClickBack}
+            >
               <ArrowBackIosIcon />
             </IconButton>
           )}
@@ -92,7 +98,11 @@ export function Header({
           </Typography>
         </Stack>
 
-        <Stack direction="row" alignItems="center" gap={1}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          gap={1}
+        >
           {onClickNotification && (
             <IconButtonBadge
               iconName="notifications"
@@ -102,7 +112,10 @@ export function Header({
               onClick={onClickNotification}
             />
           )}
-          <Tooltip title="Account settings" enterDelay={1000}>
+          <Tooltip
+            title="Account settings"
+            enterDelay={1000}
+          >
             <IconButton
               onClick={handleClick}
               size="small"

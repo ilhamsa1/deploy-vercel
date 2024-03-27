@@ -1,21 +1,16 @@
 'use client'
 
-import { ComponentProps, useState } from 'react'
+import React, { ComponentProps, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { usePathname, useRouter } from 'next/navigation'
-import { SharedProvider } from '@luxe/ui'
+import SharedProvider from '../shared-provider'
 import { LIST_SIDEMENU } from '../../config/sidemenu'
-import { Layout } from '../layout'
+import Layout from '../layout'
+import { logout } from './actions'
 
 type SideMenuItem = ComponentProps<typeof Layout>['sideMenuItems'][0]
 
-const WrapperProvider = ({
-  children,
-  user,
-}: {
-  children: React.ReactNode
-  user?: any
-}) => {
+const WrapperProvider = ({ children, user }: { children: React.ReactNode; user?: any }) => {
   const pathname = usePathname()
   const router = useRouter()
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -23,16 +18,34 @@ const WrapperProvider = ({
   const pathnameArray = pathname.split('/') // (1) "/transactions/uuid" => ['', 'transactions', 'uuid']
   const isBack = pathnameArray.length > 2
 
+  // TODO: store user into into redux store
+
   const onClickBack = isBack ? router.back : undefined
   const onSignOut = async () => {
-    // supabase signout
+    await logout()
   }
 
   const isActive = (itemUrl: string) => {
-    return (
-      (pathname.length === 1 && itemUrl?.length === 1) ||
-      (pathname.indexOf(itemUrl) >= 0 && itemUrl?.length !== 1)
-    )
+    // will update this logic after we have dynamic url page
+    // split the path url first to get the name of the page
+    const splitSlashPathname = pathname.split(/\//).filter((url) => {
+      const isEmptyString = url === '' // is Url empty string
+      const isUrlContainsNumbers = /\d/.test(url) // check is url contains numbers
+
+      return !isEmptyString && !isUrlContainsNumbers
+    })
+    const splitSlashItemUrl = itemUrl.split(/\//).filter((url) => {
+      const isEmptyString = url === '' // is Url empty string
+      const isUrlContainsNumbers = /\d/.test(url) // check is url contains numbers
+
+      return !isEmptyString && !isUrlContainsNumbers
+    })
+
+    // then try to get the last url name
+    const lastPathname = splitSlashPathname.pop()
+    const lastItemUrl = splitSlashItemUrl.pop()
+
+    return lastPathname === lastItemUrl
   }
 
   const sideMenuItems = LIST_SIDEMENU.map((menuItem) => {
@@ -45,6 +58,7 @@ const WrapperProvider = ({
   return (
     <SharedProvider>
       <Layout
+        user={user}
         title="Luxe Dashboard"
         onClickBack={onClickBack}
         onOpenDrawer={() => setOpenDrawer(true)}

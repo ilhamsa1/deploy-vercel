@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Luxe Dashboard | Profile',
+  title: 'Luxe Homepage',
 }
 
 export default async function IndexPage() {
