@@ -10,9 +10,12 @@ import {
   RootContainer,
 } from './styled'
 
-type Props = ComponentProps<typeof SideMenu> & ComponentProps<typeof Header> & ComponentProps<'div'>
+type Props = ComponentProps<typeof SideMenu> &
+  ComponentProps<typeof Header> &
+  ComponentProps<'div'> & { user: any }
 
 const Layout: ComponentType<Props> = ({
+  user,
   children,
   title,
   onClickBack,
@@ -25,11 +28,13 @@ const Layout: ComponentType<Props> = ({
   return (
     <RootContainer>
       <ContentContainer>
-        <SideMenu
-          sideMenuItems={sideMenuItems}
-          openDrawer={openDrawer}
-          setOpenDrawer={setOpenDrawer}
-        />
+        {!!user && (
+          <SideMenu
+            sideMenuItems={sideMenuItems}
+            openDrawer={openDrawer}
+            setOpenDrawer={setOpenDrawer}
+          />
+        )}
         <AppContainer>
           <PageContainer>
             <Header

@@ -3,7 +3,7 @@
 import React, { ComponentProps, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { usePathname, useRouter } from 'next/navigation'
-import { SharedProvider } from '@luxe/ui'
+import SharedProvider from '../shared-provider'
 import { LIST_SIDEMENU } from '../../config/sidemenu'
 import Layout from '../layout'
 import { logout } from './actions'
@@ -17,6 +17,8 @@ const WrapperProvider = ({ children, user }: { children: React.ReactNode; user?:
 
   const pathnameArray = pathname.split('/') // (1) "/transactions/uuid" => ['', 'transactions', 'uuid']
   const isBack = pathnameArray.length > 2
+
+  // TODO: store user into into redux store
 
   const onClickBack = isBack ? router.back : undefined
   const onSignOut = async () => {
@@ -56,6 +58,7 @@ const WrapperProvider = ({ children, user }: { children: React.ReactNode; user?:
   return (
     <SharedProvider>
       <Layout
+        user={user}
         title="Luxe Dashboard"
         onClickBack={onClickBack}
         onOpenDrawer={() => setOpenDrawer(true)}
