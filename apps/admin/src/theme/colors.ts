@@ -28,6 +28,7 @@ export const colors = {
   // Backgrounds
   white: '#FFFFFF',
   grey: '#F1F1F1',
+  cream: '#F2F4F8',
   disabled: '#E4E4E4',
   regentGrey: '#808E9E',
   dimGrey: '#727272',
@@ -106,6 +107,6 @@ export const palette = {
     white: colors.textWhite,
   },
   background: {
-    default: colors.white,
+    default: colors.cream,
   },
 }

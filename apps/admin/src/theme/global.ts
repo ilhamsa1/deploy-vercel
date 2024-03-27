@@ -7,7 +7,7 @@ export const global = {
   appBarBreakpoint: 'xs',
   // max content width when monitor is very big
   maxContentWidth: 1200,
-  headerHeight: '3rem',
+  headerHeight: '4.125rem',
   maxMobileWidth: '390px',
   padding: '12px',
   smallImage: '73px',

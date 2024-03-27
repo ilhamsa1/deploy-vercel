@@ -1,10 +1,9 @@
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import Divider from '@mui/material/Divider'
-import AccountBox from '@mui/icons-material/AccountBox'
-import Logout from '@mui/icons-material/Logout'
-import Settings from '@mui/icons-material/Settings'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+
+import BusinessIcon from '@mui/icons-material/Business'
 
 interface ProfileMenuProps {
   anchorEl: null | HTMLElement
@@ -44,24 +43,46 @@ export default function ProfileMenu({ anchorEl, handleClose, onSignOut }: Profil
         },
       }}
     >
-      <MenuItem onClick={handleClose}>
-        <ListItemIcon>
-          <AccountBox fontSize="small" />
-        </ListItemIcon>
-        Profile
+      <MenuItem
+        sx={{ p: '12px 20px', minWidth: '200px' }}
+        onClick={handleClose}
+      >
+        <Stack gap={1}>
+          {/* User Name */}
+          <Typography variant="h6">John Doe</Typography>
+          <Stack gap={0.125}>
+            {/* User Email */}
+            <Typography variant="caption">johndoe@mail.co</Typography>
+            {/* User Tier/Role */}
+            <Typography variant="caption">Admin</Typography>
+          </Stack>
+          {/* User Organization */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap={0.5}
+          >
+            <BusinessIcon />
+            <Typography variant="caption">Organization</Typography>
+          </Stack>
+        </Stack>
       </MenuItem>
-      <Divider />
-      <MenuItem onClick={handleClose}>
-        <ListItemIcon>
-          <Settings fontSize="small" />
-        </ListItemIcon>
-        Settings
+      <MenuItem
+        sx={{ p: '10px 20px' }}
+        onClick={handleClose}
+      >
+        <Typography variant="button">API</Typography>
       </MenuItem>
-      <MenuItem onClick={onSignOut}>
-        <ListItemIcon>
-          <Logout fontSize="small" />
-        </ListItemIcon>
-        Logout
+      <MenuItem
+        sx={{ p: '10px 20px' }}
+        onClick={onSignOut}
+      >
+        <Typography
+          variant="button"
+          sx={{ textTransform: 'initial' }}
+        >
+          Logout
+        </Typography>
       </MenuItem>
     </Menu>
   )
