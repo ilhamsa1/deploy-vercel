@@ -16,8 +16,8 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
-import AppleIcon from '@mui/icons-material/Apple'
-import GoogleIcon from '@mui/icons-material/Google'
+// import AppleIcon from '@mui/icons-material/Apple'
+// import GoogleIcon from '@mui/icons-material/Google'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
@@ -186,6 +186,7 @@ export default function LoginPage() {
                   Log In
                 </Button>
               </Stack>
+              {/* Will use buttons below to use provider oauth in the future
               <Stack
                 direction="row"
                 justifyContent="space-between"
@@ -206,7 +207,7 @@ export default function LoginPage() {
                 >
                   Log in with Apple
                 </Button>
-              </Stack>
+              </Stack> */}
               <Divider />
             </Stack>
           </form>
