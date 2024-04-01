@@ -25,14 +25,7 @@ export const SideMenu: ComponentType<Props> = ({
   return (
     <Box
       component="nav"
-      sx={{
-        width: {
-          md: global.drawerWidth,
-        },
-        flexShrink: {
-          md: 0,
-        },
-      }}
+      sx={styles.container}
     >
       {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
       <Drawer
@@ -43,12 +36,7 @@ export const SideMenu: ComponentType<Props> = ({
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
         }}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': {
-            width: global.drawerWidth,
-          },
-        }}
+        sx={styles.drawer}
       >
         <DrawerMenuList {...{ sideMenuItems, setOpenDrawer }} />
       </Drawer>
@@ -56,15 +44,27 @@ export const SideMenu: ComponentType<Props> = ({
       <Drawer
         variant="permanent"
         open
-        sx={{
-          display: { xs: 'none', md: 'block' },
-          '& .MuiDrawer-paper': {
-            width: global.drawerWidth,
-          },
-        }}
+        sx={styles.drawer}
       >
         <DrawerMenuList {...{ sideMenuItems, setOpenDrawer }} />
       </Drawer>
     </Box>
   )
+}
+
+const styles = {
+  container: {
+    width: {
+      md: global.drawerWidth,
+    },
+    flexShrink: {
+      md: 0,
+    },
+  },
+  drawer: {
+    display: { xs: 'none', md: 'block' },
+    '& .MuiDrawer-paper': {
+      width: global.drawerWidth,
+    },
+  },
 }

@@ -20,31 +20,10 @@ export default function ProfileMenu({ anchorEl, handleClose, onSignOut }: Profil
       onClose={handleClose}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      slotProps={{
-        paper: {
-          elevation: 1,
-          sx: {
-            overflow: 'visible',
-            mt: 1.5,
-            color: 'black',
-            '&::before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        },
-      }}
+      slotProps={styles.slotProps}
     >
       <MenuItem
-        sx={{ p: '12px 20px', minWidth: '200px' }}
+        sx={styles.menuItemDetail}
         onClick={handleClose}
       >
         <Stack gap={1}>
@@ -68,22 +47,50 @@ export default function ProfileMenu({ anchorEl, handleClose, onSignOut }: Profil
         </Stack>
       </MenuItem>
       <MenuItem
-        sx={{ p: '10px 20px' }}
+        sx={styles.menuItem}
         onClick={handleClose}
       >
         <Typography variant="button">API</Typography>
       </MenuItem>
       <MenuItem
-        sx={{ p: '10px 20px' }}
+        sx={styles.menuItem}
         onClick={onSignOut}
       >
         <Typography
           variant="button"
-          sx={{ textTransform: 'initial' }}
+          sx={styles.logoutText}
         >
           Logout
         </Typography>
       </MenuItem>
     </Menu>
   )
+}
+
+const styles = {
+  logoutText: { textTransform: 'initial' },
+  menuItem: { p: '10px 20px' },
+  menuItemDetail: { p: '12px 20px', minWidth: '200px' },
+  slotProps: {
+    paper: {
+      elevation: 1,
+      sx: {
+        overflow: 'visible',
+        mt: 1.5,
+        color: 'black',
+        '&::before': {
+          content: '""',
+          display: 'block',
+          position: 'absolute',
+          top: 0,
+          right: 14,
+          width: 10,
+          height: 10,
+          bgcolor: 'background.paper',
+          transform: 'translateY(-50%) rotate(45deg)',
+          zIndex: 0,
+        },
+      },
+    },
+  },
 }
