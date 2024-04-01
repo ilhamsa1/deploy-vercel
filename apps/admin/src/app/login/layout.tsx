@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { Toaster } from 'react-hot-toast'
 
+import SharedProvider from '../../components/shared-provider'
+
 import { createClient } from '../../utils/supabase/server'
 
 export const metadata: Metadata = {
@@ -21,9 +23,9 @@ export default async function TenantsLayout({
   }
 
   return (
-    <>
+    <SharedProvider>
       {children}
       <Toaster />
-    </>
+    </SharedProvider>
   )
 }

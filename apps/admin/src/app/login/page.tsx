@@ -1,15 +1,22 @@
 'use client'
-import { useTransition } from 'react'
+import React, { useState, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import zod from 'zod'
 
 import toast from 'react-hot-toast'
+import Checkbox from '@mui/material/Checkbox'
 import Container from '@mui/material/Container'
 import Divider from '@mui/material/Divider'
+import FilledInput from '@mui/material/FilledInput'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
 import {
   Form,
@@ -20,6 +27,7 @@ import {
   FormMessage,
 } from '../../components/form'
 import Button from '../../components/button'
+import Link from '../../components/link'
 
 import { login } from './actions'
 
@@ -31,7 +39,10 @@ const FormSchema = zod.object({
 })
 
 export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, startTransition] = useTransition()
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show)
 
   const form = useForm<zod.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -91,12 +102,6 @@ export default function LoginPage() {
                           variant="filled"
                           placeholder="example@gmail.com"
                           fullWidth
-                          inputProps={{
-                            style: { padding: '13px 16px' },
-                          }}
-                          InputProps={{
-                            sx: { borderRadius: 0 },
-                          }}
                           {...field}
                           type="email"
                           onChange={field.onChange}
@@ -113,18 +118,21 @@ export default function LoginPage() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <TextField
-                          variant="filled"
+                        <FilledInput
                           placeholder="password"
                           fullWidth
-                          inputProps={{
-                            style: { padding: '13px 16px' },
-                          }}
-                          InputProps={{
-                            sx: { borderRadius: 0 },
-                          }}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                              >
+                                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                              </IconButton>
+                            </InputAdornment>
+                          }
                           {...field}
-                          type="password"
+                          type={showPassword ? 'text' : 'password'}
                           onChange={field.onChange}
                         />
                       </FormControl>
@@ -133,8 +141,20 @@ export default function LoginPage() {
                     </FormItem>
                   )}
                 />
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Remember me"
+                  />
+                  <Link href="/">
+                    <Typography variant="body2">Forgot Password?</Typography>
+                  </Link>
+                </Stack>
                 <Button
-                  color="primary"
                   type="submit"
                   isLoading={isLoading}
                 >

@@ -24,3 +24,14 @@ export const MuiTextField = {
     },
   },
 } satisfies Components<Theme>['MuiTextField']
+
+export const MuiFilledInput = {
+  styleOverrides: {
+    root: {
+      borderRadius: 0,
+    },
+    input: {
+      padding: '13px 16px',
+    },
+  },
+} satisfies Components<Theme>['MuiFilledInput']

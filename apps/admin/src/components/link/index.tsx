@@ -9,11 +9,12 @@ interface LinkProps extends NextLinkProps {
   sx?: SxProps
   target?: string
   color?: string
+  underline?: boolean
 }
 
 // Next Link doesnt need the <a> tag anymore
 // https://nextjs.org/docs/app/api-reference/components/link#version-history
-function Link({ ref, ...props }: LinkProps) {
+function Link({ ref, underline = false, ...props }: LinkProps) {
   const { href, target, ...other } = props
   if (!href) {
     return <span {...other} />
@@ -25,6 +26,9 @@ function Link({ ref, ...props }: LinkProps) {
       ref={ref}
       href={href as string}
       target={target}
+      sx={{
+        textDecoration: underline ? 'underline' : 'none',
+      }}
       {...other}
     />
   )

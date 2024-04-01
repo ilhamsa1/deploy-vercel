@@ -4,7 +4,7 @@ import { borderRadius } from '../border-radius'
 import { colors } from '../colors'
 import { spacings } from '../spacings'
 import { FONTS } from '../typography'
-import { MuiInputField, MuiTextField } from './input-field'
+import { MuiInputField, MuiTextField, MuiFilledInput } from './input-field'
 import { MuiPaper } from './paper'
 import { MuiAlert } from './alert'
 
@@ -101,4 +101,5 @@ export const overrides: Components = {
   MuiPaper,
   MuiOutlinedInput: MuiInputField,
   MuiTextField,
+  MuiFilledInput,
 }
