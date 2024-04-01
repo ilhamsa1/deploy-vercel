@@ -1,14 +1,11 @@
 import React, { SyntheticEvent, useState } from 'react'
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
-import MenuIcon from '@mui/icons-material/Menu'
 import AppBar from '@mui/material/AppBar'
 import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
-import Typography from '@mui/material/Typography'
 
 import IconButtonBadge from '../icon-button-badge'
 import { global } from '../../theme'
@@ -24,14 +21,7 @@ interface HeaderProps {
   onSignOut: () => void
 }
 
-export default function Header({
-  title,
-  onOpenDrawer,
-  onClickBack,
-  notificationCount,
-  onClickNotification,
-  onSignOut,
-}: HeaderProps) {
+export default function Header({ notificationCount, onClickNotification, onSignOut }: HeaderProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -49,91 +39,60 @@ export default function Header({
         width: '100%',
         background: 'rgba(255,255,255,0.8)',
         backdropFilter: 'blur(6px)',
+        borderBottom: '1px solid #DDE1E6',
       }}
     >
-      <Toolbar
-        variant="dense"
-        sx={{
-          px: { xs: 1.5, md: 3 },
-          py: 1,
-          height: global.headerHeight,
-          minHeight: global.headerHeight,
-        }}
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center"
       >
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          width="100%"
+        <Toolbar
+          variant="dense"
+          sx={{
+            px: { xs: 1.5, md: 3 },
+            py: 1,
+            height: global.headerHeight,
+            minHeight: global.headerHeight,
+          }}
         >
-          <IconButton
-            color="primary"
-            onClick={onOpenDrawer}
-            sx={{
-              mr: { xs: 1 },
-              display: { xs: 'flex', md: 'none' },
-            }}
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap={1}
           >
-            <MenuIcon />
-          </IconButton>
-
-          {onClickBack && (
-            <IconButton
-              sx={{ mr: { xs: 1.5, md: 3 } }}
-              onClick={onClickBack}
+            {onClickNotification && (
+              <IconButtonBadge
+                iconName="notifications"
+                color="inherit"
+                badgeContent={Number(notificationCount ?? 0)}
+                badgeColor="primary"
+                onClick={onClickNotification}
+              />
+            )}
+            <Tooltip
+              title="Account settings"
+              enterDelay={1000}
             >
-              <ArrowBackIosIcon />
-            </IconButton>
-          )}
-
-          <Typography
-            variant="h4"
-            noWrap
-            sx={{
-              flexGrow: 1,
-              textTransform: 'capitalize',
-            }}
-          >
-            {title}
-          </Typography>
-        </Stack>
-
-        <Stack
-          direction="row"
-          alignItems="center"
-          gap={1}
-        >
-          {onClickNotification && (
-            <IconButtonBadge
-              iconName="notifications"
-              color="inherit"
-              badgeContent={Number(notificationCount ?? 0)}
-              badgeColor="primary"
-              onClick={onClickNotification}
+              <IconButton
+                onClick={handleClick}
+                size="small"
+                aria-controls={open ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                sx={{ color: 'black' }}
+              >
+                <AccountCircleIcon />
+              </IconButton>
+            </Tooltip>
+            <ProfileMenu
+              anchorEl={anchorEl}
+              handleClose={handleClose}
+              onSignOut={onSignOut}
             />
-          )}
-          <Tooltip
-            title="Account settings"
-            enterDelay={1000}
-          >
-            <IconButton
-              onClick={handleClick}
-              size="small"
-              aria-controls={open ? 'account-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              sx={{ color: 'black' }}
-            >
-              <AccountCircleIcon />
-            </IconButton>
-          </Tooltip>
-          <ProfileMenu
-            anchorEl={anchorEl}
-            handleClose={handleClose}
-            onSignOut={onSignOut}
-          />
-        </Stack>
-      </Toolbar>
+          </Stack>
+        </Toolbar>
+      </Stack>
     </AppBar>
   )
 }

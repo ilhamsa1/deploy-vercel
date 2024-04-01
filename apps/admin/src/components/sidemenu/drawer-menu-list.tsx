@@ -1,14 +1,20 @@
 import { ComponentType } from 'react'
-import Close from '@mui/icons-material/Close'
+
 import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
 import Icon from '@mui/material/Icon'
 import IconButton from '@mui/material/IconButton'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 
+import Close from '@mui/icons-material/Close'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+
 import Chip from '../chip'
 import Link from '../link'
+
+import { global } from '../../theme'
 
 export type DrawerProps = {
   sideMenuItems: SideMenuItem[]
@@ -44,7 +50,27 @@ const DrawerMenuList: ComponentType<DrawerProps> = ({ sideMenuItems, setOpenDraw
           />
         </IconButton>
       </Box>
-      <Box sx={{ mt: 6 }}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{
+          px: 3,
+          py: 1,
+          height: global.headerHeight,
+          minHeight: global.headerHeight,
+        }}
+      >
+        <Typography
+          variant="h4"
+          color="#697077"
+        >
+          Lexupay
+        </Typography>
+        <KeyboardArrowDownIcon />
+      </Box>
+      <Divider variant="middle" />
+      <Box sx={{ mt: 2 }}>
         {sideMenuItems.map((menuItem) => {
           const color = menuItem.active ? theme.palette.primary.main : 'inherit'
           return (
