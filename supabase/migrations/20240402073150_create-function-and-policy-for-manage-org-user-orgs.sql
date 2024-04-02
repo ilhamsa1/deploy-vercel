@@ -4,7 +4,7 @@ RETURNS INTEGER
 LANGUAGE sql
 SECURITY definer SET search_path = public
 as $$
-  SELECT oid FROM public.user_orgs WHERE id = auth.uid()
+  SELECT oid FROM public.user_orgs WHERE uid = auth.uid()
 $$;
 -- create a function to get user role by auth uid
 CREATE FUNCTION public.get_role_for_authenticated_user()
@@ -12,7 +12,7 @@ RETURNS TEXT
 LANGUAGE sql
 SECURITY definer SET search_path = public
 as $$
-  SELECT role FROM public.user_orgs WHERE id = auth.uid()
+  SELECT role FROM public.user_orgs WHERE uid = auth.uid()
 $$;
 -- user with oid can view their own org
 CREATE POLICY "user can only view their own user org"
