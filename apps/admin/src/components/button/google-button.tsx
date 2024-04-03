@@ -1,6 +1,9 @@
+'use client'
+
 import { ComponentType } from 'react'
-import Button from '.'
 import { createClient } from '@/utils/supabase/client'
+
+import Button from '.'
 
 interface Props {
   nextUrl?: string
