@@ -1,3 +1,3 @@
 export default function AuthError() {
-  return <div>Authentication Error</div>;
+  return <div>Authentication Error</div>
 }
