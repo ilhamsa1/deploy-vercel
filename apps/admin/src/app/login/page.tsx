@@ -164,7 +164,7 @@ export default function LoginPage() {
                 </Button>
               </Stack>
               <Divider />
-              <GoogleButton />
+              <GoogleButton nextUrl="/tenants" />
             </Stack>
           </form>
         </Form>
