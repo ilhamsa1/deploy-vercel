@@ -8,7 +8,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 
 import IconButtonBadge from '../icon-button-badge'
-import { global } from '../../theme'
+import { global, colors } from '../../theme'
 
 import ProfileMenu from './profile-menu'
 
@@ -35,12 +35,7 @@ export default function Header({ notificationCount, onClickNotification, onSignO
     <AppBar
       position="sticky"
       color="default"
-      sx={{
-        width: '100%',
-        background: 'rgba(255,255,255,0.8)',
-        backdropFilter: 'blur(6px)',
-        borderBottom: '1px solid #DDE1E6',
-      }}
+      sx={styles.appBarContainer}
     >
       <Stack
         direction="row"
@@ -49,12 +44,7 @@ export default function Header({ notificationCount, onClickNotification, onSignO
       >
         <Toolbar
           variant="dense"
-          sx={{
-            px: { xs: 1.5, md: 3 },
-            py: 1,
-            height: global.headerHeight,
-            minHeight: global.headerHeight,
-          }}
+          sx={styles.toolbar}
         >
           <Stack
             direction="row"
@@ -95,4 +85,19 @@ export default function Header({ notificationCount, onClickNotification, onSignO
       </Stack>
     </AppBar>
   )
+}
+
+const styles = {
+  appBarContainer: {
+    width: '100%',
+    background: colors.secondary50,
+    backdropFilter: 'blur(6px)',
+    borderBottom: `1px solid ${colors.secondary50}`,
+  },
+  toolbar: {
+    px: { xs: 1.5, md: 3 },
+    py: 1,
+    height: global.headerHeight,
+    minHeight: global.headerHeight,
+  },
 }
