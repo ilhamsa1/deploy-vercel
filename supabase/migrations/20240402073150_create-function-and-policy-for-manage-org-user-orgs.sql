@@ -19,11 +19,15 @@ CREATE POLICY "user can only view their own user org"
 ON public.org
 FOR SELECT
 USING ( id in ( SELECT public.get_org_for_authenticated_user() ) );
--- current user auth can view their own user_org
+-- current user can see their user_org list, and admin user auth can see their org user_org list
 CREATE POLICY "admin can organize their org users"
 ON public.user_orgs
 FOR SELECT
 USING (
-  (org_id in ( SELECT public.get_org_for_authenticated_user() ))
-  AND (( SELECT public.get_role_for_authenticated_user() ) = 'admin')
+  (auth.uid() = user_id)
+  OR
+  (
+    (org_id in ( SELECT public.get_org_for_authenticated_user() ))
+    AND (( SELECT public.get_role_for_authenticated_user() ) = 'admin')
+  )
 );

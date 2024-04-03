@@ -5,7 +5,7 @@ CREATE TABLE public.user_orgs (
   role TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ,
-  PRIMARY KEY (user_id)
+  CONSTRAINT PK_user_org PRIMARY KEY(user_id, org_id)
 );
 -- enable RLS, we want to restrict access on this table
 ALTER TABLE public.user_orgs ENABLE ROW LEVEL SECURITY;
