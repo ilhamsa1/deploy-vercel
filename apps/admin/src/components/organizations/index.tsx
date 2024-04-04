@@ -1,5 +1,5 @@
 'use client'
-import { useFetchOrganizationQuery } from '../../models/organizations/hooks'
+import { useFetchOrganizationQuery } from '@/models/organizations/hooks'
 
 // Example to call data
 const Organizations = () => {
