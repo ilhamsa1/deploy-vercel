@@ -5,6 +5,9 @@ import { ComponentType } from 'react'
 import { global } from '../../theme'
 import DrawerMenuList, { DrawerProps } from './drawer-menu-list'
 
+import Stack from '@mui/material/Stack'
+import LogoutButton from '../button/logout-button'
+
 interface Props extends DrawerProps {
   /**
    * Injected by the documentation to work in an iframe.
@@ -47,6 +50,9 @@ export const SideMenu: ComponentType<Props> = ({
         sx={styles.drawer}
       >
         <DrawerMenuList {...{ sideMenuItems, setOpenDrawer }} />
+        <Stack sx={{ m: 2 }}>
+          <LogoutButton />
+        </Stack>
       </Drawer>
     </Box>
   )

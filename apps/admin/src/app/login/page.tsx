@@ -29,7 +29,9 @@ import {
 import Button from '../../components/button'
 import Link from '../../components/link'
 
-import { login } from './actions'
+import { login, signup } from './actions'
+
+import GoogleButton from '@/components/button/google-button'
 
 const FormSchema = zod.object({
   email: zod.string().email(),
@@ -162,6 +164,7 @@ export default function LoginPage() {
                 </Button>
               </Stack>
               <Divider />
+              <GoogleButton nextUrl="/tenants" />
             </Stack>
           </form>
         </Form>
