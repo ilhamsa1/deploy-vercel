@@ -30,3 +30,8 @@ export interface PaginationParam {
   page: string | number
   pageSize: string | number
 }
+
+export interface ParamsUpdateMutation<T> {
+  id: string
+  data: T
+}

@@ -12,14 +12,21 @@ export const getOrganizationById = async (client: SupabaseClient, organizationId
   return data
 }
 
-export const createOrganization = async (
+export async function updateOrganizationById(
   client: SupabaseClient,
-  organization: OrganizationModels,
-) => {
-  const { data, error } = await client.from('org').insert(organization)
-  if (error) {
-    throw error
-  }
+  params: {
+    id: string
+    data: Partial<OrganizationModels>
+  },
+) {
+  const { data } = await client
+    .from('org')
+    .update(params.data)
+    .match({ id: params.id })
+    .throwOnError()
+    .select<string, OrganizationModels>('*')
+    .throwOnError()
+    .single()
 
   return data
 }
