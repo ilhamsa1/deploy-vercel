@@ -22,7 +22,7 @@ export default async function TenantsLayout({
   if (userData?.user) {
     // Note: will fix leter, TypeScript assumes 'org' is an array but it is actually an object
     const tag = (userOrg?.org as any)?.tag
-    redirect('/tenants?tag=' + tag)
+    redirect(`/org/${tag}`)
   }
 
   return (

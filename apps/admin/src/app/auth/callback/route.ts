@@ -20,7 +20,7 @@ export async function GET(request: Request) {
       const tag = (userOrg?.org as any)?.tag
       if (tag) {
         // Note: will fix leter, TypeScript assumes 'org' is an array but it is actually an object
-        redirectUrl = '/tenants?tag=' + tag
+        redirectUrl = `/org/${tag}`
       }
       return NextResponse.redirect(`${process.env.BASE_URL}${redirectUrl}`)
     }

@@ -1,13 +1,10 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import { OrganizationModels } from './types'
 
-export const getOrganizationById = async (client: SupabaseClient, organizationId: number) => {
-  const { data } = await client
-    .from('org')
-    .select()
-    .eq('id', organizationId)
-    .throwOnError()
-    .single()
+export const getOrganizationByTagName = async (client: SupabaseClient, tag: string) => {
+  const { data } = await client.from('org').select().eq('tag', tag).single()
+
+  console.log('sssssssss', data, tag)
 
   return data
 }
