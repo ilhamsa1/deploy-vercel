@@ -42,18 +42,23 @@ const List: React.FC = () => {
     },
   ]
 
-  const handleRowClick = (item: any) => console.log(item)
-
   const handlePaginationModelChange = (paginationModel: GridPaginationModel) => {
     console.log(paginationModel)
   }
 
   return (
     <Datagrid
-      rows={[]}
+      noAction
+      rows={[
+        {
+          id: 1,
+          name: 'userA',
+          email: 'user@example.com',
+          requestedDate: '02-04-2024',
+        },
+      ]}
       loading={isLoading}
       columns={columns}
-      handleRowClick={handleRowClick}
       page={page}
       pageSize={pageSize}
       rowCount={count}

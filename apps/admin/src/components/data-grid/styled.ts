@@ -47,17 +47,13 @@ export const Container = styled('div')({
 })
 
 export const CustomizedDatagrid = styled(DataGrid)`
-  border: 0;
+  margin-top: 1.25rem;
   padding-bottom: 0 !important;
+  padding-top: 0 !important;
   font-size: 1rem !important;
 
   & .MuiDataGrid-root {
     border-style: none;
-  }
-
-  & .MuiDataGrid-main {
-    margin-top: 1.25rem;
-    margin-bottom: 1.25rem;
   }
 
   & .MuiDataGrid-columnHeader:focus,
@@ -74,10 +70,8 @@ export const CustomizedDatagrid = styled(DataGrid)`
     border-color: #e3e2e7;
   }
 
-  & .MuiDataGrid-virtualScroller {
+  & .MuiDataGrid-row {
     background-color: #ffffff;
-    border-radius: 4px;
-    border: 1px solid #e3e2e7;
   }
 
   & .MuiDataGrid-iconSeparator {
@@ -121,12 +115,6 @@ export const CustomizedDatagrid = styled(DataGrid)`
     text-transform: capitalize;
   }
 
-  & .MuiDataGrid-columnHeaders {
-    color: #212121;
-    border-bottom: none !important;
-    margin-bottom: 18px;
-  }
-
   & .MuiDataGrid-sortIcon {
     color: ${colors.white};
   }
@@ -142,7 +130,6 @@ export const CustomizedDatagrid = styled(DataGrid)`
 
   & .MuiDataGrid-footerContainer {
     background-color: #ffffff;
-    border-style: none;
   }
 
   & .MuiTablePagination-root p {

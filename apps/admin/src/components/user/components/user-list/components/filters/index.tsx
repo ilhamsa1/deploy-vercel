@@ -38,7 +38,7 @@ const Filter: React.FC = () => {
       <Grid
         item
         xs
-        sm={3}
+        sm={2}
       >
         <Button
           fullWidth
@@ -46,7 +46,7 @@ const Filter: React.FC = () => {
           variant="contained"
           onClick={() => console.log('test')}
         >
-          Add Organization User
+          Add User
         </Button>
       </Grid>
     </Grid>
