@@ -1,6 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { SupabaseClient } from '@supabase/supabase-js'
+
+import { createClient } from '../utils/supabase/client'
 
 export const useDebounce = <T>(value: T, delay: number): T => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value)
@@ -46,4 +49,13 @@ export function useDialogShowState() {
   const onCloseDialog = () => setOpenDialog(false)
 
   return { openDialog, onOpenDialog, onCloseDialog }
+}
+
+/**
+ * Wrap the createClient in a useMemo hook to prevent the client from being recreated on every render
+ *
+ * @returns {SupabaseClient} The memoized Supabase client instance.
+ */
+export const useSupabase = (): SupabaseClient => {
+  return useMemo(createClient, [])
 }

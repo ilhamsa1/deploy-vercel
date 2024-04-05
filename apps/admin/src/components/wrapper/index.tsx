@@ -10,7 +10,15 @@ import { logout } from './actions'
 
 type SideMenuItem = ComponentProps<typeof Layout>['sideMenuItems'][0]
 
-const WrapperProvider = ({ children, user }: { children: React.ReactNode; user?: any }) => {
+const WrapperProvider = ({
+  children,
+  user,
+  prefixUrl,
+}: {
+  children: React.ReactNode
+  user?: any
+  prefixUrl?: string
+}) => {
   const pathname = usePathname()
   const router = useRouter()
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -49,9 +57,12 @@ const WrapperProvider = ({ children, user }: { children: React.ReactNode; user?:
   }
 
   const sideMenuItems = LIST_SIDEMENU.map((menuItem) => {
+    const url = prefixUrl ? `${prefixUrl}${menuItem.url}` : menuItem.url
+
     return {
       ...menuItem,
-      active: isActive(menuItem.url),
+      active: isActive(url),
+      url,
     } satisfies SideMenuItem
   })
 

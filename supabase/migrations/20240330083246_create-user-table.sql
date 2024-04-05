@@ -11,11 +11,13 @@ ALTER TABLE public.user ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "can only view own user data"
 ON public.user
 FOR SELECT
+TO AUTHENTICATED
 USING ( auth.uid() = id );
 -- user allowed to update their own data
 CREATE POLICY "can only update own user data"
 ON public.user
 FOR UPDATE
+TO AUTHENTICATED
 USING ( auth.uid() = id );
 -- create a function to insert a row into public.user
 CREATE FUNCTION public.handle_new_user()
