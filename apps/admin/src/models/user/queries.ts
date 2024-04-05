@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
-export const getUserOrganizationByUser = async (client: SupabaseClient) => {
+export const getSingleUserOrganizationByUser = async (client: SupabaseClient) => {
   const { data: userData } = await client.auth.getUser()
   const { data } = await client
     .from('user_orgs')
@@ -11,6 +11,7 @@ export const getUserOrganizationByUser = async (client: SupabaseClient) => {
       `,
     )
     .eq('user_id', userData?.user?.id)
+    .limit(1)
     .single()
 
   return {
@@ -27,7 +28,7 @@ export const getUserOrganizationListByUser = async (client: SupabaseClient) => {
       `
       role,
       user_id,
-      org (tag)
+      org (tag, display_name)
     `,
     )
     .eq('user_id', userData?.user?.id)

@@ -16,6 +16,7 @@ interface Props {
     user_id: string
     org: {
       tag: string
+      display_name: string
     }[]
   }[]
 }
@@ -46,7 +47,7 @@ const OrgUserList: ComponentType<Props> = ({ data }) => {
                 LinkComponent={Link}
                 href={`/org/${org.tag}`}
               >
-                <ListItemText primary={org.tag} />
+                <ListItemText primary={org.display_name} />
               </ListItemButton>
             )
           })}

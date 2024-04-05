@@ -1,4 +1,4 @@
-import { getUserOrganizationByUser } from '@/models/user/queries'
+import { getSingleUserOrganizationByUser } from '@/models/user/queries'
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
 
@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      const { userOrg } = await getUserOrganizationByUser(supabase)
+      const { userOrg } = await getSingleUserOrganizationByUser(supabase)
       let redirectUrl = next
       const tag = (userOrg?.org as any)?.tag
       if (tag) {
