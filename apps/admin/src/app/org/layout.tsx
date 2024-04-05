@@ -1,10 +1,10 @@
 import React from 'react'
 import type { Metadata } from 'next'
 
-import SessionProvider from '../../components/session-provider'
+import SessionProvider from '@/components/session-provider'
 
 export const metadata: Metadata = {
-  title: 'Luxe Dashboard',
+  title: 'Luxe',
 }
 
 export default function TenantsLayout({
