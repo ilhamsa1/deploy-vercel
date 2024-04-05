@@ -1,7 +1,7 @@
 -- create a public.payment_tx table for storing payment transaction information
 CREATE TABLE public.payment_tx (
-  id UUID NOT NULL DEFAULT uuid_generate_ulid(),
-  id2 TEXT NOT NULL GENERATED ALWAYS AS (uuid_to_ulid(id)) STORED,
+  id UUID_ULID NOT NULL DEFAULT uuid_generate_ulid(),
+  id2 CHAR(26) NOT NULL GENERATED ALWAYS AS (uuid_to_ulid(id)) STORED,
   pi_id UUID NOT NULL REFERENCES payment_intent ON DELETE CASCADE,
   amount NUMERIC,
   amount_e INTEGER,
