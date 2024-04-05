@@ -1,10 +1,16 @@
 import Typography from '@mui/material/Typography'
-import { GridCellParams, GridPaginationModel } from '@mui/x-data-grid'
-import React, { useState } from 'react'
-
+import { GridActionsCellItem, GridCellParams, GridPaginationModel } from '@mui/x-data-grid'
+import React, { useState, ComponentType } from 'react'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+// import CancelIcon from '@mui/icons-material/Cancel'
 import Datagrid from '@/components/data-grid'
+import { Box } from '@mui/material'
 
-const List: React.FC = () => {
+type Props = {
+  onOpenDialog: () => void
+}
+
+const List: ComponentType<Props> = ({ onOpenDialog }) => {
   const [isLoading] = useState(false)
   const [page] = useState(1)
   const [pageSize] = useState(20)
@@ -39,6 +45,33 @@ const List: React.FC = () => {
       flex: 1,
       minWidth: 150,
       headerName: 'Joined Date',
+    },
+    {
+      field: 'actions',
+      headerName: '',
+      width: 100,
+      renderCell: (data: GridCellParams) => {
+        return (
+          <Box>
+            <GridActionsCellItem
+              icon={<CheckCircleIcon />}
+              label="Edit"
+              className="textPrimary"
+              onClick={() => {
+                onOpenDialog()
+                console.log(data.id)
+              }}
+              color="inherit"
+            />
+            {/* <GridActionsCellItem
+              icon={<CancelIcon />}
+              label="Delete"
+              onClick={() => console.log(data.id)}
+              color="inherit"
+            /> */}
+          </Box>
+        )
+      },
     },
   ]
 
