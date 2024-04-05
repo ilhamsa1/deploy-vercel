@@ -1,11 +1,12 @@
 import Stack from '@mui/material/Stack'
-import { ComponentType } from 'react'
+import { ComponentType, useState } from 'react'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 import Dialog from '@/components/dialog'
 import Button from '@/components/button'
 import ContentDetails from '@/components/content-details'
 import Typography from '@/components/typography'
+import SelectRole from '@/components/select-role'
 
 import DialogInviteUser from './invite'
 
@@ -22,6 +23,7 @@ const DialogAddUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) => {
     onCloseDialog: onCloseDialogInvite,
     onOpenDialog: onOpenDialogInvite,
   } = useDialogShowState()
+  const [selectRole, setSelectRole] = useState('admin')
 
   const onSubmit = () => {
     onOpenDialogInvite()
@@ -73,6 +75,10 @@ const DialogAddUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) => {
             />
           </Stack>
           <Typography>Please select role that you want to assign to this user</Typography>
+          <SelectRole
+            selectRole={selectRole}
+            setSelectRole={setSelectRole}
+          />
         </Stack>
       </Dialog>
       <DialogInviteUser
