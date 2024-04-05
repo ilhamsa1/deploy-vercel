@@ -8,8 +8,19 @@ import Link from 'next/link'
 
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
+import { ComponentType } from 'react'
 
-const OrgUserList = () => {
+interface Props {
+  data: {
+    role: string
+    user_id: string
+    org: {
+      tag: string
+    }[]
+  }[]
+}
+
+const OrgUserList: ComponentType<Props> = ({ data }) => {
   return (
     <Container sx={{ my: 8 }}>
       <Typography
@@ -26,13 +37,16 @@ const OrgUserList = () => {
       </Typography>
       <Stack sx={{ my: 2, p: 2, background: '#fff' }}>
         <Stack divider={<Divider flexItem />}>
-          {['majin', 'test'].map((org) => {
+          {data.map((userOrg) => {
+            // Note: fix supabase return object but the typing is array
+            const org = userOrg.org as any
             return (
               <ListItemButton
+                key={org.tag}
                 LinkComponent={Link}
-                href={`/org/${org}`}
+                href={`/org/${org.tag}`}
               >
-                <ListItemText primary={org} />
+                <ListItemText primary={org.tag} />
               </ListItemButton>
             )
           })}

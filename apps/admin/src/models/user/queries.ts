@@ -18,3 +18,19 @@ export const getUserOrganizationByUser = async (client: SupabaseClient) => {
     userOrg: data,
   }
 }
+
+export const getUserOrganizationListByUser = async (client: SupabaseClient) => {
+  const { data: userData } = await client.auth.getUser()
+  const { data } = await client
+    .from('user_orgs')
+    .select(
+      `
+      role,
+      user_id,
+      org (tag)
+    `,
+    )
+    .eq('user_id', userData?.user?.id)
+
+  return data
+}

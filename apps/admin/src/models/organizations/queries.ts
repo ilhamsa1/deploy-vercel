@@ -3,7 +3,6 @@ import { OrganizationModels } from './types'
 
 export const getOrganizationByTagName = async (client: SupabaseClient, tag: string) => {
   const { data } = await client.from('org').select().eq('tag', tag).single()
-
   return data
 }
 
