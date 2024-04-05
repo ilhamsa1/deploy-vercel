@@ -7,10 +7,16 @@ export const metadata: Metadata = {
   title: 'Luxe',
 }
 
+interface Props {
+  children: React.ReactNode
+  params: {
+    org: string
+  }
+}
+
 export default function TenantsLayout({
   children, // will be a page or nested layout
-}: {
-  children: React.ReactNode
-}) {
-  return <SessionProvider>{children}</SessionProvider>
+  params,
+}: Props) {
+  return <SessionProvider org={params.org}>{children}</SessionProvider>
 }
