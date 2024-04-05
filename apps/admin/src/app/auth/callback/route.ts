@@ -1,3 +1,4 @@
+import { getUserOrganizationByUser } from '@/models/user/queries'
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
 
@@ -14,7 +15,14 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      return NextResponse.redirect(`${process.env.BASE_URL}${next}`)
+      const { userOrg } = await getUserOrganizationByUser(supabase)
+      let redirectUrl = next
+      const tag = (userOrg?.org as any)?.tag
+      if (tag) {
+        // Note: will fix leter, TypeScript assumes 'org' is an array but it is actually an object
+        redirectUrl = '/tenants?tag=' + tag
+      }
+      return NextResponse.redirect(`${process.env.BASE_URL}${redirectUrl}`)
     }
   }
 
