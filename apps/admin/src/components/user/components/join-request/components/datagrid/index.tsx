@@ -2,7 +2,7 @@ import Typography from '@mui/material/Typography'
 import { GridCellParams, GridPaginationModel } from '@mui/x-data-grid'
 import React, { useState } from 'react'
 
-import Datagrid from '../../../../../data-grid'
+import Datagrid from '@/components/data-grid'
 
 const List: React.FC = () => {
   const [isLoading] = useState(false)

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import UsersContent from '../../../components/user'
+import UsersContent from '@/components/user'
 
 export const metadata: Metadata = {
   title: 'Luxe Dashboard | Users',

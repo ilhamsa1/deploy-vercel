@@ -38,3 +38,12 @@ export const useDebounceFn = () => {
 
   return { debounce }
 }
+
+export function useDialogShowState() {
+  const [openDialog, setOpenDialog] = useState(false)
+
+  const onOpenDialog = () => setOpenDialog(true)
+  const onCloseDialog = () => setOpenDialog(false)
+
+  return { openDialog, onOpenDialog, onCloseDialog }
+}

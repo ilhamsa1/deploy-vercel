@@ -1,10 +1,14 @@
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
-import React, { useState } from 'react'
+import React, { useState, ComponentType } from 'react'
 
-import Button from '../../../../../button'
+import Button from '@/components/button'
 
-const Filter: React.FC = () => {
+type Props = {
+  onOpenDialog: () => void
+}
+
+const Filter: ComponentType<Props> = ({ onOpenDialog }) => {
   const [search, setSearch] = useState<string>('')
 
   return (
@@ -44,7 +48,7 @@ const Filter: React.FC = () => {
           fullWidth
           size="small"
           variant="contained"
-          onClick={() => console.log('test')}
+          onClick={onOpenDialog}
         >
           Add User
         </Button>

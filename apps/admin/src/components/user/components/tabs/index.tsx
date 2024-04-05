@@ -4,7 +4,7 @@ import { useState } from 'react'
 import UserList from '../user-list'
 import JoinRequest from '../join-request'
 
-import UITabs from '../../../tabs'
+import UITabs from '@/components/tabs'
 
 const Tabs = () => {
   const [value, setValue] = useState(0)
