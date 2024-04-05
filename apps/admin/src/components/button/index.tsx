@@ -15,7 +15,6 @@ const muiBtnSizeToPropsMappings = {
       ...FONTS.btnLarge,
       paddingY: '8px',
       paddingX: '22px',
-      borderRadius: '8px',
     },
   },
   medium: {
@@ -24,7 +23,6 @@ const muiBtnSizeToPropsMappings = {
       ...FONTS.btnNormal,
       paddingY: '16px',
       paddingX: '12px',
-      borderRadius: '2px',
     },
   },
   small: {
@@ -33,7 +31,6 @@ const muiBtnSizeToPropsMappings = {
       ...FONTS.btnMedium,
       paddingY: '4px',
       paddingX: '10px',
-      borderRadius: '6px',
     },
   },
 } as Record<NonNullable<IButton['size']>, Partial<MuiButtonProps>>
