@@ -1,7 +1,7 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import type { Metadata, NextPage } from 'next'
+import type { Metadata } from 'next'
 import { getOrganizationByTagName } from '@/models/organizations/queries'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
