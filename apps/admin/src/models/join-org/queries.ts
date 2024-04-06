@@ -38,7 +38,7 @@ export const joinOrganizationByInvitationCode = async (
     .limit(1)
     .single()
 
-  //  handle di weebhook
+  // NOTE: handle di weebhook in future
   await client
     .from('org_invite')
     .update({
