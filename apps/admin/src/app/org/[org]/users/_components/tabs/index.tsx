@@ -1,14 +1,31 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import { useState } from 'react'
+import { useState, ComponentType } from 'react'
+
+import UITabs from '@/components/tabs'
 
 import UserList from '../user-list'
 import JoinRequest from '../join-request'
 
-import UITabs from '@/components/tabs'
+interface Props {
+  users: {
+    data: {
+      role: string
+      user_id: string
+      org: {
+        tag: string
+        display_name: string
+      }
+      user: {
+        display_name: string
+      }
+    }[]
+    count: number
+  }
+}
 
-const Tabs = () => {
+const Tabs: ComponentType<Props> = ({ users }) => {
   const [value, setValue] = useState(0)
 
   return (
@@ -20,7 +37,7 @@ const Tabs = () => {
           handleChange={setValue}
         />
       </Box>
-      {value === 0 && <UserList />}
+      {value === 0 && <UserList users={users} />}
       {value === 1 && <JoinRequest />}
     </Box>
   )

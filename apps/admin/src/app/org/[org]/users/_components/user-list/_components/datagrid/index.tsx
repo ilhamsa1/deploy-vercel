@@ -1,10 +1,10 @@
 import Typography from '@mui/material/Typography'
-import { GridCellParams, GridPaginationModel } from '@mui/x-data-grid'
+import { GridCellParams, GridPaginationModel, GridRowModel } from '@mui/x-data-grid'
 import React, { useState } from 'react'
 
 import Datagrid from '@/components/data-grid'
 
-const List: React.FC = () => {
+const List = ({ users }: any) => {
   const [isLoading] = useState(false)
   const [page] = useState(1)
   const [pageSize] = useState(20)
@@ -12,10 +12,13 @@ const List: React.FC = () => {
 
   const columns = [
     {
-      field: 'name',
+      field: 'display_name',
       flex: 1,
       minWidth: 150,
       headerName: 'Name',
+      renderCell: (data: GridCellParams) => {
+        return <Typography>{data.row?.user?.display_name}</Typography>
+      },
     },
     {
       field: 'email',
@@ -29,7 +32,7 @@ const List: React.FC = () => {
               textTransform: 'lowercase',
             }}
           >
-            {data.row?.email}
+            {data.row?.user?.email || 'N/A'}
           </Typography>
         )
       },
@@ -55,20 +58,13 @@ const List: React.FC = () => {
   return (
     <Datagrid
       noAction
-      rows={[
-        {
-          id: 1,
-          name: 'userA',
-          email: 'user@example.com',
-          role: 'admin',
-          joinedDate: '02-04-2024',
-        },
-      ]}
+      rows={users?.data}
       loading={isLoading}
       columns={columns}
       page={page}
       pageSize={pageSize}
       rowCount={count}
+      getRowId={(row: GridRowModel) => row.user_id}
       handlePaginationModelChange={handlePaginationModelChange}
     />
   )
