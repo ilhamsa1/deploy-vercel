@@ -1,7 +1,9 @@
 {
   "name": "@luxe/source",
   "version": "0.0.0",
-  "scripts": {},
+  "scripts": {
+    "generate:db:type": "supabase gen types typescript --local > apps/admin/src/utils/supabase/types.ts"
+  },
   "private": true,
   "dependencies": {
     "@emotion/cache": "^11.11.0",
