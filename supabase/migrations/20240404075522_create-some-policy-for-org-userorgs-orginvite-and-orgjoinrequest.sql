@@ -63,21 +63,12 @@ USING (
 );
 
 -- ORG_INVITE TABLE
--- user admin can create/insert invitation to new user into org
-CREATE POLICY "user admin can create/insert invitation to new user into org"
-ON public.org_invite
-FOR INSERT
-TO AUTHENTICATED
-WITH CHECK (true);
 -- admin user can see invitation to join some one to org
 CREATE POLICY "admin user can see list invitation new user to join org"
 ON public.org_invite
 FOR SELECT
 TO AUTHENTICATED
-USING (
-  (( SELECT public.get_org_for_authenticated_user(org_id) ) = true)
-  AND (( SELECT public.get_role_based_orgid_for_authenticated_user(org_id) ) = 'admin')
-);
+USING (true);
 -- user admin can create/insert user_orgs to new user into org
 CREATE POLICY "user admin can create/insert user_orgs to new user into org"
 ON public.org_invite
@@ -92,11 +83,7 @@ CREATE POLICY "user admin can change invitation role and all user can update to 
 ON public.org_invite
 FOR UPDATE
 TO AUTHENTICATED
-USING (
-  (( SELECT public.get_org_for_authenticated_user(org_id) ) = false)
-  OR
-  (( SELECT public.get_role_based_orgid_for_authenticated_user(org_id) ) = 'admin')
-);
+USING (true);
 
 -- ORG_JOIN_REQUEST TABLE
 -- all user can see their own join request created and admin can see all incoming join request to the org
