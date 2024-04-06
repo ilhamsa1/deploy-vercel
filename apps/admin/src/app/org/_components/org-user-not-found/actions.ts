@@ -6,5 +6,5 @@ export async function joinInviteCode(formData: { code: string }) {
   const supabase = createClient()
 
   const result = await joinOrganizationByInvitationCode(supabase, formData.code)
-  return JSON.stringify(result)
+  return result
 }

@@ -8,6 +8,7 @@ import Button from '@/components/button'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import TextField from '@mui/material/TextField'
+import { useRouter } from 'next/navigation'
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/form'
 import { useForm } from 'react-hook-form'
@@ -15,6 +16,8 @@ import toast from 'react-hot-toast'
 import { joinInviteCode } from './actions'
 
 const OrgUserNotFound = () => {
+  const router = useRouter()
+
   const form = useForm<zod.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -24,12 +27,17 @@ const OrgUserNotFound = () => {
 
   async function onSubmit(data: zod.infer<typeof FormSchema>) {
     try {
-      await joinInviteCode(data)
+      const response = await joinInviteCode(data)
+      if (!response || !response.org || !response.org.tag) {
+        throw new Error('Failed to join organization')
+      }
 
-      toast.success('Successfully login')
+      const orgTag = response.org.tag
+      toast.success('Successfully joined organization.')
+
+      router.push(`/org/${orgTag}`)
     } catch (error) {
-      let message = 'Unknown Error'
-      if (error instanceof Error) message = error.message
+      const message = error instanceof Error ? error.message : 'Unknown Error'
       toast.error(message)
     }
   }

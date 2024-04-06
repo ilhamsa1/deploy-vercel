@@ -7,6 +7,8 @@ export const joinOrganizationByInvitationCode = async (
 ) => {
   const { data: userData } = await client.auth.getUser()
 
+  if (!userData?.user) throw new Error('No Authorization')
+
   const { data: orgInvite } = await client
     .from('org_invite')
     .select('*')
@@ -21,11 +23,20 @@ export const joinOrganizationByInvitationCode = async (
   const { data } = await client
     .from('user_orgs')
     .insert({
-      user_id: userData.user?.id,
+      user_id: userData.user.id,
       org_id: orgInvite.org_id,
       role: orgInvite.role,
     })
+    .select(
+      `
+      role,
+      user_id,
+      org (tag, display_name)
+    `,
+    )
     .throwOnError()
+    .limit(1)
+    .single()
 
   //  handle di weebhook
   await client
