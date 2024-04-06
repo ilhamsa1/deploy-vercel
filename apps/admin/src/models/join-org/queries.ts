@@ -11,12 +11,11 @@ export const joinOrganizationByInvitationCode = async (
     .from('org_invite')
     .select('*')
     .eq('code', code)
-    .is('acceptSed_at', null)
+    .is('accepted_at', null)
     .limit(1)
     .single()
 
   if (!orgInvite) throw new Error('Code is not valid')
-  if (orgInvite.send_to !== userData.user?.email) throw new Error('Code is not valid')
 
   // NOTE: this code should run in db transaction
   const { data } = await client
