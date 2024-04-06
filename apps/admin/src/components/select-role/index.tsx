@@ -8,11 +8,17 @@ import Typography from '@/components/typography'
 import { palette } from '@/theme'
 
 type Props = {
-  selectRole: string
-  setSelectRole: any
+  value: string
+  onChange: (_value: string) => void
 }
 
-const SelectRole: ComponentType<Props> = ({ selectRole = 'admin', setSelectRole }) => {
+type Roles = {
+  label: string
+  value: string
+  sublabel: string
+}
+
+const SelectRole: ComponentType<Props> = ({ value = 'admin', onChange }) => {
   const roles = [
     {
       label: 'Admin',
@@ -31,15 +37,15 @@ const SelectRole: ComponentType<Props> = ({ selectRole = 'admin', setSelectRole 
       direction="column"
       spacing={1}
     >
-      {roles.map(({ label, value, sublabel }: any) => {
-        const isSelected = selectRole === value
+      {roles.map(({ label, value: role, sublabel }: Roles) => {
+        const isSelected = value === role
         return (
           <Stack
-            key={value}
+            key={role}
             direction="row"
             spacing={1}
             sx={styles.select(isSelected)}
-            onClick={() => setSelectRole(value)}
+            onClick={() => onChange(role)}
           >
             {isSelected ? <RadioButtonCheckedIcon /> : <RadioButtonUncheckedIcon />}
             <Stack direction="column">

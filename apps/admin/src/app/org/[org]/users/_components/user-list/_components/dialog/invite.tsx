@@ -14,9 +14,10 @@ import { useDialogShowState } from '@/hooks'
 type Props = {
   openDialog: boolean
   onCloseDialog: () => void
+  inviteCode: string
 }
 
-const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) => {
+const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inviteCode }) => {
   const {
     openDialog: openDialogSentInvite,
     onCloseDialog: onCloseDialogSentInvite,
@@ -57,7 +58,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) =
             spacing={1}
           >
             <Typography variant="caption">Invitation Code</Typography>
-            <Typography variant="h2">A1b2C34</Typography>
+            <Typography variant="h2">{inviteCode}</Typography>
             <Typography
               onClick={() => copyToClipboard('A1b2C34')}
               sx={{
