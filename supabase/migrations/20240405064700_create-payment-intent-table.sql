@@ -1,6 +1,6 @@
 -- create a public.payment_intent table for storing payment intent information
 CREATE TABLE public.payment_intent (
-  id UUID_ULID NOT NULL DEFAULT uuid_generate_ulid(),
+  id UUID_ULID NOT NULL DEFAULT uuid_generate_v7(),
   id2 CHAR(26) NOT NULL GENERATED ALWAYS AS (uuid_to_ulid(id)) STORED,
   user_id UUID NOT NULL,
   org_id INTEGER NOT NULL,

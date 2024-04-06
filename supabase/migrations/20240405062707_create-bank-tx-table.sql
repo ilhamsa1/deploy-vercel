@@ -1,6 +1,6 @@
 -- create a public.bank_tx table for storing bank transaction information
 CREATE TABLE public.bank_tx (
-  id UUID_ULID NOT NULL DEFAULT uuid_generate_ulid(),
+  id UUID_ULID NOT NULL DEFAULT uuid_generate_v7(),
   id2 CHAR(26) NOT NULL GENERATED ALWAYS AS (uuid_to_ulid(id)) STORED,
   ba_id INTEGER NOT NULL REFERENCES bank_account ON DELETE CASCADE,
   num BIGINT,
