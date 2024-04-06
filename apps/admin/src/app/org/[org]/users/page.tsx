@@ -1,11 +1,21 @@
 import type { Metadata } from 'next'
 
-import UsersContent from '../../_components/users/page-view'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+
+import Tabs from './_components/tabs'
 
 export const metadata: Metadata = {
   title: 'Luxe Dashboard | Users',
 }
 
 export default async function UsersPage() {
-  return <UsersContent />
+  return (
+    <Box>
+      <Box>
+        <Typography variant="h3">Users</Typography>
+      </Box>
+      <Tabs />
+    </Box>
+  )
 }

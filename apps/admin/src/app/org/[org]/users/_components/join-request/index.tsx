@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box'
-import Filters from './components/filters'
-import Datagrid from './components/datagrid'
+import Filters from './_components/filters'
+import Datagrid from './_components/datagrid'
 
-import DialogAcceptRequestUser from './components/dialog/accept-request'
+import DialogAcceptRequestUser from './_components/dialog/accept-request'
 
 import { useDialogShowState } from '@/hooks'
 
