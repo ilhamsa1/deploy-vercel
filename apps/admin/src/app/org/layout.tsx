@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
 import SharedProvider from '@/components/shared-provider'
+import { Toaster } from 'react-hot-toast'
 
 export const metadata: Metadata = {
   title: 'Luxe',
@@ -20,5 +21,10 @@ export default async function TenantsLayout({
     redirect('/login')
   }
 
-  return <SharedProvider>{children}</SharedProvider>
+  return (
+    <SharedProvider>
+      {children}
+      <Toaster />
+    </SharedProvider>
+  )
 }

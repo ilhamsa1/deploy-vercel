@@ -23,7 +23,10 @@ interface Props {
 
 const OrgUserList: ComponentType<Props> = ({ data }) => {
   return (
-    <Container sx={{ my: 8 }}>
+    <Container
+      sx={{ my: 8 }}
+      maxWidth="md"
+    >
       <Typography
         variant="h2"
         gutterBottom
