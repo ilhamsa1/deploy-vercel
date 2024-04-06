@@ -10,22 +10,21 @@ import JoinRequest from '../join-request'
 
 interface Props {
   users: {
-    data: {
-      role: string
-      user_id: string
-      org: {
-        tag: string
-        display_name: string
-      }
-      user: {
-        display_name: string
-      }
+    role: string
+    user_id: string
+    created_at: string
+    org: {
+      tag: string
+      display_name: string
     }[]
-    count: number
-  }
+    user: {
+      display_name: string
+    }[]
+  }[]
+  count: number
 }
 
-const Tabs: ComponentType<Props> = ({ users }) => {
+const Tabs: ComponentType<Props> = ({ users, count }) => {
   const [value, setValue] = useState(0)
 
   return (
@@ -37,7 +36,12 @@ const Tabs: ComponentType<Props> = ({ users }) => {
           handleChange={setValue}
         />
       </Box>
-      {value === 0 && <UserList users={users} />}
+      {value === 0 && (
+        <UserList
+          users={users}
+          count={count}
+        />
+      )}
       {value === 1 && <JoinRequest />}
     </Box>
   )

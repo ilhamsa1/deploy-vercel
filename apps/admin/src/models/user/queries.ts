@@ -45,6 +45,7 @@ export const getUserList = async (client: SupabaseClient, tag: string) => {
       `
     role,
     user_id,
+    created_at,
     org (tag, display_name),
     user (display_name)
   `,

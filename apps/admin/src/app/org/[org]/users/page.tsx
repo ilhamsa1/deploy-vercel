@@ -21,7 +21,10 @@ export default async function UsersPage({ params }: { params: { org: string } })
       <Box>
         <Typography variant="h3">Users</Typography>
       </Box>
-      <Tabs users={users} />
+      <Tabs
+        users={users.data || []}
+        count={users.count || 0}
+      />
     </Box>
   )
 }

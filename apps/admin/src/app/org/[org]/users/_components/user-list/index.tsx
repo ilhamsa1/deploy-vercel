@@ -6,12 +6,15 @@ import Datagrid from './_components/datagrid'
 import DialogAdd from './_components/dialog/add'
 import { useDialogShowState } from '@/hooks'
 
-const UserList = ({ users }: any) => {
+const UserList = ({ users, count }: any) => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
   return (
     <Box>
       <Filters onOpenDialog={onOpenDialog} />
-      <Datagrid users={users} />
+      <Datagrid
+        users={users}
+        count={count}
+      />
       <DialogAdd
         openDialog={openDialog}
         onCloseDialog={onCloseDialog}

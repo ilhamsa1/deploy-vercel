@@ -3,12 +3,12 @@ import { GridCellParams, GridPaginationModel, GridRowModel } from '@mui/x-data-g
 import React, { useState } from 'react'
 
 import Datagrid from '@/components/data-grid'
+import { formatDateNameShortMonth } from '@/lib/date'
 
-const List = ({ users }: any) => {
+const List = ({ users, count }: any) => {
   const [isLoading] = useState(false)
   const [page] = useState(1)
   const [pageSize] = useState(20)
-  const [count] = useState(10)
 
   const columns = [
     {
@@ -17,7 +17,7 @@ const List = ({ users }: any) => {
       minWidth: 150,
       headerName: 'Name',
       renderCell: (data: GridCellParams) => {
-        return <Typography>{data.row?.user?.display_name}</Typography>
+        return <Typography>{data.row?.user?.display_name || 'N/A'}</Typography>
       },
     },
     {
@@ -32,7 +32,7 @@ const List = ({ users }: any) => {
               textTransform: 'lowercase',
             }}
           >
-            {data.row?.user?.email || 'N/A'}
+            {data.row?.user?.email || '-'}
           </Typography>
         )
       },
@@ -44,10 +44,21 @@ const List = ({ users }: any) => {
       headerName: 'Role',
     },
     {
-      field: 'joinedDate',
+      field: 'created_at',
       flex: 1,
       minWidth: 150,
       headerName: 'Joined Date',
+      renderCell: (data: GridCellParams) => {
+        return (
+          <Typography
+            sx={{
+              textTransform: 'lowercase',
+            }}
+          >
+            {formatDateNameShortMonth(data.row?.created_at)}
+          </Typography>
+        )
+      },
     },
   ]
 
@@ -58,7 +69,7 @@ const List = ({ users }: any) => {
   return (
     <Datagrid
       noAction
-      rows={users?.data}
+      rows={users}
       loading={isLoading}
       columns={columns}
       page={page}
