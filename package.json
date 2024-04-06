@@ -2,6 +2,7 @@
   "name": "@luxe/source",
   "version": "0.0.0",
   "scripts": {
+    "serve": "nx run-many -t serve --parallel=100",
     "generate:db:type": "supabase gen types typescript --local > apps/admin/src/utils/supabase/types.ts"
   },
   "private": true,
