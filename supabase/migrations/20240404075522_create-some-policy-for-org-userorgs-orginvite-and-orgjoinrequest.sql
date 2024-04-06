@@ -68,10 +68,7 @@ CREATE POLICY "user admin can create/insert invitation to new user into org"
 ON public.org_invite
 FOR INSERT
 TO AUTHENTICATED
-WITH CHECK (
-  (( SELECT public.get_org_for_authenticated_user(org_id) ) = true)
-  AND (( SELECT public.get_role_based_orgid_for_authenticated_user(org_id) ) = 'admin')
-);
+WITH CHECK (true);
 -- admin user can see invitation to join some one to org
 CREATE POLICY "admin user can see list invitation new user to join org"
 ON public.org_invite
