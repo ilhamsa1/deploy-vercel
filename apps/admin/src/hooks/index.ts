@@ -42,6 +42,15 @@ export const useDebounceFn = () => {
   return { debounce }
 }
 
+export function useDialogShowState() {
+  const [openDialog, setOpenDialog] = useState(false)
+
+  const onOpenDialog = () => setOpenDialog(true)
+  const onCloseDialog = () => setOpenDialog(false)
+
+  return { openDialog, onOpenDialog, onCloseDialog }
+}
+
 /**
  * Wrap the createClient in a useMemo hook to prevent the client from being recreated on every render
  *
