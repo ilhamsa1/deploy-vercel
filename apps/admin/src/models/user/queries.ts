@@ -1,4 +1,7 @@
-import { SupabaseClient } from '@supabase/supabase-js'
+import { QueryData, SupabaseClient } from '@supabase/supabase-js'
+
+import { Tables } from '../../utils/supabase/types'
+import { ResponseData } from '../../lib/common'
 import { getOrganizationByTagName } from '../organizations/queries'
 
 export const getSingleUserOrganizationByUser = async (client: SupabaseClient) => {
@@ -37,8 +40,14 @@ export const getUserOrganizationListByUser = async (client: SupabaseClient) => {
   return data
 }
 
-export const getUserList = async (client: SupabaseClient, tag: string) => {
+export type UserListT = Tables<'user_orgs'> & { org: Tables<'org'>[]; user: Tables<'user'>[] }
+export const getUserList = async (
+  client: SupabaseClient,
+  tag: string,
+): Promise<ResponseData<UserListT> | null> => {
+  if (!client || !tag) return null
   const org = await getOrganizationByTagName(client, tag)
+  if (!org) return null
   const data = await client
     .from('user_orgs')
     .select(
@@ -53,5 +62,5 @@ export const getUserList = async (client: SupabaseClient, tag: string) => {
     )
     .eq('org_id', org.id)
 
-  return data
+  return data as QueryData<UserListT>
 }

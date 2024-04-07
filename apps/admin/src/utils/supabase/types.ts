@@ -1,4 +1,10 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   graphql_public: {
@@ -28,6 +34,109 @@ export type Database = {
   }
   public: {
     Tables: {
+      bank: {
+        Row: {
+          id: number
+          name: string | null
+          tag: string | null
+        }
+        Insert: {
+          id?: never
+          name?: string | null
+          tag?: string | null
+        }
+        Update: {
+          id?: never
+          name?: string | null
+          tag?: string | null
+        }
+        Relationships: []
+      }
+      bank_account: {
+        Row: {
+          bank_id: number
+          id: number
+          name: string | null
+          num: string | null
+        }
+        Insert: {
+          bank_id: number
+          id?: never
+          name?: string | null
+          num?: string | null
+        }
+        Update: {
+          bank_id?: number
+          id?: never
+          name?: string | null
+          num?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_account_bank_id_fkey"
+            columns: ["bank_id"]
+            isOneToOne: false
+            referencedRelation: "bank"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_tx: {
+        Row: {
+          amount: number | null
+          amount_e: number | null
+          ba_id: number
+          currency: string | null
+          description: string | null
+          id: string
+          id2: string
+          num: number | null
+          posted_at: string | null
+          ref_id: string | null
+          remarks: string | null
+          transacted_at: string | null
+          type: string | null
+        }
+        Insert: {
+          amount?: number | null
+          amount_e?: number | null
+          ba_id: number
+          currency?: string | null
+          description?: string | null
+          id?: string
+          id2?: string
+          num?: number | null
+          posted_at?: string | null
+          ref_id?: string | null
+          remarks?: string | null
+          transacted_at?: string | null
+          type?: string | null
+        }
+        Update: {
+          amount?: number | null
+          amount_e?: number | null
+          ba_id?: number
+          currency?: string | null
+          description?: string | null
+          id?: string
+          id2?: string
+          num?: number | null
+          posted_at?: string | null
+          ref_id?: string | null
+          remarks?: string | null
+          transacted_at?: string | null
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_tx_ba_id_fkey"
+            columns: ["ba_id"]
+            isOneToOne: false
+            referencedRelation: "bank_account"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       org: {
         Row: {
           display_name: string | null
@@ -49,11 +158,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'org_tier_fkey'
-            columns: ['tier']
+            foreignKeyName: "org_tier_fkey"
+            columns: ["tier"]
             isOneToOne: false
-            referencedRelation: 'usage_tier'
-            referencedColumns: ['id']
+            referencedRelation: "usage_tier"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -87,18 +196,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'fk_inviter_user'
-            columns: ['created_by', 'org_id']
+            foreignKeyName: "fk_inviter_user"
+            columns: ["created_by", "org_id"]
             isOneToOne: false
-            referencedRelation: 'user_orgs'
-            referencedColumns: ['user_id', 'org_id']
+            referencedRelation: "user_orgs"
+            referencedColumns: ["user_id", "org_id"]
           },
           {
-            foreignKeyName: 'org_invite_org_id_fkey'
-            columns: ['org_id']
+            foreignKeyName: "org_invite_org_id_fkey"
+            columns: ["org_id"]
             isOneToOne: false
-            referencedRelation: 'org'
-            referencedColumns: ['id']
+            referencedRelation: "org"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -126,25 +235,146 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'fk_approved_by_user'
-            columns: ['approved_by', 'org_id']
+            foreignKeyName: "fk_approved_by_user"
+            columns: ["approved_by", "org_id"]
             isOneToOne: false
-            referencedRelation: 'user_orgs'
-            referencedColumns: ['user_id', 'org_id']
+            referencedRelation: "user_orgs"
+            referencedColumns: ["user_id", "org_id"]
           },
           {
-            foreignKeyName: 'fk_request_user'
-            columns: ['user_id', 'org_id']
+            foreignKeyName: "fk_request_user"
+            columns: ["user_id", "org_id"]
             isOneToOne: false
-            referencedRelation: 'user_orgs'
-            referencedColumns: ['user_id', 'org_id']
+            referencedRelation: "user_orgs"
+            referencedColumns: ["user_id", "org_id"]
           },
           {
-            foreignKeyName: 'org_join_request_org_id_fkey'
-            columns: ['org_id']
+            foreignKeyName: "org_join_request_org_id_fkey"
+            columns: ["org_id"]
             isOneToOne: false
-            referencedRelation: 'org'
-            referencedColumns: ['id']
+            referencedRelation: "org"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_intent: {
+        Row: {
+          amount: number | null
+          amount_e: number | null
+          client_secret: string | null
+          confirmation_method: string | null
+          currency: string | null
+          customer: string | null
+          description: string | null
+          id: string
+          id2: string
+          last_payment_error: Json | null
+          latest_charge: string | null
+          metadata: Json | null
+          next_action: Json | null
+          org_id: number
+          payment_method: string | null
+          receipt_email: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          amount_e?: number | null
+          client_secret?: string | null
+          confirmation_method?: string | null
+          currency?: string | null
+          customer?: string | null
+          description?: string | null
+          id?: string
+          id2?: string
+          last_payment_error?: Json | null
+          latest_charge?: string | null
+          metadata?: Json | null
+          next_action?: Json | null
+          org_id: number
+          payment_method?: string | null
+          receipt_email?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          amount_e?: number | null
+          client_secret?: string | null
+          confirmation_method?: string | null
+          currency?: string | null
+          customer?: string | null
+          description?: string | null
+          id?: string
+          id2?: string
+          last_payment_error?: Json | null
+          latest_charge?: string | null
+          metadata?: Json | null
+          next_action?: Json | null
+          org_id?: number
+          payment_method?: string | null
+          receipt_email?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_org"
+            columns: ["user_id", "org_id"]
+            isOneToOne: false
+            referencedRelation: "user_orgs"
+            referencedColumns: ["user_id", "org_id"]
+          },
+        ]
+      }
+      payment_tx: {
+        Row: {
+          amount: number | null
+          amount_e: number | null
+          amount_refunded: number | null
+          currency: string | null
+          id: string
+          id2: string
+          payment_method: string | null
+          payment_method_details: Json | null
+          pi_id: string
+          refunds: Json | null
+          status: string | null
+        }
+        Insert: {
+          amount?: number | null
+          amount_e?: number | null
+          amount_refunded?: number | null
+          currency?: string | null
+          id?: string
+          id2?: string
+          payment_method?: string | null
+          payment_method_details?: Json | null
+          pi_id: string
+          refunds?: Json | null
+          status?: string | null
+        }
+        Update: {
+          amount?: number | null
+          amount_e?: number | null
+          amount_refunded?: number | null
+          currency?: string | null
+          id?: string
+          id2?: string
+          payment_method?: string | null
+          payment_method_details?: Json | null
+          pi_id?: string
+          refunds?: Json | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_tx_pi_id_fkey"
+            columns: ["pi_id"]
+            isOneToOne: false
+            referencedRelation: "payment_intent"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -181,11 +411,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'user_id_fkey'
-            columns: ['id']
+            foreignKeyName: "user_id_fkey"
+            columns: ["id"]
             isOneToOne: true
-            referencedRelation: 'users'
-            referencedColumns: ['id']
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -213,18 +443,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'user_orgs_org_id_fkey'
-            columns: ['org_id']
+            foreignKeyName: "user_orgs_org_id_fkey"
+            columns: ["org_id"]
             isOneToOne: false
-            referencedRelation: 'org'
-            referencedColumns: ['id']
+            referencedRelation: "org"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'user_orgs_user_id_fkey'
-            columns: ['user_id']
+            foreignKeyName: "user_orgs_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: 'user'
-            referencedColumns: ['id']
+            referencedRelation: "user"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -233,6 +463,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      char26_ulid: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
+      }
+      char26_ulid_to_uuid: {
+        Args: {
+          "": string
+        }
+        Returns: unknown
+      }
       get_org_for_authenticated_user: {
         Args: {
           oid: number
@@ -244,6 +486,59 @@ export type Database = {
           oid: number
         }
         Returns: string
+      }
+      json_to_uuid_ulid: {
+        Args: {
+          "": Json
+        }
+        Returns: unknown
+      }
+      parse_ulid: {
+        Args: {
+          ulid: string
+        }
+        Returns: string
+      }
+      text_ulid: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
+      }
+      text_ulid_to_uuid: {
+        Args: {
+          "": string
+        }
+        Returns: unknown
+      }
+      ulid_to_uuid: {
+        Args: {
+          ulid: string
+        }
+        Returns: string
+      }
+      uuid_generate_v7: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      uuid_to_ulid: {
+        Args: {
+          id: string
+        }
+        Returns: string
+      }
+      uuid_ulid_eq_operator: {
+        Args: {
+          lhs_id: unknown
+          rhs_id: string
+        }
+        Returns: boolean
+      }
+      uuid_ulid_to_json: {
+        Args: {
+          "": unknown
+        }
+        Returns: Json
       }
     }
     Enums: {
@@ -357,11 +652,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'objects_bucketId_fkey'
-            columns: ['bucket_id']
+            foreignKeyName: "objects_bucketId_fkey"
+            columns: ["bucket_id"]
             isOneToOne: false
-            referencedRelation: 'buckets'
-            referencedColumns: ['id']
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -434,25 +729,27 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, 'public'>]
+type PublicSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (PublicSchema['Tables'] & PublicSchema['Views'])
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
-        Database[PublicTableNameOrOptions['schema']]['Views'])
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions['schema']]['Tables'] &
-      Database[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema['Tables'] & PublicSchema['Views'])
-    ? (PublicSchema['Tables'] & PublicSchema['Views'])[PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -460,18 +757,20 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends keyof PublicSchema['Tables'] | { schema: keyof Database },
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
-    ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -479,18 +778,20 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends keyof PublicSchema['Tables'] | { schema: keyof Database },
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
-    ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -498,12 +799,15 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends keyof PublicSchema['Enums'] | { schema: keyof Database },
+  PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
-    ? PublicSchema['Enums'][PublicEnumNameOrOptions]
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+

@@ -8,19 +8,10 @@ import UITabs from '@/components/tabs'
 import UserList from '../user-list'
 import JoinRequest from '../join-request'
 
+import { UserListT } from '@/models/user/queries'
+
 interface Props {
-  users: {
-    role: string
-    user_id: string
-    created_at: string
-    org: {
-      tag: string
-      display_name: string
-    }[]
-    user: {
-      display_name: string
-    }[]
-  }[]
+  users: UserListT[]
   count: number
 }
 

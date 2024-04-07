@@ -3,3 +3,4 @@
 /.nx/cache
 /node_modules
 /.next
+apps/admin/src/utils/supabase/types.ts
