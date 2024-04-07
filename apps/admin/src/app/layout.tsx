@@ -2,8 +2,6 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 
-import WrapperProvider from '../components/wrapper'
-
 export const metadata: Metadata = {
   title: 'Luxe Homepage',
 }
@@ -31,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <WrapperProvider>{children}</WrapperProvider>
+          {children}
         </AppRouterCacheProvider>
       </body>
     </html>

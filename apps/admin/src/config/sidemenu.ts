@@ -3,18 +3,18 @@ export const LIST_SIDEMENU = [
     key: 'common.dashboard',
     label: 'Dashboard',
     icon: 'dashboard',
-    url: '/tenants',
+    url: '/',
   },
   {
     key: 'common.transactions',
     label: 'Transactions',
     icon: 'receipt_long_outlined',
-    url: '/tenants/transactions',
+    url: '/transactions',
   },
   {
     key: 'common.users',
     label: 'Users',
     icon: 'people',
-    url: '/tenants/users',
+    url: '/users',
   },
 ]

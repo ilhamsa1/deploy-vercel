@@ -1,15 +1,15 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { getOrganizationById, updateOrganizationById } from './queries'
+import { getOrganizationByTagName, updateOrganizationById } from './queries'
 import { useSupabase } from '../../hooks'
 import { OrganizationModels } from './types'
 import { ParamsUpdateMutation } from '../../interfaces'
 
-export const useFetchOrganizationQuery = (organizationId: number) => {
+export const useFetchOrganizationQuery = (tag: string) => {
   const client = useSupabase()
-  const queryKey = ['organization', organizationId]
+  const queryKey = ['organization', tag]
 
   const queryFn = async () => {
-    return await getOrganizationById(client, organizationId)
+    return await getOrganizationByTagName(client, tag)
   }
 
   return useQuery({ queryKey, queryFn })

@@ -29,7 +29,7 @@ import {
 import Button from '../../components/button'
 import Link from '../../components/link'
 
-import { login, signup } from './actions'
+import { login } from './actions'
 
 import GoogleButton from '@/components/button/google-button'
 
@@ -164,7 +164,7 @@ export default function LoginPage() {
                 </Button>
               </Stack>
               <Divider />
-              <GoogleButton nextUrl="/tenants" />
+              <GoogleButton nextUrl="/org" />
             </Stack>
           </form>
         </Form>
