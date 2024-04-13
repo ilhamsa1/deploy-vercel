@@ -1,15 +1,12 @@
-import { Database } from '@/utils/supabase/types'
-import { SupabaseClient } from '@supabase/supabase-js'
+import { createClient } from '@/utils/supabase/server'
 
-export const joinOrganizationByInvitationCode = async (
-  client: SupabaseClient<Database>,
-  code: string,
-) => {
-  const { data: userData } = await client.auth.getUser()
+export const joinOrganizationByInvitationCode = async (code: string) => {
+  const supabase = createClient()
+  const { data: userData } = await supabase.auth.getUser()
 
   if (!userData?.user) throw new Error('No Authorization')
 
-  const { data: orgInvite } = await client
+  const { data: orgInvite } = await supabase
     .from('org_invite')
     .select('*')
     .eq('code', code)
@@ -20,7 +17,7 @@ export const joinOrganizationByInvitationCode = async (
   if (!orgInvite) throw new Error('Code is not valid')
 
   // NOTE: this code should run in db transaction
-  const { data } = await client
+  const { data } = await supabase
     .from('user_orgs')
     .insert({
       user_id: userData.user.id,
@@ -38,8 +35,8 @@ export const joinOrganizationByInvitationCode = async (
     .limit(1)
     .single()
 
-  // NOTE: handle di weebhook in future
-  await client
+  // NOTE: handle di webhook in future
+  await supabase
     .from('org_invite')
     .update({
       accepted_at: new Date().toISOString(),

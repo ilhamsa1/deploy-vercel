@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Luxe',
 }
 
-export default async function TenantsLayout({
+export default async function OrgLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode

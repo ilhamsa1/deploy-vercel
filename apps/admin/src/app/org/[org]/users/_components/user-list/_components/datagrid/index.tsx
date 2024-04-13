@@ -5,8 +5,7 @@ import React, { useState } from 'react'
 import Datagrid from '@/components/data-grid'
 import { formatDateNameShortMonth } from '@/lib/date'
 
-const List = ({ users, count }: any) => {
-  const [isLoading] = useState(false)
+const List = ({ users, count, isLoading }: any) => {
   const [page] = useState(1)
   const [pageSize] = useState(20)
 

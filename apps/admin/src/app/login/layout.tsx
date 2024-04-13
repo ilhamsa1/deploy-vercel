@@ -6,25 +6,21 @@ import { Toaster } from 'react-hot-toast'
 import SharedProvider from '../../components/shared-provider'
 
 import { createClient } from '../../utils/supabase/server'
-import { getSingleUserOrganizationByUser } from '@/models/user/queries'
 
 export const metadata: Metadata = {
   title: 'Luxe Login',
 }
 
-export default async function TenantsLayout({
+export default async function LoginLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode
 }) {
   const supabase = createClient()
-  const { userData, userOrg } = await getSingleUserOrganizationByUser(supabase)
-  if (userData?.user) {
-    // Note: will fix leter, TypeScript assumes 'org' is an array but it is actually an object
-    const tag = (userOrg?.org as any)?.tag
-    redirect(`/org/${tag}`)
+  const { data } = await supabase.auth.getUser()
+  if (data?.user) {
+    redirect('/org')
   }
-
   return (
     <SharedProvider>
       {children}

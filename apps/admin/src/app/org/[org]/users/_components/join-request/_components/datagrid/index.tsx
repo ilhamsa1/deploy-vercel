@@ -1,10 +1,11 @@
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { GridActionsCellItem, GridCellParams, GridPaginationModel } from '@mui/x-data-grid'
 import React, { useState, ComponentType } from 'react'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 // import CancelIcon from '@mui/icons-material/Cancel'
+
 import Datagrid from '@/components/data-grid'
-import { Box } from '@mui/material'
 
 type Props = {
   onOpenDialog: () => void

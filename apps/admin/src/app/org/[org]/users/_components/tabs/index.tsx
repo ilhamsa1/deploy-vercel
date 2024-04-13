@@ -8,14 +8,7 @@ import UITabs from '@/components/tabs'
 import UserList from '../user-list'
 import JoinRequest from '../join-request'
 
-import { UserListT } from '@/models/user/queries'
-
-interface Props {
-  users: UserListT[]
-  count: number
-}
-
-const Tabs: ComponentType<Props> = ({ users, count }) => {
+const Tabs: ComponentType = () => {
   const [value, setValue] = useState(0)
 
   return (
@@ -27,12 +20,7 @@ const Tabs: ComponentType<Props> = ({ users, count }) => {
           handleChange={setValue}
         />
       </Box>
-      {value === 0 && (
-        <UserList
-          users={users}
-          count={count}
-        />
-      )}
+      {value === 0 && <UserList />}
       {value === 1 && <JoinRequest />}
     </Box>
   )

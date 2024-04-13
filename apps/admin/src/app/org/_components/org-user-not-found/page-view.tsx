@@ -1,19 +1,19 @@
 'use client'
 
-import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
-import { Stack } from '@mui/material'
-import LogoutButton from '@/components/button/logout-button'
-import Button from '@/components/button'
-import zod from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
+import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/form'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { joinInviteCode } from './actions'
+import zod from 'zod'
+
+import LogoutButton from '@/components/button/logout-button'
+import Button from '@/components/button'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/form'
+import { joinOrganizationByInvitationCode } from './actions'
 
 const OrgUserNotFound = () => {
   const router = useRouter()
@@ -27,7 +27,7 @@ const OrgUserNotFound = () => {
 
   async function onSubmit(data: zod.infer<typeof FormSchema>) {
     try {
-      const response = await joinInviteCode(data)
+      const response = await joinOrganizationByInvitationCode(data.code)
       if (!response || !response.org || !response.org.tag) {
         throw new Error('Failed to join organization')
       }

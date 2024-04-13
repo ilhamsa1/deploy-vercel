@@ -1,10 +1,5 @@
 'use server'
-import { joinOrganizationByInvitationCode } from '@/models/join-org/queries'
-import { createClient } from '@/utils/supabase/server'
 
-export async function joinInviteCode(formData: { code: string }) {
-  const supabase = createClient()
+import { joinOrganizationByInvitationCode as joinOrganizationByInvitationCodeAction } from '@/models/join-org/actions'
 
-  const result = await joinOrganizationByInvitationCode(supabase, formData.code)
-  return result
-}
+export const joinOrganizationByInvitationCode = joinOrganizationByInvitationCodeAction

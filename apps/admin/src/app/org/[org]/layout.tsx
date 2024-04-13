@@ -9,14 +9,10 @@ export const metadata: Metadata = {
 
 interface Props {
   children: React.ReactNode
-  params: {
-    org: string
-  }
 }
 
-export default function TenantsLayout({
+export default function OrgLayout({
   children, // will be a page or nested layout
-  params,
 }: Props) {
-  return <SessionProvider org={params.org}>{children}</SessionProvider>
+  return <SessionProvider>{children}</SessionProvider>
 }
