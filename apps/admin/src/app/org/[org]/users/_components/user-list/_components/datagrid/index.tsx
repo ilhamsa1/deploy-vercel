@@ -5,9 +5,11 @@ import React, { useState } from 'react'
 import Datagrid from '@/components/data-grid'
 import { formatDateNameShortMonth } from '@/lib/date'
 
-const List = ({ users, count, isLoading }: any) => {
+const List = ({ data, count, isLoading }: any) => {
   const [page] = useState(1)
   const [pageSize] = useState(20)
+
+  console.log(data)
 
   const columns = [
     {
@@ -16,6 +18,7 @@ const List = ({ users, count, isLoading }: any) => {
       minWidth: 150,
       headerName: 'Name',
       renderCell: (data: GridCellParams) => {
+        console.log(data.row)
         return <Typography>{data.row?.user?.display_name || 'N/A'}</Typography>
       },
     },
@@ -68,7 +71,7 @@ const List = ({ users, count, isLoading }: any) => {
   return (
     <Datagrid
       noAction
-      rows={users}
+      rows={data}
       loading={isLoading}
       columns={columns}
       page={page}

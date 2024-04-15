@@ -3,8 +3,6 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
-import SharedProvider from '@/components/shared-provider'
-import { Toaster } from 'react-hot-toast'
 
 export const metadata: Metadata = {
   title: 'Luxe',
@@ -21,10 +19,5 @@ export default async function OrgLayout({
     redirect('/login')
   }
 
-  return (
-    <SharedProvider>
-      {children}
-      <Toaster />
-    </SharedProvider>
-  )
+  return children
 }

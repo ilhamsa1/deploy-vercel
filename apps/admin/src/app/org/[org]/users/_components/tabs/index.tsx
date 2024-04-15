@@ -13,10 +13,10 @@ const Tabs: ComponentType = () => {
 
   return (
     <Box>
-      <Box sx={{ margin: '1.25rem' }}>
+      <Box sx={{ mt: 2 }}>
         <UITabs
           value={value}
-          labels={['User List', 'Joint Request']}
+          labels={['User List', 'Join Request']}
           handleChange={setValue}
         />
       </Box>

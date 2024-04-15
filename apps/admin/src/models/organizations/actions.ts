@@ -3,7 +3,7 @@ import { QueryData, SupabaseClient } from '@supabase/supabase-js'
 import { ResponseData } from '@/lib/common'
 import { createClient } from '@/utils/supabase/server'
 
-import { OrganizationModels, UserOrgT, UserListT, OrgT } from './types'
+import { OrganizationModels, OrgT, OrgInviteT, UserOrgT, UserListT } from './types'
 
 export const getUserAuth = async () => {
   const supabase = createClient()
@@ -60,16 +60,35 @@ export const getUserList = async (): Promise<ResponseData<UserListT> | null> => 
     .from('user_orgs')
     .select(
       `
-    role,
-    user_id,
-    created_at,
-    org (tag, display_name),
-    user (display_name)
+    *,
+    org (*),
+    user (*)
   `,
       { count: 'exact' },
     )
     .eq('org_id', orgId)
   return data as QueryData<UserListT>
+}
+
+export const getOrgInvites = async (): Promise<ResponseData<OrgInviteT> | null> => {
+  const supabase = createClient()
+  const { data: userData } = await supabase.auth.getUser()
+  const orgId = userData.user?.user_metadata?.org?.id
+  if (!orgId) return null
+  const data = await supabase
+    .from('org_invite')
+    .select(
+      `
+      *,
+      user:created_by (
+        *
+      )
+      `,
+      { count: 'exact' },
+    )
+    .eq('org_id', orgId)
+  console.log('getOrgInvites data', data)
+  return data as QueryData<OrgInviteT>
 }
 
 export async function chooseOrg(org: OrgT) {
