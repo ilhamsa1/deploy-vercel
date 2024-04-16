@@ -3,7 +3,7 @@ import { QueryData, SupabaseClient } from '@supabase/supabase-js'
 import { ResponseData } from '@/lib/common'
 import { createClient } from '@/utils/supabase/server'
 
-import { OrganizationModels, OrgT, OrgInviteT, UserOrgT, UserListT } from './types'
+import { OrganizationModels, OrgT, OrgInviteT, UserOrgT, UserListT, OrgJoinRequestT } from './types'
 
 export const getUserAuth = async () => {
   const supabase = createClient()
@@ -87,8 +87,30 @@ export const getOrgInvites = async (): Promise<ResponseData<OrgInviteT> | null> 
       { count: 'exact' },
     )
     .eq('org_id', orgId)
-  console.log('getOrgInvites data', data)
   return data as QueryData<OrgInviteT>
+}
+
+export const getOrgJoinRequests = async (): Promise<ResponseData<OrgJoinRequestT> | null> => {
+  const supabase = createClient()
+  const { data: userData } = await supabase.auth.getUser()
+  const orgId = userData.user?.user_metadata?.org?.id
+  if (!orgId) return null
+  const data = await supabase
+    .from('org_join_request')
+    .select(
+      `
+      *,
+      user (
+        *
+      )
+      org (
+        *
+      )
+      `,
+      { count: 'exact' },
+    )
+    .eq('org_id', orgId)
+  return data as QueryData<OrgJoinRequestT>
 }
 
 export async function chooseOrg(org: OrgT) {

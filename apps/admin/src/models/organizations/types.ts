@@ -7,7 +7,11 @@ export interface OrganizationModels {
 }
 
 export type OrgT = Tables<'org'>
-export type OrgInviteT = Tables<'org_invite'> & { user: Tables<'user'>[] }
+export type OrgInviteT = Tables<'org_invite'> & { user: Tables<'user'> }
+export type OrgJoinRequestT = Tables<'org_join_request'> & {
+  org: Tables<'org'>
+  user: Tables<'user'>
+}
 
 export type UserOrgT = Tables<'user_orgs'> & { org: Tables<'org'> }
-export type UserListT = Tables<'user_orgs'> & { org: Tables<'org'>[]; user: Tables<'user'>[] }
+export type UserListT = Tables<'user_orgs'> & { org: Tables<'org'>; user: Tables<'user'> }

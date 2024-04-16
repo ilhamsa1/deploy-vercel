@@ -1,5 +1,5 @@
 'use server'
 
-import { getOrgInvites as getOrgInvitesAction } from '@/models/organizations/actions'
+import { getOrgJoinRequests as getOrgJoinRequestsAction } from '@/models/organizations/actions'
 
-export const getOrgInvites = getOrgInvitesAction
+export const getOrgJoinRequests = getOrgJoinRequestsAction

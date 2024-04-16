@@ -6,11 +6,10 @@ import React, { useState, ComponentType } from 'react'
 // import CancelIcon from '@mui/icons-material/Cancel'
 
 import Datagrid from '@/components/data-grid'
-import { OrgInviteT } from '@/models/organizations/types'
-import { formatDateNameShortMonth } from '@/lib/date'
+import { OrgJoinRequestT } from '@/models/organizations/types'
 
 type Props = {
-  data: OrgInviteT[]
+  data: OrgJoinRequestT[]
   count: number
   isLoading: boolean
   onOpenDialog: () => void
@@ -22,53 +21,19 @@ const List: ComponentType<Props> = ({ data, count, isLoading, onOpenDialog }) =>
 
   const columns = [
     {
-      field: 'send_to',
+      field: 'user',
+      headerName: 'User',
       flex: 1,
-      minWidth: 150,
-      headerName: 'Send To',
-      renderCell: (data: GridCellParams) => {
-        return (
-          <Typography
-            sx={{
-              textTransform: 'lowercase',
-            }}
-          >
-            {data.row?.send_to}
-          </Typography>
-        )
-      },
-    },
-    {
-      field: 'role',
-      flex: 1,
-      minWidth: 150,
-      headerName: 'Role',
-    },
-    {
-      field: 'created_by',
-      headerName: 'Created By',
-      flex: 1,
-      minWidth: 150,
+      minWidth: 240,
       renderCell: (data: GridCellParams) => {
         return <Typography>{data.row?.user?.display_name}</Typography>
       },
     },
     {
-      field: 'accepted_at',
+      field: 'note',
       flex: 1,
-      minWidth: 150,
-      headerName: 'Accepted At',
-      renderCell: (data: GridCellParams) => {
-        return (
-          <Typography
-            sx={{
-              textTransform: 'lowercase',
-            }}
-          >
-            {formatDateNameShortMonth(data.row?.accepted_at)}
-          </Typography>
-        )
-      },
+      minWidth: 250,
+      headerName: 'Note',
     },
     {
       field: 'actions',
