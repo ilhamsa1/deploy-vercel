@@ -9,8 +9,6 @@ const List = ({ data, count, isLoading }: any) => {
   const [page] = useState(1)
   const [pageSize] = useState(20)
 
-  console.log(data)
-
   const columns = [
     {
       field: 'display_name',
@@ -18,7 +16,6 @@ const List = ({ data, count, isLoading }: any) => {
       minWidth: 150,
       headerName: 'Name',
       renderCell: (data: GridCellParams) => {
-        console.log(data.row)
         return <Typography>{data.row?.user?.display_name || 'N/A'}</Typography>
       },
     },

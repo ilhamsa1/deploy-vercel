@@ -5,25 +5,25 @@ import { useEffect, useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
 
 import { useDialogShowState } from '@/hooks'
-import { OrgInviteT } from '@/models/organizations/types'
+import { OrgJoinRequestT } from '@/models/organizations/types'
 import Datagrid from './_components/datagrid'
 import DialogAcceptRequestUser from './_components/dialog/accept-request'
 import Filters from './_components/filters'
 
-import { getOrgInvites } from './actions'
+import { getOrgJoinRequests } from './actions'
 
-const InvitesList = () => {
+const OrgJoinRequestList = () => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
-  const [data, setData] = useState<OrgInviteT[]>([])
+  const [data, setData] = useState<OrgJoinRequestT[]>([])
   const [count, setCount] = useState<number>(0)
   const [isLoading, startTransition] = useTransition()
 
-  const fetchOrgInvites = () => {
+  const fetchOrgJoinRequests = () => {
     startTransition(async () => {
       try {
-        const res = await getOrgInvites()
+        const res = await getOrgJoinRequests()
         if (!res) return
-        setData(res.data as OrgInviteT[])
+        setData(res.data as OrgJoinRequestT[])
         setCount(res.count || 0)
       } catch (e: unknown) {
         toast.error((e as Error)?.message)
@@ -32,7 +32,7 @@ const InvitesList = () => {
   }
 
   useEffect(() => {
-    fetchOrgInvites()
+    fetchOrgJoinRequests()
   }, [])
 
   return (
@@ -52,4 +52,4 @@ const InvitesList = () => {
   )
 }
 
-export default InvitesList
+export default OrgJoinRequestList
