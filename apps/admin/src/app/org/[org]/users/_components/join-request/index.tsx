@@ -32,7 +32,6 @@ const InvitesList = () => {
   }
 
   useEffect(() => {
-    console.log('JoinRequest')
     fetchOrgInvites()
   }, [])
 

@@ -16,7 +16,7 @@ type Props = {
   onOpenDialog: () => void
 }
 
-const List: ComponentType<Props> = ({ data, count, isLoading, onOpenDialog }) => {
+const List: ComponentType<Props> = ({ data = [], count, isLoading, onOpenDialog }) => {
   const [page] = useState(1)
   const [pageSize] = useState(20)
 
