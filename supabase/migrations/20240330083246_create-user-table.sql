@@ -3,6 +3,7 @@ CREATE TABLE public.user (
   id UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE,
   display_name TEXT,
   avatar_img TEXT,
+  email TEXT,
   PRIMARY KEY (id)
 );
 -- enable RLS, we want to restrict access on this table
