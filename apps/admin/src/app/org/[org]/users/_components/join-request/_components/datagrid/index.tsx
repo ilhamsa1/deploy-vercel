@@ -15,10 +15,9 @@ type Props = {
   onOpenDialog: () => void
 }
 
-const List: ComponentType<Props> = ({ data = [], count, isLoading, onOpenDialog }) => {
+const List: ComponentType<Props> = ({ data, count, isLoading, onOpenDialog }) => {
   const [page] = useState(1)
   const [pageSize] = useState(20)
-
   const columns = [
     {
       field: 'user',
@@ -71,7 +70,7 @@ const List: ComponentType<Props> = ({ data = [], count, isLoading, onOpenDialog 
   return (
     <Datagrid
       noAction
-      rows={data}
+      rows={data || []}
       loading={isLoading}
       columns={columns}
       page={page}
