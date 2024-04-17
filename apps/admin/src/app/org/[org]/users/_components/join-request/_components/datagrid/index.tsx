@@ -1,50 +1,38 @@
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { GridActionsCellItem, GridCellParams, GridPaginationModel } from '@mui/x-data-grid'
 import React, { useState, ComponentType } from 'react'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 // import CancelIcon from '@mui/icons-material/Cancel'
+
 import Datagrid from '@/components/data-grid'
-import { Box } from '@mui/material'
+import { OrgJoinRequestT } from '@/models/organizations/types'
 
 type Props = {
+  data: OrgJoinRequestT[]
+  count: number
+  isLoading: boolean
   onOpenDialog: () => void
 }
 
-const List: ComponentType<Props> = ({ onOpenDialog }) => {
-  const [isLoading] = useState(false)
+const List: ComponentType<Props> = ({ data, count, isLoading, onOpenDialog }) => {
   const [page] = useState(1)
   const [pageSize] = useState(20)
-  const [count] = useState(10)
-
   const columns = [
     {
-      field: 'name',
+      field: 'user',
+      headerName: 'User',
       flex: 1,
-      minWidth: 150,
-      headerName: 'Name',
-    },
-    {
-      field: 'email',
-      headerName: 'Email',
-      flex: 1,
-      minWidth: 150,
+      minWidth: 240,
       renderCell: (data: GridCellParams) => {
-        return (
-          <Typography
-            sx={{
-              textTransform: 'lowercase',
-            }}
-          >
-            {data.row?.email}
-          </Typography>
-        )
+        return <Typography>{data.row?.user?.display_name}</Typography>
       },
     },
     {
-      field: 'requestedDate',
+      field: 'note',
       flex: 1,
-      minWidth: 150,
-      headerName: 'Joined Date',
+      minWidth: 250,
+      headerName: 'Note',
     },
     {
       field: 'actions',
@@ -82,14 +70,7 @@ const List: ComponentType<Props> = ({ onOpenDialog }) => {
   return (
     <Datagrid
       noAction
-      rows={[
-        {
-          id: 1,
-          name: 'userA',
-          email: 'user@example.com',
-          requestedDate: '02-04-2024',
-        },
-      ]}
+      rows={data || []}
       loading={isLoading}
       columns={columns}
       page={page}

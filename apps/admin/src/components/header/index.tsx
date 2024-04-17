@@ -90,9 +90,9 @@ export default function Header({ notificationCount, onClickNotification, onSignO
 const styles = {
   appBarContainer: {
     width: '100%',
-    background: colors.secondary50,
+    background: colors.primary50,
     backdropFilter: 'blur(6px)',
-    borderBottom: `1px solid ${colors.secondary50}`,
+    borderBottom: `1px solid ${colors.primary50}`,
   },
   toolbar: {
     px: { xs: 1.5, md: 3 },

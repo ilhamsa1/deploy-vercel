@@ -1,16 +1,16 @@
 export const colors = {
   // Primary
-  primary50: '#ffe9ec',
-  primary100: '#ffc7cc',
-  primary200: '#fa908d',
-  primary300: '#f26260',
-  primary400: '#fb3536',
-  primary500: '#ff0c0c',
-  primary600: '#f10011',
-  primary700: '#df000c',
-  primary800: '#d30002',
-  primary900: '#c50000',
-  primaryText: '#121212',
+  primary50: '#FFFFFF',
+  primary100: '#FFFFFF',
+  primary200: '#EEEEEE',
+  primary300: '#E0E0E0',
+  primary400: '#BDBDBD',
+  primary500: '#9E9E9E',
+  primary600: '#757575',
+  primary700: '#616161',
+  primary800: '#424242',
+  primary900: '#212121',
+  primaryText: '#FFFFFF',
 
   // Secondary
   secondary50: '#eee6f9',
@@ -23,7 +23,7 @@ export const colors = {
   secondary700: '#4f1bbc',
   secondary800: '#4014b5',
   secondary900: '#2200ab',
-  secondaryText: '#121212',
+  secondaryText: '#424242',
 
   // Backgrounds
   white: '#FFFFFF',
@@ -89,8 +89,8 @@ export const palette = {
   common: colors,
   primary: {
     light: colors.primary200,
-    main: colors.primary500,
-    dark: colors.primary700,
+    main: colors.primary800,
+    dark: colors.primary900,
     contrastText: colors.primaryText,
   },
   secondary: {

@@ -6,3 +6,5 @@ export const computeMutation = <T extends Record<string, unknown>>(
 
   return keys.some((key) => newRow[key] !== oldRow[key])
 }
+
+export type ResponseData<T> = { data: T[]; count?: number; status: number; error: any }

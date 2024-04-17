@@ -1,29 +1,53 @@
 'use client'
 
-import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
-import { Stack } from '@mui/material'
 import Divider from '@mui/material/Divider'
-import Link from 'next/link'
-
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
-import { ComponentType } from 'react'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import { ComponentType, useEffect, useTransition } from 'react'
+import toast from 'react-hot-toast'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
+import { UserOrgT, OrgT } from '@/models/organizations/types'
+import { chooseOrg } from './actions'
 
 interface Props {
-  data: {
-    role: string
-    user_id: string
-    org: {
-      tag: string
-      display_name: string
-    }[]
-  }[]
+  data: UserOrgT[]
 }
 
 const OrgUserList: ComponentType<Props> = ({ data }) => {
+  const [isLoading, startTransition] = useTransition()
+
+  function onSelect(org: OrgT) {
+    startTransition(async () => {
+      const result = await chooseOrg(org)
+
+      if (result.error?.message) {
+        toast.error(result.error?.message)
+        return
+      }
+      redirect(`/org/${org.tag}`)
+    })
+  }
+
+  // Auto redirect user to org page if there is only 1 org
+  // dont need to allow user to select
+  useEffect(() => {
+    if (data.length == 1) {
+      onSelect(data[0].org)
+    }
+  }, [data])
+
+  if (data.length == 1) return null
+
   return (
-    <Container sx={{ my: 8 }}>
+    <Container
+      sx={{ my: 8 }}
+      maxWidth="md"
+    >
       <Typography
         variant="h2"
         gutterBottom
@@ -38,14 +62,14 @@ const OrgUserList: ComponentType<Props> = ({ data }) => {
       </Typography>
       <Stack sx={{ my: 2, p: 2, background: '#fff' }}>
         <Stack divider={<Divider flexItem />}>
-          {data.map((userOrg) => {
-            // Note: fix supabase return object but the typing is array
-            const org = userOrg.org as any
+          {data.map(({ org }) => {
+            if (!org) return null
             return (
               <ListItemButton
                 key={org.tag}
                 LinkComponent={Link}
-                href={`/org/${org.tag}`}
+                onClick={() => onSelect(org)}
+                disabled={isLoading}
               >
                 <ListItemText primary={org.display_name} />
               </ListItemButton>
