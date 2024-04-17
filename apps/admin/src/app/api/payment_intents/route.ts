@@ -13,16 +13,10 @@ export async function GET() {
 export async function POST(request: Request) {
   const supabase = createClient()
   const params = await request.json()
-  const { data: userData } = await supabase.auth.getUser()
-
-  const orgId = userData.user?.user_metadata?.org?.id
-  if (!orgId) return null
-
-  const paymentIntent = { ...params, userId: userData.user, orgId }
 
   const { data } = await supabase
     .from('payment_intent')
-    .insert(paymentIntent)
+    .insert(params)
     .select('*')
     .throwOnError()
     .single()
