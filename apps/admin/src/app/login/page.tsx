@@ -2,9 +2,9 @@
 import React, { useState, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import zod from 'zod'
 
-import toast from 'react-hot-toast'
 import Checkbox from '@mui/material/Checkbox'
 import Container from '@mui/material/Container'
 import Divider from '@mui/material/Divider'
@@ -18,20 +18,12 @@ import Typography from '@mui/material/Typography'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../components/form'
-import Button from '../../components/button'
-import Link from '../../components/link'
+import Button from '@/components/button'
+import GoogleButton from '@/components/button/google-button'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/form'
+import Link from '@/components/link'
 
 import { login } from './actions'
-
-import GoogleButton from '@/components/button/google-button'
 
 const FormSchema = zod.object({
   email: zod.string().email(),

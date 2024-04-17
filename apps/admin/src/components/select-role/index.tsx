@@ -43,7 +43,7 @@ const SelectRole: ComponentType<Props> = ({ selectRole = 'admin', setSelectRole 
           >
             {isSelected ? <RadioButtonCheckedIcon /> : <RadioButtonUncheckedIcon />}
             <Stack direction="column">
-              <Typography variant="caption">{label}</Typography>
+              <Typography variant="body1">{label}</Typography>
               <Typography
                 color={palette.common.neutral600}
                 variant="caption"
@@ -60,11 +60,11 @@ const SelectRole: ComponentType<Props> = ({ selectRole = 'admin', setSelectRole 
 
 const styles = {
   select: (isSelected: boolean) => ({
-    border: '1px solid',
+    border: '3px solid',
     borderRadius: '4px',
-    padding: '6px 4px',
+    padding: '0.8rem',
     cursor: 'pointer',
-    borderColor: isSelected ? 'red' : 'black',
+    borderColor: isSelected ? 'green' : 'black',
   }),
 }
 

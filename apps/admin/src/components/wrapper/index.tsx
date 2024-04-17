@@ -1,27 +1,21 @@
 'use client'
 
+import { User } from '@supabase/supabase-js'
 import React, { ComponentProps, useState } from 'react'
-import { Toaster } from 'react-hot-toast'
 import { usePathname, useRouter } from 'next/navigation'
-import SharedProvider from '../shared-provider'
+
 import { LIST_SIDEMENU } from '../../config/sidemenu'
 import Layout from '../layout'
 import { logout } from './actions'
 
 type SideMenuItem = ComponentProps<typeof Layout>['sideMenuItems'][0]
 
-const WrapperProvider = ({
-  children,
-  user,
-  prefixUrl,
-}: {
-  children: React.ReactNode
-  user?: any
-  prefixUrl?: string
-}) => {
+const WrapperProvider = ({ children, user }: { children: React.ReactNode; user: User }) => {
   const pathname = usePathname()
   const router = useRouter()
   const [openDrawer, setOpenDrawer] = useState(false)
+
+  const prefixUrl = `/org/${user.user_metadata.org.tag}`
 
   const pathnameArray = pathname.split('/') // (1) "/transactions/uuid" => ['', 'transactions', 'uuid']
   const isBack = pathnameArray.length > 2
@@ -67,24 +61,17 @@ const WrapperProvider = ({
   })
 
   return (
-    <SharedProvider>
-      <Layout
-        user={user}
-        title="Luxe Dashboard"
-        onClickBack={onClickBack}
-        onOpenDrawer={() => setOpenDrawer(true)}
-        sideMenuItems={sideMenuItems}
-        onSignOut={onSignOut}
-        openDrawer={openDrawer}
-        setOpenDrawer={setOpenDrawer}
-      >
-        {children}
-      </Layout>
-
-      <Toaster />
-
-      {/* <NotificationBar /> */}
-    </SharedProvider>
+    <Layout
+      title="Luxe Dashboard"
+      onClickBack={onClickBack}
+      onOpenDrawer={() => setOpenDrawer(true)}
+      sideMenuItems={sideMenuItems}
+      onSignOut={onSignOut}
+      openDrawer={openDrawer}
+      setOpenDrawer={setOpenDrawer}
+    >
+      {children}
+    </Layout>
   )
 }
 
