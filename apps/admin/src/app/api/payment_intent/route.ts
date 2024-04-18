@@ -1,15 +1,45 @@
-import { NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { apiKey } from '@/services/api-key'
 import zod from 'zod'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const supabase = await apiKey(request)
+  const searchParams = request.nextUrl.searchParams
+  const requires_action = searchParams.get('requires_action')
+  const amount = searchParams.get('amount')
+  const cursor = searchParams.get('cursor')
+  const limit = parseInt(searchParams.get('limit') as string) || 10
 
-  const { data, count } = await supabase
-    .from('payment_intent')
-    .select('*', { count: 'exact', head: true })
+  let query = supabase.from('payment_intent').select('*')
 
-  return NextResponse.json({ data, count })
+  if (requires_action) {
+    query = query.eq('requires_action', requires_action)
+  }
+  if (amount) {
+    query = query.gte('amount', amount)
+  }
+
+  if (cursor) {
+    query = query.or(Buffer.from(cursor, 'base64').toString('utf-8'))
+  }
+
+  const response = await query.limit(limit + 1).order('createdAt', { ascending: true })
+
+  let next_cursor: typeof cursor | null = null
+  let prev_cursor: typeof cursor | null = null
+
+  if (!!response.data && response.data.length > limit) {
+    response.data = response.data.splice(0, limit)
+
+    const firstItem = response.data[0]
+    const lastItem = response.data[response.data.length - 1]
+
+    next_cursor = Buffer.from(`and=(id.gt.${lastItem.id},deleted_at.is.null)`).toString('base64')
+
+    prev_cursor = Buffer.from(`and=(id.lt.${firstItem.id},deleted_at.is.null)`).toString('base64')
+  }
+
+  return NextResponse.json({ data: response.data ?? [], prev_cursor, next_cursor })
 }
 
 export async function POST(request: Request) {
