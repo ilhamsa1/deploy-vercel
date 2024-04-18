@@ -1,9 +1,11 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { apiKey } from '@/services/api-key'
 import zod from 'zod'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: NextRequest) {
-  const supabase = await apiKey(request)
+  const supabase = createClient()
+  // const supabase = await apiKey(request)
   const searchParams = request.nextUrl.searchParams
   const requires_action = searchParams.get('requires_action')
   const amount = searchParams.get('amount')
@@ -13,7 +15,7 @@ export async function GET(request: NextRequest) {
   let query = supabase.from('payment_intent').select('*')
 
   if (requires_action) {
-    query = query.eq('requires_action', requires_action)
+    query = query.eq('status', requires_action)
   }
   if (amount) {
     query = query.gte('amount', amount)
@@ -23,7 +25,7 @@ export async function GET(request: NextRequest) {
     query = query.or(Buffer.from(cursor, 'base64').toString('utf-8'))
   }
 
-  const response = await query.limit(limit + 1).order('createdAt', { ascending: true })
+  const response = await query.limit(limit + 1).order('payment_method', { ascending: true })
 
   let next_cursor: typeof cursor | null = null
   let prev_cursor: typeof cursor | null = null
@@ -34,9 +36,13 @@ export async function GET(request: NextRequest) {
     const firstItem = response.data[0]
     const lastItem = response.data[response.data.length - 1]
 
-    next_cursor = Buffer.from(`and=(id.gt.${lastItem.id},deleted_at.is.null)`).toString('base64')
+    if (firstItem) {
+      prev_cursor = Buffer.from(`and=(id.lt.${firstItem.id},deleted_at.is.null)`).toString('base64')
+    }
 
-    prev_cursor = Buffer.from(`and=(id.lt.${firstItem.id},deleted_at.is.null)`).toString('base64')
+    if (lastItem) {
+      next_cursor = Buffer.from(`and=(id.gt.${lastItem.id},deleted_at.is.null)`).toString('base64')
+    }
   }
 
   return NextResponse.json({ data: response.data ?? [], prev_cursor, next_cursor })
