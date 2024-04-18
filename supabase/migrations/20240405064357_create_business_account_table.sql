@@ -4,6 +4,7 @@ CREATE TABLE public.business_account (
   public_id TEXT UNIQUE GENERATED ALWAYS AS (gen_short_code(id, gen_short_secret('_account'))) STORED,
   user_id UUID NOT NULL,
   org_id INTEGER REFERENCES org NOT NULL,
+  display_name TEXT,
   PRIMARY KEY(id),
   CONSTRAINT fk_user_org FOREIGN KEY (user_id, org_id) REFERENCES user_orgs(user_id, org_id) ON DELETE CASCADE
 );
