@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 
   const { data } = await supabase
     .from('payment_intent')
-    .insert(params)
+    .insert({ ...params, status: 'requires_payment_method' })
     .select('*')
     .throwOnError()
     .single()
