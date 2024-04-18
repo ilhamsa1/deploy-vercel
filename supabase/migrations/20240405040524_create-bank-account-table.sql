@@ -1,6 +1,6 @@
 -- create a public.bank_account table for storing bank account information
 CREATE TABLE public.bank_account (
-  id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
+  id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
   bank_id BIGINT NOT NULL REFERENCES bank ON DELETE CASCADE,
   org_id INTEGER NOT NULL REFERENCES org ON DELETE CASCADE,
   num TEXT,

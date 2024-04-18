@@ -1,6 +1,6 @@
 -- create a public.bank table for storing bank information
 CREATE TABLE public.bank (
-  id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+  id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
   tag TEXT,
   name TEXT,
   PRIMARY KEY (id)
