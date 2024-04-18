@@ -29,7 +29,7 @@ BEGIN
     UPDATE payment_intent 
     SET 
       status = 'requires_action',
-      payment_method = CONCAT(tag, '_', row_bank_account.id) 
+      payment_method = CONCAT(row_bank_account.tag, '_', row_bank_account.id) 
     WHERE id = row.id;
 
     UPDATE bank_account 
