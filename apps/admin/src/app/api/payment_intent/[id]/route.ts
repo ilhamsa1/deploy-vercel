@@ -1,18 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
-import { serviceHandler } from '@/services/service-handler'
+import { apiKey } from '@/services/api-key'
 
 export async function GET(request: Request, context: { params: { id: string } }) {
   const paymentIntentId = context.params.id
-  const supabase = createClient()
-  const accountId = await serviceHandler(request)
+  const supabase = await apiKey(request)
 
-  const { data } = await supabase
-    .from('payment_intent')
-    .select()
-    .eq('id', paymentIntentId)
-    .eq('account_id', accountId)
-    .single()
+  const { data } = await supabase.from('payment_intent').select().eq('id', paymentIntentId).single()
 
   return NextResponse.json({ data })
 }

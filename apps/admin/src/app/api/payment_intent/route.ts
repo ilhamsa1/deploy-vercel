@@ -1,30 +1,44 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
-import { serviceHandler } from '@/services/service-handler'
+import { apiKey } from '@/services/api-key'
+import zod from 'zod'
 
 export async function GET(request: Request) {
-  const supabase = createClient()
-  const accountId = await serviceHandler(request)
+  const supabase = await apiKey(request)
 
   const { data, count } = await supabase
     .from('payment_intent')
     .select('*', { count: 'exact', head: true })
-    .eq('account_id', accountId)
 
   return NextResponse.json({ data, count })
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await apiKey(request)
   const params = await request.json()
-  const accountId = await serviceHandler(request)
+  await paymentIntentValidate(params)
 
   const { data } = await supabase
     .from('payment_intent')
-    .insert({ ...params, accountId })
+    .insert(params)
     .select('*')
     .throwOnError()
     .single()
 
   return NextResponse.json({ data })
 }
+
+export const paymentIntentValidate = async (payload: zod.infer<typeof FormSchema>) => {
+  const validationResult = (await FormSchema.safeParse(payload)) as { error?: string }
+
+  if (validationResult.error) {
+    throw new Error(validationResult.error)
+  }
+}
+
+const FormSchema = zod.object({
+  currency: zod.string(),
+  amount: zod.number(),
+  metadata: zod.object({}),
+  customer: zod.string(),
+  receipt_email: zod.string(),
+})
