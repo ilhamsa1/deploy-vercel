@@ -1,11 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { apiKey } from '@/services/api-key'
 import zod from 'zod'
-import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: NextRequest) {
-  const supabase = createClient()
-  // const supabase = await apiKey(request)
+  const supabase = await apiKey(request)
   const searchParams = request.nextUrl.searchParams
   const requires_action = searchParams.get('requires_action')
   const amount = searchParams.get('amount')
