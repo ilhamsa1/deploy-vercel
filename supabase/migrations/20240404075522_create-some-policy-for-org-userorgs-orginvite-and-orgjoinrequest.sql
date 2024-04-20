@@ -1,3 +1,17 @@
+-- USER POLICY
+-- user allowed to select their own data
+CREATE POLICY "can only view own user data"
+ON public.user
+FOR SELECT
+TO AUTHENTICATED, ANON
+USING ( ((select (auth.uid() = id)) OR (select (auth.key_uid() = id))) );
+-- user allowed to update their own data
+CREATE POLICY "can only update own user data"
+ON public.user
+FOR UPDATE
+TO AUTHENTICATED, ANON
+USING ( ((select (auth.uid() = id)) OR (select (auth.key_uid() = id))) );
+
 -- ORG POLICY
 -- user with oid can view their own org
 CREATE POLICY "user can only view their own user org"
