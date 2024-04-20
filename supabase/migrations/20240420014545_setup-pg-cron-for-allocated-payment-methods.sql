@@ -1,4 +1,10 @@
-create extension pg_cron with schema extensions;
+create extension if not exists pg_cron;
 
-select cron.schedule('scan-allocated-payment-method', '*/1 * * * *', 'CALL allocate_payment_methods()');
-
+select
+  cron.schedule(
+    'scan-allocated-payment-method', 
+    '* * * * *', 
+    $$
+    select allocate_payment_methods();
+    $$
+  );
