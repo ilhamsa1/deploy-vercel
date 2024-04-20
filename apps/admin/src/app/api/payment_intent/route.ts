@@ -10,6 +10,7 @@ import {
   extractOperandAndOperatorCursor,
   RESERVED_SEARCH_KEYS,
 } from '@/lib/pagination'
+import { PAYMENT_INTENT_STATUS } from '@/lib/constant'
 
 export async function GET(request: NextRequest) {
   const supabase = await apiKey(request)
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
 
   const { data } = await supabase
     .from('payment_intent')
-    .insert({ ...params, status: 'requires_payment_method' })
+    .insert({ ...params, status: PAYMENT_INTENT_STATUS.REQUIRES_PAYMENT_METHOD })
     .select('*')
     .throwOnError()
     .single()
