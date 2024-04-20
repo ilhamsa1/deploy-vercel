@@ -58,7 +58,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
         )[0];
 
         // Construct payment method
-        const payment_method = row_bank.tag + '_' + row_bank_account.id;
+        const payment_method = 'bank_account_' + row_bank_account.id;
 
         // Update Price of in next_action
         const count_payment_intent = plv8.execute(
