@@ -13,9 +13,10 @@ import { type SupabaseClient } from '@supabase/supabase-js'
 type PostgrestQueryBuilder<T> = ReturnType<SupabaseClient<T>['from']>
 type PostgresFilterBuilder<T> = ReturnType<PostgrestQueryBuilder<T>['select']>
 type OrderOpts<T = string> = Parameters<PostgresFilterBuilder<T>['order']>[1]
+type OrderEntries<T = string> = [key: string, val: OrderOpts<T>][]
 
 export function orderParamToOrderOptions(input: string) {
-  return input.split(',').reduce<{ [key: string]: OrderOpts }>((acc, each) => {
+  return input.split(',').reduce<OrderEntries>((acc, each) => {
     const [column, ...rest] = each.split('.')
     const opts: OrderOpts = {
       ascending: rest.includes('desc') ? false : true,
@@ -25,9 +26,9 @@ export function orderParamToOrderOptions(input: string) {
     } else if (rest.includes('nullslast')) {
       opts.nullsFirst = false
     }
-    acc[column] = opts
+    acc.push([column, opts])
     return acc
-  }, {})
+  }, []) // acc is array of entries
 }
 
 const RESERVED_SEARCH_KEYS = [
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get('limit') || '')
 
   // Vertical Column Filtering: https://postgrest.org/en/v12/references/api/tables_views.html#vertical-filtering
-  let query = supabase.from('payment_intent').select('*')
+  let query = supabase.from('payment_intent').select<typeof select, Record<string, unknown>>(select)
 
   // Horizontal Row Filtering: https://postgrest.org/en/v12/references/api/tables_views.html#horizontal-filtering
   for (const [key, value] of searchParams.entries()) {
@@ -70,14 +71,22 @@ export async function GET(request: NextRequest) {
   }
 
   // Ordering By: https://postgrest.org/en/v12/references/api/tables_views.html#ordering
-  const orderOptions = orderParamToOrderOptions(orderParam)
-  for (const [column, options] of Object.entries(orderOptions)) {
+  const orderEntries = orderParamToOrderOptions(orderParam)
+  for (const [column, options] of orderEntries) {
     query = query.order(column, options)
   }
 
-  // if (cursor) {
-  //   query = query.or(Buffer.from(cursor, 'base64').toString('utf-8'))
-  // }
+  if (cursor) {
+    const cursorPlain = Buffer.from(cursor, 'base64url').toString('utf-8')
+    const [operator] = cursorPlain.split('=', 1)
+    const operand = cursorPlain.slice(operator.length + 1)
+
+    if (operator === 'or') {
+      query = query.or(operand)
+    } else {
+      throw new Error('Invalid cursor')
+    }
+  }
 
   const { data } = await query.limit(limit || 10)
 
@@ -86,33 +95,72 @@ export async function GET(request: NextRequest) {
 
   if (!!data && data.length > 0) {
     const firstItem = data[0]
-    prev_cursor = Buffer.from(`and=(deleted_at.is.null, id.lt.${firstItem.id})`).toString('base64')
+    prev_cursor = getPrevCursor(orderEntries, firstItem)
 
     if (data.length >= limit) {
       const lastItem = data[data.length - 1]
-
-      let isIdColumnAsc = true
-      const aConditions = []
-      const bConditions = []
-      for (const [column, options] of Object.entries(orderOptions)) {
-        const isColumnAsc = options?.ascending || true
-        if (column === 'id') {
-          isIdColumnAsc = isColumnAsc
-        }
-        const columnValue = lastItem[column]
-        aConditions.push(`${column}.${isColumnAsc ? 'gte' : 'lte'}.${columnValue}`)
-        bConditions.push(`${column}.${isColumnAsc ? 'gt' : 'lt'}.${columnValue}`)
-      }
-      const aLast = `id.${isIdColumnAsc ? 'gt' : 'lt'}.${lastItem.id}`
-
-      next_cursor = Buffer.from(
-        // or=(and(a1, a2, a3, aLast), and(b1, b2, b3))
-        `or=(and(${aConditions.join(',')},${aLast}),and(${bConditions.join(',')}))`,
-      ).toString('base64')
+      next_cursor = getNextCursor(orderEntries, lastItem)
     }
   }
 
   return NextResponse.json({ data, prev_cursor, next_cursor })
+}
+
+export function getCursor(
+  orderEntries: OrderEntries,
+  firstOrlastItem: Record<string, unknown>,
+  isNext: boolean,
+) {
+  // Assume id column is sorted ascending by default
+  let isIdColumnAsc = true
+
+  // Initialize accumulative and OR conditions for cursor creation
+  const accEqConditions = []
+  const accOrConditions = []
+
+  // Loop over each order entry which defines column and sorting direction
+  for (const [column, options] of orderEntries) {
+    // Determine if the current column is sorted ascending, default is true
+    const isColumnAsc = options?.ascending || true
+    // Special handling if the column is 'id'
+    if (column === 'id') {
+      isIdColumnAsc = isColumnAsc
+    }
+    const columnValue = firstOrlastItem[column]
+
+    // Construct a nested AND condition combining all previous EQ conditions, and add to OR conditions
+    const andConditions = accEqConditions.slice() // copy array
+    const operator: string = isNext ? (isColumnAsc ? 'gt' : 'lt') : isColumnAsc ? 'lt' : 'gt'
+    andConditions.push(`${column}.${operator}.${columnValue}`)
+    if (andConditions.length === 1) {
+      accOrConditions.push(andConditions[0])
+    } else {
+      accOrConditions.push(`and(${andConditions.join(',')})`)
+    }
+
+    // Keep accumulating EQ conditions for each column
+    accEqConditions.push(`${column}.eq.${columnValue}`)
+  }
+
+  // Construct the last part of cursor using the 'id' column's sort direction
+  const lastCondition = `id.${isIdColumnAsc ? 'gt' : 'lt'}.${firstOrlastItem.id}`
+
+  // Construct a nested AND condition combining all previous EQ conditions and add to OR conditions
+  accOrConditions.push(`and(${accEqConditions.join(',')},${lastCondition})`)
+
+  // Combine OR conditions to construct the cursor
+  return Buffer.from(
+    // or=(c1, and(eq1, c2), and(eq1, eq2, c3), and(eq1, eq2, eq3, cId))
+    `or=(${accOrConditions.join(',')})`,
+  ).toString('base64url')
+}
+
+export function getNextCursor(orderEntries: OrderEntries, lastItem: Record<string, unknown>) {
+  return getCursor(orderEntries, lastItem, true)
+}
+
+export function getPrevCursor(orderEntries: OrderEntries, firstItem: Record<string, unknown>) {
+  return getCursor(orderEntries, firstItem, false)
 }
 
 export async function POST(request: Request) {
