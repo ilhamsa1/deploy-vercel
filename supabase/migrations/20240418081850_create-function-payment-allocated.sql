@@ -31,7 +31,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
 
         // If business account not found, return false
         if (!row_business_account) {
-            return false;
+            throw new Error('There is no bussiness account');
         }
 
         // Get available bank account
@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
 
         // If bank account not found, return false
         if (!row_bank_account) {
-            return false;
+            throw new Error('There is no bank account');
         }
 
         // Retrieve bank information

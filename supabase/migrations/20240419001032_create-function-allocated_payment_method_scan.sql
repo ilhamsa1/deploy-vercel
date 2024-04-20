@@ -1,17 +1,8 @@
-CREATE OR REPLACE FUNCTION public.allocate_payment_methods() 
-RETURNS TRIGGER
-SECURITY definer
-SET search_path = public
-AS $$
+CREATE OR REPLACE FUNCTION public.allocate_payment_methods(item public.payment_intent DEFAULT NULL) RETURNS VOID AS $$
 DECLARE
     each_item payment_intent;  -- Declare as a record type for each row
 BEGIN
     
-    -- If the new row status is 'requires_payment_method', process it
-    IF NEW.status = 'requires_payment_method' THEN
-        PERFORM allocate_payment_method_single(NEW);
-    END IF;
-
     -- Scan items that are not yet being processed
     FOR each_item IN
         SELECT * FROM payment_intent WHERE status = 'requires_payment_method'
@@ -20,13 +11,9 @@ BEGIN
         PERFORM allocate_payment_method_single(each_item);
     END LOOP;
 
-    RETURN NEW;
+    -- If item is provided, process it as well
+    IF item IS NOT NULL THEN
+        PERFORM allocate_payment_method_single(item);
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE TRIGGER on_allocate_payment_trigger
-AFTER INSERT OR UPDATE ON public.payment_intent
-FOR EACH ROW
-WHEN (NEW.status = 'requires_payment_method')
-EXECUTE FUNCTION allocate_payment_methods();
