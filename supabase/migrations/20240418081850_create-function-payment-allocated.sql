@@ -81,6 +81,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
     plv8.execute(
         "UPDATE payment_intent SET " +
         "status = 'requires_action', next_action = $1 ," +
+        "confirmation_method = 'manual' ," +
         "payment_method = $2 " +
         "WHERE id = $3",
         [next_action, payment_method, row.id]
