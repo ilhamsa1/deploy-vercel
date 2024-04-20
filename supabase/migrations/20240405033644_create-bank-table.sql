@@ -7,3 +7,11 @@ CREATE TABLE public.bank (
 );
 -- enable RLS, we want to restrict access on this table
 ALTER TABLE public.bank ENABLE ROW LEVEL SECURITY;
+
+-- BANK POLICY
+-- user can view bank data
+CREATE POLICY "user can only view all bank data"
+ON public.bank
+FOR SELECT
+TO AUTHENTICATED
+USING (true);

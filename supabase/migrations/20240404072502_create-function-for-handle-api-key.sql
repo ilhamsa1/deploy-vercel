@@ -219,3 +219,10 @@ BEGIN
   END IF;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION auth.current_uid()
+RETURNS uuid
+LANGUAGE sql
+as $$
+  SELECT CASE WHEN current_user = 'anon' THEN (SELECT auth.key_uid()) ELSE (SELECT auth.uid()) END;
+$$;
