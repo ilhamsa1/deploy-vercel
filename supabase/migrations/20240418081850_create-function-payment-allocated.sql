@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
     try {
       plv8.subtransaction(function(){
         // Retrieve payment intent and associated business account
-        let row = plv8.execute(
+        const row = plv8.execute(
             "SELECT pi.*, ba.org_id::TEXT AS org_id " +
             "FROM payment_intent pi " +
             "JOIN business_account ba ON ba.id = pi.account_id " +
@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
         }
 
         // Retrieve bank account associated with business account
-        let row_business_account = plv8.execute(
+        const row_business_account = plv8.execute(
             "SELECT * FROM business_account WHERE id = $1 LIMIT 1",
             [row.account_id]
         )[0];
@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
         }
 
         // Get available bank account
-        let row_bank_account = plv8.execute(
+        const row_bank_account = plv8.execute(
             "SELECT ba.* " +
             "FROM bank_account ba " +
             "INNER JOIN bank b ON ba.bank_id = b.id " +
@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
         }
 
         // Retrieve bank information
-        let row_bank = plv8.execute(
+        const row_bank = plv8.execute(
             "SELECT * FROM bank WHERE id = $1 LIMIT 1",
             [row_bank_account.bank_id]
         )[0];
@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
         const payment_method = row_bank.tag + '_' + row_bank_account.id;
 
         // Update Price of in next_action
-        let count_payment_intent = plv8.execute(
+        const count_payment_intent = plv8.execute(
             "SELECT count(*) " +
             "FROM payment_intent pi " +
             "WHERE pi.amount = $1 AND pi.status = $2 AND pi.id != $3 AND payment_method = $4",
