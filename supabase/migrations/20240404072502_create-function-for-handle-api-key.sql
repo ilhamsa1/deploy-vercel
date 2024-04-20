@@ -1,19 +1,21 @@
 -- Table to store JWTs (JSON Web Tokens) associated with users for authentication purposes.
+-- Table for storing the relationship between user.id and password/secret.id
 CREATE TABLE auth.jwts (
   secret_id UUID NOT NULL,                            -- UUID for the JWT secret
   user_id UUID NULL,                                  -- UUID for the user (nullable)
+  deleted_at TIMESTAMPTZ,
   CONSTRAINT jwts_pkey PRIMARY KEY (secret_id),       -- Primary key constraint
-  CONSTRAINT jwts_secret_id_fkey FOREIGN KEY (secret_id) REFERENCES vault.secrets (id) ON DELETE CASCADE,   -- Foreign key constraint referencing vault.secrets
-  CONSTRAINT user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE SET NULL               -- Foreign key constraint referencing auth.users
+  CONSTRAINT jwts_secret_id_fkey FOREIGN KEY (secret_id) REFERENCES vault.secrets (id) ON DELETE RESTRICT,    -- Foreign key constraint referencing vault.secrets
+  CONSTRAINT user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE                  -- Foreign key constraint referencing auth.users
 ) tablespace pg_default;
 
 -- Insert initial secrets for project API key and JWT secret into the vault.
 INSERT INTO vault.secrets (name, secret) VALUES (
-  'project_api_key_secret',                            -- Name of the secret for project API key
+  'project_api_key_secret',                             -- Name of the secret for project API key
   encode(digest(gen_random_bytes(32), 'sha512'), 'hex') -- Generate and encode the secret for project API key
 ), (
-  'project_jwt_secret',                                -- Name of the secret for project JWT
-  'your-project-jwt-secret-here'                       -- JWT secret value
+  'project_jwt_secret',                                 -- Name of the secret for project JWT
+  'your-project-jwt-secret-here'                        -- JWT secret value
 );
 
 -- Function to create a vault secret for a newly created user.
@@ -24,8 +26,8 @@ SECURITY definer
 SET search_path = extensions
 AS $$
 DECLARE
-  rand_bytes BYTEA := gen_random_bytes(32);            -- Generate random bytes
-  user_secret TEXT := encode(digest(rand_bytes, 'sha512'), 'hex');  -- Generate and encode the user secret
+  rand_bytes BYTEA := gen_random_bytes(32);                               -- Generate random bytes
+  user_secret TEXT := encode(digest(rand_bytes, 'sha512'), 'hex');        -- Generate and encode the user secret
 BEGIN
   INSERT INTO vault.secrets (name, secret) VALUES (new.id, user_secret);  -- Insert the user secret into the vault
   RETURN new;
@@ -64,7 +66,7 @@ CREATE TRIGGER on_user_deleted__remove_user_vault_secrets AFTER DELETE
 
 -- This function creates an API key for a given user and stores it securely in the database.
 CREATE OR REPLACE FUNCTION create_api_key(id_of_user UUID, key_description TEXT)
-RETURNS VOID
+RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY definer
 SET search_path = extensions
@@ -79,8 +81,8 @@ DECLARE
   user_secret TEXT;                -- Secret key for user
   project_jwt_secret TEXT;         -- Secret key for JWT generation
   project_api_key_secret TEXT;     -- Secret key for API key generation
-  time_stamp BIGINT = time_stamp = trunc(extract(epoch FROM NOW()), 0);              -- Unix timestamp for current time
-  expires BIGINT = time_stamp + trunc(extract(epoch FROM interval '100 years'), 0);  -- Unix timestamp for expiration time (100 years from now)
+  time_stamp BIGINT = trunc(extract(epoch FROM NOW()), 0);                            -- Unix timestamp for current time
+  expires BIGINT = time_stamp + trunc(extract(epoch FROM interval '100 years'), 0);   -- Unix timestamp for expiration time (100 years from now)
 BEGIN
   -- Check if the authenticated user matches the provided user ID
   IF auth.uid() = id_of_user THEN
@@ -115,7 +117,11 @@ BEGIN
 
     -- Associate the JWT with the user in the authentication table
     INSERT INTO auth.jwts (secret_id, user_id) VALUES (jwt_record_id, id_of_user);
+
+    RETURN true;
   END IF;
+
+  RETURN false;
 END;
 $$;
 
@@ -162,6 +168,7 @@ END;
 $$;
 
 -- This function revokes (deletes) an API key associated with a specific secret ID for a given user from the database.
+-- Password/secret record will be deleted from vault table
 CREATE OR REPLACE FUNCTION revoke_api_key(id_of_user UUID, secret_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
@@ -171,6 +178,7 @@ AS $$
 BEGIN
   -- Check if the authenticated user matches the provided user ID
   IF auth.uid() = id_of_user THEN
+    UPDATE auth.jwts SET deleted_at = NOW() WHERE secret_id=secret_id;
     -- Delete the API key from the vault using the provided secret ID
     DELETE FROM vault.secrets WHERE id=secret_id;
   END IF;
@@ -185,7 +193,7 @@ SECURITY definer
 SET search_path = extensions
 AS $$
 DECLARE
-  project_hash TEXT;               -- Hash of the project
+  user_api_key_hash TEXT;               -- Hash of the project
   project_api_key_secret TEXT;     -- Secret key for API key generation
   secret_uuid UUID;                -- UUID for the stored secret
   user_api_key TEXT;               -- API key provided by the user
@@ -196,15 +204,15 @@ BEGIN
   -- Retrieve the secret key for the project's API key generation
   SELECT decrypted_secret INTO project_api_key_secret FROM vault.decrypted_secrets WHERE name='project_api_key_secret';
 
-  -- Generate the hash of the project using the provided API key
-  project_hash := encode(hmac(user_api_key, project_api_key_secret, 'sha512'), 'hex');
+  -- Generate the hash of the provided API key
+  user_api_key_hash := encode(hmac(user_api_key, project_api_key_secret, 'sha512'), 'hex');
 
-  -- Retrieve the UUID of the secret associated with the project hash
-  SELECT id INTO secret_uuid FROM vault.secrets WHERE name=project_hash;
+  -- Retrieve the UUID of the secret associated with the user_api_key_hash
+  SELECT id INTO secret_uuid FROM vault.secrets WHERE name=user_api_key_hash;
 
   -- If a secret UUID is found, return the user ID associated with the secret
   IF secret_uuid IS NOT NULL THEN
-    RETURN (SELECT user_id FROM auth.jwts WHERE secret_id=secret_uuid);
+    RETURN (SELECT user_id FROM auth.jwts WHERE secret_id=secret_uuid AND deleted_at IS NULL);
   ELSE
     -- If no secret UUID is found, return null
     RETURN NULL;
