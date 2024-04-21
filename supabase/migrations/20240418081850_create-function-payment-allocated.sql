@@ -40,7 +40,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
             "FROM bank_account ba " +
             "INNER JOIN bank b ON ba.bank_id = b.id " +
             "WHERE ba.org_id = $1 " +
-            "ORDER BY ba.last_allocated_at DESC " +
+            "ORDER BY ba.last_allocated_at ASC " +
             "LIMIT 1 " +
             "FOR UPDATE SKIP LOCKED",
             [row_business_account.org_id]
