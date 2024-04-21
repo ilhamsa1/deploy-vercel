@@ -9,7 +9,7 @@ CREATE TABLE public.bank (
 ALTER TABLE public.bank ENABLE ROW LEVEL SECURITY;
 
 -- BANK POLICY
--- user can view bank data
+
 CREATE POLICY "user can only view all bank data"
 ON public.bank
 FOR SELECT

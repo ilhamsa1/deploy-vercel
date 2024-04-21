@@ -29,7 +29,7 @@ CREATE POLICY "user can only insert org payment tx data"
 ON public.payment_tx
 FOR INSERT
 TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+WITH CHECK (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
 
 CREATE POLICY "user can only update org payment tx data"
 ON public.payment_tx

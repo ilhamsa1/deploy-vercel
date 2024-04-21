@@ -28,7 +28,7 @@ CREATE POLICY "user can only insert org event data"
 ON public.event
 FOR INSERT
 TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+WITH CHECK (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
 
 CREATE POLICY "user can only update org event data"
 ON public.event
