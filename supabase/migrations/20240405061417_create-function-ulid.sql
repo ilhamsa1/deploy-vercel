@@ -179,7 +179,7 @@ WITH FUNCTION json_to_uuid_ulid(JSON)
 AS IMPLICIT;
 
 -- create a function for uuid_ulid eq operator
-CREATE OR REPLACE FUNCTION uuid_ulid_eq_operator(lhs_id UUID_ULID, rhs_id VARCHAR)
+CREATE OR REPLACE FUNCTION uuid_ulid_eq_operator(lhs_id UUID_ULID, rhs_id TEXT)
 RETURNS BOOLEAN
 AS
 $$
@@ -191,7 +191,7 @@ IMMUTABLE;
 -- create operator ===
 CREATE OPERATOR === (
   LEFTARG = UUID_ULID,
-  RIGHTARG = varchar,
+  RIGHTARG = TEXT,
   FUNCTION = uuid_ulid_eq_operator,
   COMMUTATOR = ===,
   NEGATOR = !==,
