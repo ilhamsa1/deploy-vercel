@@ -95,8 +95,8 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
                 amount_remaining: BigInt(row.amount) + BigInt(count_payment_intent.count),
                 amount_remaining_e: row.amount_e,
                 currency: row.currency,
-                type: "ph_bank_transfer",
-                ph_bank_transfer: {
+                type: payment_method,
+                [payment_method]: {
                     bank_code: row_bank.tag,
                     account_number: selected_bank_account.num,
                     memo: "TODO: Memo" // Add a memo indicating the purpose of the transaction
