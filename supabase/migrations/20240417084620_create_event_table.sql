@@ -35,3 +35,5 @@ ON public.event
 FOR UPDATE
 TO AUTHENTICATED
 USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+
+NOTIFY pgrst, 'reload schema';
