@@ -13,6 +13,13 @@ import {
 import { PAYMENT_INTENT_STATUS } from '@/lib/constant'
 import { convertToDecimal } from '@/lib/common'
 
+// Change the dynamic behavior of a layout or page to fully static or fully dynamic. https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
+export const dynamic = 'auto'
+// Set the default revalidation time for a layout or page. https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#revalidate
+export const revalidate = 0
+// https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#fetchcache
+export const fetchCache = 'auto'
+
 export async function GET(request: NextRequest) {
   const supabase = await apiKey(request)
   const searchParams = request.nextUrl.searchParams
