@@ -5,7 +5,6 @@ import zod from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
-import { useParams } from 'next/navigation'
 
 import Dialog from '@/components/dialog'
 import Button from '@/components/button'
@@ -29,7 +28,6 @@ const DialogAddUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) => {
     onCloseDialog: onCloseDialogInvite,
     onOpenDialog: onOpenDialogInvite,
   } = useDialogShowState()
-  const params = useParams<{ org: string }>()
   const [inviteCode, setInviteCode] = useState('')
 
   const form = useForm<zod.infer<typeof FormSchema>>({
@@ -41,7 +39,7 @@ const DialogAddUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) => {
 
   const onSubmit = async (data: zod.infer<typeof FormSchema>) => {
     try {
-      const response = await inviteUser({ ...data, org: params.org })
+      const response = await inviteUser(data)
       if (!response || !response.org) {
         throw new Error('Failed to invite organization')
       }

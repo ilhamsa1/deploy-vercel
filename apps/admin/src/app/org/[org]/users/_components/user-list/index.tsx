@@ -22,7 +22,7 @@ const UserList = () => {
     startTransition(async () => {
       try {
         const res = await getUserList()
-        if (!res) return
+        if (!res?.data.length) return
         setData(res.data as UserListT[])
         setCount(res.count || 0)
       } catch (e: unknown) {
