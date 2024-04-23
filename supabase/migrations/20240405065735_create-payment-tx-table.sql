@@ -23,16 +23,16 @@ CREATE POLICY "user can only view org payment tx data"
 ON public.payment_tx
 FOR SELECT
 TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+USING ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );
 
 CREATE POLICY "user can only insert org payment tx data"
 ON public.payment_tx
 FOR INSERT
 TO AUTHENTICATED
-WITH CHECK (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+WITH CHECK ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );
 
 CREATE POLICY "user can only update org payment tx data"
 ON public.payment_tx
 FOR UPDATE
 TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+USING ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );

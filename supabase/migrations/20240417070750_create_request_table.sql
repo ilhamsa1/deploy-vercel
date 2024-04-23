@@ -19,16 +19,16 @@ CREATE POLICY "user can only view org request data"
 ON public.request
 FOR SELECT
 TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+USING ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );
 
 CREATE POLICY "user can only insert org request data"
 ON public.request
 FOR INSERT
 TO AUTHENTICATED
-WITH CHECK (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+WITH CHECK ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );
 
 CREATE POLICY "user can only update org request data"
 ON public.request
 FOR UPDATE
 TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+USING ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );

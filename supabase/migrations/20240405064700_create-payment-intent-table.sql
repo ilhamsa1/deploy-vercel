@@ -25,20 +25,24 @@ ALTER TABLE public.payment_intent ENABLE ROW LEVEL SECURITY;
 
 -- PAYMENT INTENT POLICY
 
-CREATE POLICY "user can only view org payment intent data"
+CREATE POLICY "user can only view their payment intent data or admin can see all payment intent in their org"
 ON public.payment_intent
 FOR SELECT
-TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+TO AUTHENTICATED, ANON
+USING (
+  ( (SELECT private.is_account_own_by_authenticated_user(account_id)) = true )
+  OR
+  ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true )
+);
 
 CREATE POLICY "user can only insert org payment intent data"
 ON public.payment_intent
 FOR INSERT
-TO AUTHENTICATED
-WITH CHECK (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+TO AUTHENTICATED, ANON
+WITH CHECK ( (SELECT private.is_account_own_by_authenticated_user(account_id)) = true );
 
 CREATE POLICY "user can only update org payment intent data"
 ON public.payment_intent
 FOR UPDATE
-TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+TO AUTHENTICATED, ANON
+USING ( (SELECT private.is_account_own_by_authenticated_user(account_id)) = true );
