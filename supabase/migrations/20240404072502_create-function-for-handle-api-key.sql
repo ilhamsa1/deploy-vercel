@@ -221,8 +221,32 @@ END;
 $$;
 
 CREATE OR REPLACE FUNCTION auth.current_uid()
-RETURNS uuid
+RETURNS uuid AS $$
+  SELECT CASE WHEN (SELECT auth.role()) = 'anon' THEN (SELECT auth.key_uid()) ELSE (SELECT auth.uid()) END;
+$$ LANGUAGE sql STABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION auth.debug_role()
+RETURNS TABLE (session_role text, user_role text, auth_role text)
+ROWS 1
+AS $$
+  SELECT session_user, current_user, auth.role();
+$$ LANGUAGE sql STABLE PARALLEL SAFE;
+
+SELECT * FROM auth.debug_role();
+
+-- All functions for RLS and cron must be placed in private schema or risk public exposure (via RPC API)
+CREATE SCHEMA IF NOT EXISTS private;
+GRANT USAGE ON SCHEMA private TO anon, authenticated, service_role;
+
+CREATE OR REPLACE FUNCTION private.debug_role()
+RETURNS TABLE (session_role text, user_role text, auth_role text)
+ROWS 1
 LANGUAGE sql
-as $$
-  SELECT CASE WHEN current_user = 'anon' THEN (SELECT auth.key_uid()) ELSE (SELECT auth.uid()) END;
+SECURITY DEFINER
+SET search_path = private
+STABLE PARALLEL SAFE
+AS $$
+  SELECT * FROM auth.debug_role();
 $$;
+
+SELECT * FROM private.debug_role();
