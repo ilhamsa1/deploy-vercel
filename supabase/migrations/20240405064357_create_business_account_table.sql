@@ -13,20 +13,24 @@ ALTER TABLE public.business_account ENABLE ROW LEVEL SECURITY;
 
 -- BUSINESS ACCOUNT POLICY
 
-CREATE POLICY "user can only view org business account data"
+CREATE POLICY "user can only view org business account data or admin can view all business account with same org_id"
 ON public.business_account
 FOR SELECT
-TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+TO AUTHENTICATED, ANON
+USING (
+  ( (SELECT auth.current_uid()) = user_id )
+    OR
+  ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true )
+);
 
 CREATE POLICY "user can only insert org business account data"
 ON public.business_account
 FOR INSERT
 TO AUTHENTICATED
-WITH CHECK (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+WITH CHECK ( (SELECT auth.current_uid()) = user_id );
 
 CREATE POLICY "user can only update org business account data"
 ON public.business_account
 FOR UPDATE
 TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+USING ( (SELECT auth.current_uid()) = user_id );
