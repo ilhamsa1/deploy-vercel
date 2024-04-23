@@ -41,7 +41,9 @@ export async function GET(request: NextRequest) {
   // Ordering By: https://postgrest.org/en/v12/references/api/tables_views.html#ordering
   const orderEntries = orderParamToOrderOptions(orderParam)
   for (const [column, options] of orderEntries) {
-    query = query.order(column, options)
+    if (column) {
+      query = query.order(column, options)
+    }
   }
 
   if (cursor) {
