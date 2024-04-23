@@ -18,3 +18,13 @@ update apps/admin .env
 NEXT_PUBLIC_SUPABASE_URL=<your_supabase_project_url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your_supabase_anon_key>
 ```
+
+## Check db migration list
+
+first check the db url to supabase database locally
+
+run `supabase status` and get the `DB URL`
+
+run: `supabase migration list --db-url <DB URL>`
+
+- Need to pass this --db-url if not it will go to supabase cloud

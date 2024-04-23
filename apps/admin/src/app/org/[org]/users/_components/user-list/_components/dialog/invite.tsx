@@ -44,7 +44,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
       <Dialog
         open={openDialog}
         onClose={onCloseDialog}
-        title="Add Orgazation User"
+        title="Add User"
         fullWidth
       >
         <Stack

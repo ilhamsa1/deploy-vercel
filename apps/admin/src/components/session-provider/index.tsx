@@ -3,28 +3,18 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '../../utils/supabase/server'
 import WrapperProvider from '../wrapper'
-import { getSingleUserOrganizationByUser } from '@/models/user/queries'
 
-export default async function SessionProvider({
-  children,
-  org,
-}: {
-  children: React.ReactNode
-  org?: string
-}) {
+export default async function SessionProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
-
-  const { userData } = await getSingleUserOrganizationByUser(supabase)
+  const { data: userData } = await supabase.auth.getUser()
   if (!userData?.user) {
     redirect('/login')
   }
 
-  return (
-    <WrapperProvider
-      user={userData?.user}
-      prefixUrl={`/org/${org}`}
-    >
-      {children}
-    </WrapperProvider>
-  )
+  if (!userData?.user?.user_metadata?.org?.id) {
+    // choose org
+    redirect('/org')
+  }
+
+  return <WrapperProvider user={userData?.user}>{children}</WrapperProvider>
 }

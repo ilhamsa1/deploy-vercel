@@ -3,13 +3,12 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
-import SharedProvider from '@/components/shared-provider'
 
 export const metadata: Metadata = {
   title: 'Luxe',
 }
 
-export default async function TenantsLayout({
+export default async function OrgLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode
@@ -20,5 +19,5 @@ export default async function TenantsLayout({
     redirect('/login')
   }
 
-  return <SharedProvider>{children}</SharedProvider>
+  return children
 }

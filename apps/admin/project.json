@@ -15,7 +15,8 @@
       },
       "configurations": {
         "development": {
-          "outputPath": "apps/admin"
+          "outputPath": "apps/admin",
+          "turbo": true
         },
         "production": {}
       }
@@ -32,6 +33,7 @@
           "buildTarget": "admin:build:development",
           "verbose": true,
           "dev": true,
+          "turbo": true,
           "hostname": "0.0.0.0"
         },
         "production": {
