@@ -11,6 +11,7 @@ import {
   RESERVED_SEARCH_KEYS,
 } from '@/lib/pagination'
 import { PAYMENT_INTENT_STATUS } from '@/lib/constant'
+import { convertToDecimal } from '@/lib/common'
 
 export async function GET(request: NextRequest) {
   const supabase = await apiKey(request)
@@ -79,9 +80,16 @@ export async function POST(request: Request) {
   const params = await request.json()
   await validatePost(params)
 
+  const { amount, ...item } = params
+
   const { data } = await supabase
     .from('payment_intent')
-    .insert({ ...params, status: PAYMENT_INTENT_STATUS.REQUIRES_PAYMENT_METHOD })
+    .insert({
+      ...item,
+      amount: convertToDecimal(amount),
+      amount_e: 2,
+      status: PAYMENT_INTENT_STATUS.REQUIRES_PAYMENT_METHOD,
+    })
     .select('*')
     .throwOnError()
     .single()
@@ -111,7 +119,7 @@ const QuerySchema = zod.object({
   cursor: zod.string().optional(),
   limit: zod.number().optional(),
   status: zod.string().optional(), // status has DB index
-  amount: zod.string().optional(), // amount has DB index
+  amount: zod.number().optional(), // amount has DB index
 })
 
 const FormSchema = zod.object({
