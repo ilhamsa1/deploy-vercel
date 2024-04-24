@@ -133,35 +133,8 @@ IMMUTABLE;
 -- create domain uuid_ulid to: serve uuid type data as ulid, and stored ulid data back to uuid
 CREATE DOMAIN UUID_ULID AS UUID;
 
--- create a function to convert uuid to ulid (char 26)
-CREATE OR REPLACE FUNCTION char26_ulid(UUID_ULID)
-RETURNS CHAR(26)
-AS
-$$
-  SELECT uuid_to_ulid($1);
-$$
-LANGUAGE sql
-IMMUTABLE;
--- create a function to convert uuid to ulid (text)
-CREATE OR REPLACE FUNCTION text_ulid(UUID_ULID)
-RETURNS TEXT
-AS
-$$
-  SELECT uuid_to_ulid($1);
-$$
-LANGUAGE sql
-IMMUTABLE;
-
--- create cast to automate serve UUID as CHAR(26) or TEXT ULID
-CREATE CAST (UUID_ULID AS CHAR(26))
-WITH FUNCTION char26_ulid(UUID_ULID)
-AS IMPLICIT;
-CREATE CAST (UUID_ULID AS TEXT)
-WITH FUNCTION text_ulid(UUID_ULID)
-AS IMPLICIT;
-
 -- create a function to convert uuid_ulid to json
-CREATE OR REPLACE FUNCTION uuid_ulid_to_json(UUID_ULID)
+CREATE OR REPLACE FUNCTION json(UUID_ULID)
 RETURNS JSON
 AS
 $$
@@ -170,22 +143,8 @@ $$
 LANGUAGE SQL
 IMMUTABLE;
 
--- create cast to convert uuid_ulid as json
-CREATE CAST (UUID_ULID AS JSON)
-WITH FUNCTION uuid_ulid_to_json(UUID_ULID)
-AS IMPLICIT;
-
--- create a function to convert back char26 ulid to uuid
-CREATE OR REPLACE FUNCTION char26_ulid_to_uuid(CHAR(26))
-RETURNS UUID_ULID
-AS
-$$
-  SELECT ulid_to_uuid($1);
-$$
-LANGUAGE sql
-IMMUTABLE;
 -- create a function to convert back text ulid to uuid
-CREATE OR REPLACE FUNCTION text_ulid_to_uuid(TEXT)
+CREATE OR REPLACE FUNCTION uuid_ulid(TEXT)
 RETURNS UUID_ULID
 AS
 $$
@@ -194,26 +153,48 @@ $$
 LANGUAGE sql
 IMMUTABLE;
 
--- create cast to convert char26 as uuid_ulid
-CREATE CAST (CHAR(26) AS UUID_ULID)
-WITH FUNCTION char26_ulid_to_uuid(CHAR(26))
-AS IMPLICIT;
--- create cast to convert text as uuid_ulid
-CREATE CAST (TEXT AS UUID_ULID)
-WITH FUNCTION text_ulid_to_uuid(TEXT)
-AS IMPLICIT;
-
--- create a function to shortened format a JSON request body
-CREATE OR REPLACE FUNCTION json_to_uuid_ulid(JSON)
-RETURNS public.UUID_ULID
+-- create a function to convert back json ulid to uuid
+CREATE OR REPLACE FUNCTION uuid_ulid(JSON)
+RETURNS UUID_ULID
 AS
 $$
   select ulid_to_uuid($1 #>> '{}');
 $$
-LANGUAGE SQL
+LANGUAGE sql
 IMMUTABLE;
 
--- create cast to convert json to uuid_ulid
-CREATE CAST (JSON AS public.uuid_ulid)
-WITH FUNCTION json_to_uuid_ulid(JSON)
+-- create cast to convert uuid_ulid as json
+CREATE CAST (UUID_ULID AS JSON)
+WITH FUNCTION json(UUID_ULID)
 AS IMPLICIT;
+
+-- create cast to convert text as uuid_ulid
+CREATE CAST (TEXT AS UUID_ULID)
+WITH FUNCTION uuid_ulid(TEXT)
+AS IMPLICIT;
+
+-- create cast to convert json to uuid_ulid
+CREATE CAST (JSON AS uuid_ulid)
+WITH FUNCTION uuid_ulid(JSON)
+AS IMPLICIT;
+
+-- create a function for uuid_ulid eq operator
+CREATE OR REPLACE FUNCTION uuid_ulid_eq_operator(lhs_id UUID_ULID, rhs_id TEXT)
+RETURNS BOOLEAN
+AS
+$$
+  SELECT uuid_send(lhs_id) = parse_ulid(rhs_id);
+$$
+LANGUAGE sql
+IMMUTABLE;
+
+-- create operator ===
+CREATE OPERATOR === (
+  LEFTARG = UUID_ULID,
+  RIGHTARG = TEXT,
+  FUNCTION = uuid_ulid_eq_operator,
+  COMMUTATOR = ===,
+  NEGATOR = !==,
+  HASHES,
+  MERGES
+);
