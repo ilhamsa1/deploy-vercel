@@ -8,3 +8,7 @@ export const computeMutation = <T extends Record<string, unknown>>(
 }
 
 export type ResponseData<T> = { data: T[]; count?: number; status: number; error: any }
+
+export function convertToDecimal(amount: number) {
+  return (amount / 100).toFixed(2)
+}
