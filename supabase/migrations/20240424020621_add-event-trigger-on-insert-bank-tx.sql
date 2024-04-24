@@ -5,7 +5,7 @@ SET search_path = public
 AS $$
 BEGIN
         
-    PERFORM public.confirm_amount_banks(NEW);
+    PERFORM public.bank_payment_matchings(NEW);
 
     RETURN NEW;
 END;

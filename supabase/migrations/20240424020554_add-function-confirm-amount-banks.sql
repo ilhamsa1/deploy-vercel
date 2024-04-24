@@ -1,18 +1,15 @@
-CREATE OR REPLACE FUNCTION public.confirm_amount_banks(item public.bank_tx) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION public.bank_payment_matchings(item public.bank_tx) RETURNS VOID AS $$
 DECLARE
-    each_item payment_intent;  -- Declare as a record type for each row
+    each_item payment_intent;
 BEGIN
-    
-    -- Scan items that are not yet being processed
     FOR each_item IN
         SELECT * FROM payment_intent 
-        WHERE status = 'requires_payment_method' 
-        AND next_action->'display_bank_transfer'->>'amount_remaining' = item.amount
-        AND next_action->'display_bank_transfer'->>'amount_remaining_e' = item.amount_e
-        AND next_action->'display_bank_transfer'->>'currency' = item.currency
+        WHERE status = 'requires_action' 
+        AND ((next_action::jsonb->>'display_bank_transfer_instructions')::jsonb->>'amount_remaining')::numeric = item.amount
+        AND ((next_action::jsonb->>'display_bank_transfer_instructions')::jsonb->>'amount_remaining_e')::numeric = item.amount_e
+        AND ((next_action::jsonb->>'display_bank_transfer_instructions')::jsonb->>'currency') = item.currency
         ORDER BY id ASC
     LOOP
-        -- Process each pending item
         PERFORM confirm_payment_intent_by_bank_tx(each_item, item);
     END LOOP;   
 END;
