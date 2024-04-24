@@ -90,7 +90,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
 
         // Construct next action object
         const next_action = {
-            display_bank_transfer: {
+            display_bank_transfer_instructions: {
                 // Calculate remaining amount for bank transfer
                 amount_remaining: BigInt(row.amount) + BigInt(count_payment_intent.count),
                 amount_remaining_e: row.amount_e,
