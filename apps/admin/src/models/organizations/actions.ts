@@ -55,7 +55,8 @@ export const getUserOrganizationListByUser = async () => {
 export const getUserList = async ({
   page,
   pageSize,
-}: PaginationParam): Promise<ResponseData<UserListT> | null> => {
+  searchDisplayName,
+}: PaginationParam & { searchDisplayName?: string }): Promise<ResponseData<UserListT> | null> => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
   const orgId = userData.user?.user_metadata?.org?.id
@@ -63,18 +64,24 @@ export const getUserList = async ({
 
   const { from, to } = calculatePageAndPageSize({ page, pageSize })
 
-  const data = await supabase
+  let query = supabase
     .from('user_orgs')
     .select(
       `
-    *,
-    org (*),
-    user (*)
-  `,
+      *,
+      org(*),
+      user(*)
+    `,
       { count: 'exact' },
     )
     .eq('org_id', orgId)
     .range(from, to)
+
+  if (searchDisplayName) {
+    query = query.ilike('user.display_name', `%${searchDisplayName}%`)
+  }
+
+  const data = await query
 
   return data as QueryData<UserListT>
 }

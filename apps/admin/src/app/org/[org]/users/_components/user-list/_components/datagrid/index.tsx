@@ -68,7 +68,7 @@ const List = ({ users, count, isLoading, setPaginationModel, paginationModel }: 
   ]
 
   const handlePaginationModelChange = (newPaginationModel: GridPaginationModel) => {
-    setPaginationModel(newPaginationModel)
+    setPaginationModel((prev) => ({ ...prev, ...newPaginationModel }))
   }
 
   return (

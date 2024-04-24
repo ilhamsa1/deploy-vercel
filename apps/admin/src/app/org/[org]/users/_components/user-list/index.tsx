@@ -1,10 +1,10 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import { useEffect, useState, useTransition } from 'react'
+import { ChangeEvent, useEffect, useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
 
-import { useDialogShowState } from '@/hooks'
+import { useDebounceFn, useDialogShowState } from '@/hooks'
 import { UserListT } from '@/models/organizations/types'
 import Filters from './_components/filters'
 import Datagrid from './_components/datagrid'
@@ -17,16 +17,26 @@ const UserList = () => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
   const [data, setData] = useState<UserListT[]>([])
   const [count, setCount] = useState<number>(0)
-  const [paginationModel, setPaginationModel] = useState<PaginationParam>({
+  const [paramsModel, setParamsModel] = useState<PaginationParam & { searchDisplayName?: string }>({
     page: 1,
     pageSize: 10,
+    searchDisplayName: '',
   })
   const [isLoading, startTransition] = useTransition()
+
+  const { debounce } = useDebounceFn()
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value || ''
+    debounce(() => {
+      setParamsModel((prev) => ({ ...prev, searchDisplayName: newValue }))
+    })
+  }
 
   const fetchUsers = () => {
     startTransition(async () => {
       try {
-        const res = await getUserList(paginationModel)
+        const res = await getUserList(paramsModel)
         if (!res?.data.length) return
         setData(res.data as UserListT[])
         setCount(res.count || 0)
@@ -38,17 +48,21 @@ const UserList = () => {
 
   useEffect(() => {
     fetchUsers()
-  }, [paginationModel])
+  }, [paramsModel])
 
   return (
     <Box>
-      <Filters onOpenDialog={onOpenDialog} />
+      <Filters
+        searchDisplayName={paramsModel.searchDisplayName || ''}
+        onOpenDialog={onOpenDialog}
+        handleChange={handleChange}
+      />
       <Datagrid
         isLoading={isLoading}
         users={data}
         count={count}
-        paginationModel={paginationModel}
-        setPaginationModel={setPaginationModel}
+        paginationModel={paramsModel}
+        setPaginationModel={setParamsModel}
       />
       <DialogAdd
         openDialog={openDialog}

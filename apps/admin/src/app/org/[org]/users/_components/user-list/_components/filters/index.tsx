@@ -1,16 +1,16 @@
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
-import React, { useState, ComponentType } from 'react'
+import React, { ChangeEvent, ComponentType } from 'react'
 
 import Button from '@/components/button'
 
 type Props = {
   onOpenDialog: () => void
+  searchDisplayName: string
+  handleChange: (_e: ChangeEvent<HTMLInputElement>) => void
 }
 
-const Filter: ComponentType<Props> = ({ onOpenDialog }) => {
-  const [search, setSearch] = useState<string>('')
-
+const Filter: ComponentType<Props> = ({ onOpenDialog, searchDisplayName, handleChange }) => {
   return (
     <Grid
       container
@@ -33,10 +33,8 @@ const Filter: ComponentType<Props> = ({ onOpenDialog }) => {
           fullWidth
           size="small"
           placeholder="Search"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value)
-          }}
+          defaultValue={searchDisplayName}
+          onChange={handleChange}
         />
       </Grid>
       <Grid
