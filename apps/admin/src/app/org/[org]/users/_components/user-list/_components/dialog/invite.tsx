@@ -1,13 +1,18 @@
 import Stack from '@mui/material/Stack'
-import { ComponentType, useState } from 'react'
+import { ComponentType } from 'react'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import toast from 'react-hot-toast'
+import zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
 import DialogSentInviteUser from './sent'
 
 import Dialog from '@/components/dialog'
 import Button from '@/components/button'
 import Typography from '@/components/typography'
-import Textfield from '@/components/textfield'
+import TextField from '@/components/textfield'
+import { FormField, FormItem, FormMessage, FormControl, Form } from '@/components/form'
 
 import { useDialogShowState } from '@/hooks'
 
@@ -17,15 +22,26 @@ type Props = {
   inviteCode: string
 }
 
+const FormSchema = zod.object({
+  email: zod.string().email(),
+})
+
 const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inviteCode }) => {
   const {
     openDialog: openDialogSentInvite,
     onCloseDialog: onCloseDialogSentInvite,
     onOpenDialog: onOpenDialogSentInvite,
   } = useDialogShowState()
-  const [email, setEmail] = useState('')
 
-  const onSubmit = () => {
+  const form = useForm<zod.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      email: '',
+    },
+  })
+
+  const onSubmit = (data: zod.infer<typeof FormSchema>) => {
+    console.log(data)
     onOpenDialogSentInvite()
     onCloseDialog()
   }
@@ -33,9 +49,9 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
   const copyToClipboard = async (content: string) => {
     try {
       await navigator.clipboard.writeText(content)
-      console.log('Copied to clipboard:', content)
+      toast.success('Copied to code')
     } catch (error) {
-      console.error('Unable to copy to clipboard:', error)
+      toast.error('Unable to copy to code')
     }
   }
 
@@ -76,13 +92,29 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
             spacing={1}
             width="100%"
           >
-            <Textfield
-              value={email}
-              placeholder="Enter email address"
-              onChange={(e: any) => setEmail(e.target.value)}
-            />
+            <Form {...form}>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <TextField
+                        variant="filled"
+                        placeholder="example@gmail.com"
+                        fullWidth
+                        {...field}
+                        type="email"
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </Form>
             <Button
-              onClick={onSubmit}
+              onClick={form.handleSubmit(onSubmit)}
               color="primary"
               variant="contained"
               size="small"

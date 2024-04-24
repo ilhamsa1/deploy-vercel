@@ -15,7 +15,7 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/form'
 import { useDialogShowState } from '@/hooks'
 
 import DialogInviteUser from './invite'
-import { inviteUser } from './actions'
+import { inviteUserToOrganization } from './actions'
 
 type Props = {
   openDialog: boolean
@@ -39,12 +39,12 @@ const DialogAddUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) => {
 
   const onSubmit = async (data: zod.infer<typeof FormSchema>) => {
     try {
-      const response = await inviteUser(data)
+      const response = await inviteUserToOrganization(data.role)
       if (!response || !response.org) {
         throw new Error('Failed to invite organization')
       }
 
-      setInviteCode(response.code)
+      setInviteCode(response?.code || '')
       onOpenDialogInvite()
       onCloseDialog()
     } catch (error) {

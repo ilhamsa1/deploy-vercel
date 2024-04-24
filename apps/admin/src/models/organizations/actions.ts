@@ -74,6 +74,7 @@ export const getUserList = async ({
     `,
       { count: 'exact' },
     )
+    .throwOnError()
     .eq('org_id', orgId)
     .range(from, to)
 

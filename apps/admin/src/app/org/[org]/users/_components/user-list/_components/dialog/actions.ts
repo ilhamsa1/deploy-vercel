@@ -1,10 +1,4 @@
 'use server'
-import { inviteUserToOrganization } from '@/models/invite-org/queries'
-import { createClient } from '@/utils/supabase/server'
+import { inviteUserToOrg as inviteUserToOrgAction } from '@/models/invite-org/actions'
 
-export async function inviteUser(formData: { role: string }) {
-  const supabase = createClient()
-
-  const result = await inviteUserToOrganization(supabase, formData.role)
-  return result
-}
+export const inviteUserToOrganization = inviteUserToOrgAction
