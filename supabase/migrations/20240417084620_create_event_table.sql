@@ -21,17 +21,21 @@ ALTER TABLE public.event ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "user can only view org event data"
 ON public.event
 FOR SELECT
-TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+TO AUTHENTICATED, ANON
+USING (
+  ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true )
+  OR
+  ( (SELECT private.is_account_own_by_authenticated_user(account_id)) = true )
+);
 
 CREATE POLICY "user can only insert org event data"
 ON public.event
 FOR INSERT
-TO AUTHENTICATED
-WITH CHECK (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+TO AUTHENTICATED, ANON
+WITH CHECK (
+  ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true )
+  OR
+  ( (SELECT private.is_account_own_by_authenticated_user(account_id)) = true )
+);
 
-CREATE POLICY "user can only update org event data"
-ON public.event
-FOR UPDATE
-TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+NOTIFY pgrst, 'reload schema';

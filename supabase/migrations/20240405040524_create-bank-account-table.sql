@@ -13,26 +13,26 @@ ALTER TABLE public.bank_account ENABLE ROW LEVEL SECURITY;
 
 -- BANK ACCOUNT POLICY
 
-CREATE POLICY "user can only view org bank account data"
+CREATE POLICY "only admin user can only view org bank account data"
 ON public.bank_account
 FOR SELECT
 TO AUTHENTICATED
-USING (( SELECT public.get_org_for_authenticated_user(org_id) ) = true );
+USING ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );
 
 CREATE POLICY "only admin user can only insert org bank account data"
 ON public.bank_account
 FOR INSERT
 TO AUTHENTICATED
-WITH CHECK (( SELECT public.is_authenticated_org_role(org_id, 'admin') ) = true );
+WITH CHECK ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );
 
 CREATE POLICY "only admin user can only update org bank account data"
 ON public.bank_account
 FOR UPDATE
 TO AUTHENTICATED
-USING (( SELECT public.is_authenticated_org_role(org_id, 'admin') ) = true );
+USING ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );
 
 CREATE POLICY "only admin user can only delete org bank account data"
 ON public.bank_account
 FOR DELETE
 TO AUTHENTICATED
-USING (( SELECT public.is_authenticated_org_role(org_id, 'admin') ) = true );
+USING ( (SELECT private.is_authenticated_org_role(org_id, 'admin')) = true );
