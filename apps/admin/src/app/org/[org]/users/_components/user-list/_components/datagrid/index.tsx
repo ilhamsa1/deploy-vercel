@@ -1,14 +1,20 @@
 import Typography from '@mui/material/Typography'
 import { GridCellParams, GridPaginationModel, GridRowModel } from '@mui/x-data-grid'
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 
 import Datagrid from '@/components/data-grid'
 import { formatDateNameShortMonth } from '@/lib/date'
+import { PaginationParam } from '@/interfaces'
 
-const List = ({ data, count, isLoading }: any) => {
-  const [page] = useState(1)
-  const [pageSize] = useState(20)
+type Props = {
+  users: GridRowModel[]
+  count: number
+  isLoading: boolean
+  setPaginationModel: Dispatch<SetStateAction<PaginationParam>>
+  paginationModel: PaginationParam
+}
 
+const List = ({ users, count, isLoading, setPaginationModel, paginationModel }: Props) => {
   const columns = [
     {
       field: 'display_name',
@@ -61,18 +67,18 @@ const List = ({ data, count, isLoading }: any) => {
     },
   ]
 
-  const handlePaginationModelChange = (paginationModel: GridPaginationModel) => {
-    console.log(paginationModel)
+  const handlePaginationModelChange = (newPaginationModel: GridPaginationModel) => {
+    setPaginationModel(newPaginationModel)
   }
 
   return (
     <Datagrid
       noAction
-      rows={data}
+      rows={users}
       loading={isLoading}
       columns={columns}
-      page={page}
-      pageSize={pageSize}
+      page={Number(paginationModel.page)}
+      pageSize={Number(paginationModel.pageSize)}
       rowCount={count}
       getRowId={(row: GridRowModel) => row.user_id}
       handlePaginationModelChange={handlePaginationModelChange}

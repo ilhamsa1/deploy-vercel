@@ -1,9 +1,10 @@
 import { QueryData, SupabaseClient } from '@supabase/supabase-js'
 
-import { ResponseData } from '@/lib/common'
+import { calculatePageAndPageSize, ResponseData } from '@/lib/common'
 import { createClient } from '@/utils/supabase/server'
 
 import { OrganizationModels, OrgT, OrgInviteT, UserOrgT, UserListT, OrgJoinRequestT } from './types'
+import { PaginationParam } from '@/interfaces'
 
 export const getUserAuth = async () => {
   const supabase = createClient()
@@ -51,11 +52,17 @@ export const getUserOrganizationListByUser = async () => {
   return data as UserOrgT[]
 }
 
-export const getUserList = async (): Promise<ResponseData<UserListT> | null> => {
+export const getUserList = async ({
+  page,
+  pageSize,
+}: PaginationParam): Promise<ResponseData<UserListT> | null> => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
   const orgId = userData.user?.user_metadata?.org?.id
   if (!orgId) return null
+
+  const { from, to } = calculatePageAndPageSize({ page, pageSize })
+
   const data = await supabase
     .from('user_orgs')
     .select(
@@ -67,6 +74,8 @@ export const getUserList = async (): Promise<ResponseData<UserListT> | null> => 
       { count: 'exact' },
     )
     .eq('org_id', orgId)
+    .range(from, to)
+
   return data as QueryData<UserListT>
 }
 
