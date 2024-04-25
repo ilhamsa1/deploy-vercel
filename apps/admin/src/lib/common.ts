@@ -1,3 +1,5 @@
+import { amountCurrency } from './constant'
+
 export const computeMutation = <T extends Record<string, unknown>>(
   newRow: T,
   oldRow: T,
@@ -9,6 +11,16 @@ export const computeMutation = <T extends Record<string, unknown>>(
 
 export type ResponseData<T> = { data: T[]; count?: number; status: number; error: any }
 
-export function convertToDecimal(amount: number) {
-  return (amount / 100).toFixed(2)
+export function processAmountWithCurrency(amount: number | string, currency: string) {
+  let amount_e = 2
+
+  if (typeof amount === 'string') {
+    const [amount_w, amount_f] = amount.split('.', 2)
+    amount_e = amount_f.length
+    amount = +`${amount_w}${amount_f}`
+  } else {
+    amount_e = amountCurrency[currency.toLowerCase()]?.fractionDigits
+  }
+
+  return { amount, amount_e }
 }

@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { apiKey } from '@/services/api-key'
 import zod from 'zod'
 
 import {
@@ -11,7 +10,8 @@ import {
   RESERVED_SEARCH_KEYS,
 } from '@/lib/pagination'
 import { PAYMENT_INTENT_STATUS } from '@/lib/constant'
-import { convertToDecimal } from '@/lib/common'
+import { processAmountWithCurrency } from '@/lib/common'
+import { createClientWithAuthHeader } from '@/utils/supabase/server'
 
 // Change the dynamic behavior of a layout or page to fully static or fully dynamic. https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
 export const dynamic = 'auto'
@@ -21,7 +21,7 @@ export const revalidate = 0
 export const fetchCache = 'auto'
 
 export async function GET(request: NextRequest) {
-  const supabase = await apiKey(request)
+  const supabase = await createClientWithAuthHeader()
   const searchParams = request.nextUrl.searchParams
   await validateGet(Object.fromEntries(searchParams.entries()))
   // Security issue if duplicate key: ?select=status&status=requires_action&status=&select=
@@ -83,18 +83,28 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: Request) {
-  const supabase = await apiKey(request)
+  const supabase = createClientWithAuthHeader()
   const params = await request.json()
   await validatePost(params)
 
-  const { amount, ...item } = params
+  const { currency, ...item } = params
+  const { amount, amount_e } = processAmountWithCurrency(item.amount, currency)
+
+  const { data: account } = await supabase
+    .from('business_account')
+    .select('id, org_id')
+    .limit(1)
+    .single()
 
   const { data } = await supabase
     .from('payment_intent')
     .insert({
       ...item,
-      amount: convertToDecimal(amount),
-      amount_e: 2,
+      currency,
+      amount,
+      amount_e,
+      org_id: account?.org_id,
+      account_id: account?.id,
       status: PAYMENT_INTENT_STATUS.REQUIRES_PAYMENT_METHOD,
     })
     .select('*')
@@ -131,7 +141,7 @@ const QuerySchema = zod.object({
 
 const FormSchema = zod.object({
   currency: zod.string(),
-  amount: zod.number(),
+  amount: zod.number().or(zod.string().nonempty()),
   metadata: zod.object({}),
   customer: zod.string(),
   receipt_email: zod.string(),

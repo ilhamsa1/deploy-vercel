@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient as createClientServer } from '@supabase/supabase-js'
+import { cookies, headers } from 'next/headers'
 
 import { Database } from './types'
 
@@ -67,6 +68,30 @@ export function createServiceClient() {
             // user sessions.
           }
         },
+      },
+    },
+  )
+}
+
+export function createClientWithAuthHeader() {
+  const headersList = headers()
+  const authorization = headersList.get('authorization')
+
+  const user_api_key = authorization?.split(' ')[1] || ''
+
+  return createClientServer(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: {
+        headers: {
+          Authorization: user_api_key,
+        },
+      },
+      auth: {
+        persistSession: false,
+        detectSessionInUrl: false,
+        autoRefreshToken: false,
       },
     },
   )
