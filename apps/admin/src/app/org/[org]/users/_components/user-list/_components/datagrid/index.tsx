@@ -1,20 +1,35 @@
 import Typography from '@mui/material/Typography'
-import { GridCellParams, GridPaginationModel, GridRowModel } from '@mui/x-data-grid'
-import React, { Dispatch, SetStateAction } from 'react'
+import {
+  GridCellParams,
+  GridPaginationModel,
+  GridRowModel,
+  GridPaginationMeta,
+  DataGrid,
+  GridSortModel,
+} from '@mui/x-data-grid'
+import React, { Dispatch, SetStateAction, useRef } from 'react'
 
-import Datagrid from '@/components/data-grid'
 import { formatDateNameShortMonth } from '@/lib/date'
-import { PaginationParam } from '@/interfaces'
 
 type Props = {
   users: GridRowModel[]
-  count: number
+  totalRowCount: number
   isLoading: boolean
-  setPaginationModel: Dispatch<SetStateAction<PaginationParam>>
-  paginationModel: PaginationParam
+  setSortModel: Dispatch<SetStateAction<GridSortModel>>
+  setPaginationModel: Dispatch<SetStateAction<GridPaginationModel>>
+  paginationModel: GridPaginationModel
+  hasNextPage: string
 }
 
-const List = ({ users, count, isLoading, setPaginationModel, paginationModel }: Props) => {
+const List = ({
+  users,
+  totalRowCount,
+  isLoading,
+  setSortModel,
+  setPaginationModel,
+  paginationModel,
+  hasNextPage,
+}: Props) => {
   const columns = [
     {
       field: 'display_name',
@@ -67,21 +82,36 @@ const List = ({ users, count, isLoading, setPaginationModel, paginationModel }: 
     },
   ]
 
-  const handlePaginationModelChange = (newPaginationModel: GridPaginationModel) => {
-    setPaginationModel((prev) => ({ ...prev, ...newPaginationModel }))
-  }
+  const handleSortModelChange = React.useCallback((sortModel: GridSortModel) => {
+    // Here you save the data you need from the sort model
+    setSortModel([...sortModel])
+  }, [])
+
+  const paginationMetaRef = useRef<GridPaginationMeta>()
+
+  // Memoize to avoid flickering when the `hasNextPage` is `undefined` during refetch
+  const paginationMeta = React.useMemo(() => {
+    if (hasNextPage !== undefined && paginationMetaRef.current?.hasNextPage !== !!hasNextPage) {
+      paginationMetaRef.current = { hasNextPage: !!hasNextPage }
+    }
+    return paginationMetaRef.current
+  }, [hasNextPage])
 
   return (
-    <Datagrid
-      noAction
+    <DataGrid
       rows={users}
-      loading={isLoading}
       columns={columns}
-      page={Number(paginationModel.page)}
-      pageSize={Number(paginationModel.pageSize)}
-      rowCount={count}
+      sortingMode="server"
+      paginationMode="server"
+      pageSizeOptions={[1, 10, 20, 50, 100]}
+      initialState={{ pagination: { rowCount: -1 } }}
+      onSortModelChange={handleSortModelChange}
+      loading={isLoading}
       getRowId={(row: GridRowModel) => row.user_id}
-      handlePaginationModelChange={handlePaginationModelChange}
+      paginationModel={paginationModel}
+      onPaginationModelChange={setPaginationModel}
+      paginationMeta={paginationMeta}
+      rowCount={totalRowCount}
     />
   )
 }

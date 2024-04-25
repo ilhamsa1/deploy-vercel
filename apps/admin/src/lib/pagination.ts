@@ -1,4 +1,5 @@
 import { type SupabaseClient } from '@supabase/supabase-js'
+import { removeParentheses } from './common'
 
 type PostgrestQueryBuilder<T> = ReturnType<SupabaseClient<T>['from']>
 type PostgresFilterBuilder<T> = ReturnType<PostgrestQueryBuilder<T>['select']>
@@ -28,7 +29,7 @@ export function extractOperandAndOperatorFilter(value: string) {
 export function extractOperandAndOperatorCursor(cursor: string) {
   const cursorPlain = Buffer.from(cursor, 'base64url').toString('utf-8')
   const [operator] = cursorPlain.split('=', 1)
-  const operand = cursorPlain.slice(operator.length + 1)
+  const operand = removeParentheses(cursorPlain.slice(operator.length + 1))
   return { operator, operand }
 }
 
@@ -53,6 +54,7 @@ export function getCursor(
   orderEntries: OrderEntries,
   firstOrlastItem: Record<string, unknown>,
   isNext: boolean,
+  keyId: string,
 ) {
   // Assume id column is sorted ascending by default
   let isIdColumnAsc = true
@@ -86,7 +88,7 @@ export function getCursor(
   }
 
   // Construct the last part of cursor using the 'id' column's sort direction
-  const lastCondition = `id.${isIdColumnAsc ? 'gt' : 'lt'}.${firstOrlastItem.id}`
+  const lastCondition = `${keyId}.${isIdColumnAsc ? 'gt' : 'lt'}.${firstOrlastItem[keyId]}`
 
   // Construct a nested AND condition combining all previous EQ conditions and add to OR conditions
   accOrConditions.push(`and(${accEqConditions.join(',')},${lastCondition})`)
@@ -98,10 +100,18 @@ export function getCursor(
   ).toString('base64url')
 }
 
-export function getNextCursor(orderEntries: OrderEntries, lastItem: Record<string, unknown>) {
-  return getCursor(orderEntries, lastItem, true)
+export function getNextCursor(
+  orderEntries: OrderEntries,
+  lastItem: Record<string, unknown>,
+  keyId: string,
+) {
+  return getCursor(orderEntries, lastItem, true, keyId)
 }
 
-export function getPrevCursor(orderEntries: OrderEntries, firstItem: Record<string, unknown>) {
-  return getCursor(orderEntries, firstItem, false)
+export function getPrevCursor(
+  orderEntries: OrderEntries,
+  firstItem: Record<string, unknown>,
+  keyId: string,
+) {
+  return getCursor(orderEntries, firstItem, false, keyId)
 }

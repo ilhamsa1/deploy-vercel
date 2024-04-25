@@ -1,10 +1,16 @@
 import { QueryData, SupabaseClient } from '@supabase/supabase-js'
 
-import { calculatePageAndPageSize, ResponseData } from '@/lib/common'
+import { ResponseData } from '@/lib/common'
 import { createClient } from '@/utils/supabase/server'
 
+import {
+  extractOperandAndOperatorCursor,
+  getNextCursor,
+  getPrevCursor,
+  orderParamToOrderOptions,
+} from '@/lib/pagination'
+
 import { OrganizationModels, OrgT, OrgInviteT, UserOrgT, UserListT, OrgJoinRequestT } from './types'
-import { PaginationParam } from '@/interfaces'
 
 export const getUserAuth = async () => {
   const supabase = createClient()
@@ -53,16 +59,20 @@ export const getUserOrganizationListByUser = async () => {
 }
 
 export const getUserList = async ({
-  page,
+  cursor,
   pageSize,
-  searchDisplayName,
-}: PaginationParam & { searchDisplayName?: string }): Promise<ResponseData<UserListT> | null> => {
+  sortModel,
+}: {
+  cursor: string
+  pageSize: number
+  sortModel?: string
+}): Promise<ResponseData<UserListT> | null> => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
   const orgId = userData.user?.user_metadata?.org?.id
   if (!orgId) return null
 
-  const { from, to } = calculatePageAndPageSize({ page, pageSize })
+  const orderEntries = orderParamToOrderOptions(sortModel || '')
 
   let query = supabase
     .from('user_orgs')
@@ -72,19 +82,42 @@ export const getUserList = async ({
       org(*),
       user(*)
     `,
-      { count: 'exact' },
+      { count: 'estimated' },
     )
     .throwOnError()
     .eq('org_id', orgId)
-    .range(from, to)
 
-  if (searchDisplayName) {
-    query = query.ilike('user.display_name', `%${searchDisplayName}%`)
+  for (const [column, options] of orderEntries) {
+    if (column) {
+      query = query.order(column, options)
+    }
   }
 
-  const data = await query
+  if (cursor) {
+    const { operator, operand } = extractOperandAndOperatorCursor(cursor)
+    if (operator === 'or') {
+      query = query.or(operand)
+    } else {
+      throw new Error('Invalid cursor')
+    }
+  }
 
-  return data as QueryData<UserListT>
+  const result = await query.limit(pageSize || 10)
+
+  let next_cursor: typeof cursor = ''
+  let prev_cursor: typeof cursor = ''
+
+  if (!!result.data && result.data.length > 0) {
+    const firstItem = result.data[0]
+    prev_cursor = getPrevCursor(orderEntries, firstItem, 'user_id')
+
+    if (result.data.length >= pageSize) {
+      const lastItem = result.data[result.data.length - 1]
+      next_cursor = getNextCursor(orderEntries, lastItem, 'user_id')
+    }
+  }
+
+  return { ...result, next_cursor, prev_cursor } as QueryData<UserListT>
 }
 
 export const getOrgInvites = async (): Promise<ResponseData<OrgInviteT> | null> => {
