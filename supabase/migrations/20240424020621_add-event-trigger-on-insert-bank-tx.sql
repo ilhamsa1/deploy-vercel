@@ -5,7 +5,7 @@ SET search_path = public
 AS $$
 BEGIN
         
-    PERFORM public.bank_payment_matchings(NEW);
+    PERFORM private.bank_payment_matchings(NEW);
 
     RETURN NEW;
 END;
@@ -15,6 +15,6 @@ $$ LANGUAGE plpgsql;
 -- after each insert or update operation on the payment_intent table.
 
 CREATE OR REPLACE TRIGGER on_insert_bank_tx_trigger
-AFTER INSERT ON public.payment_intent
+AFTER INSERT ON public.bank_tx
 FOR EACH ROW
 EXECUTE FUNCTION private.handler_bank_tx_trigger();

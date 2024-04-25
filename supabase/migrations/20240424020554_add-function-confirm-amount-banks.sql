@@ -10,7 +10,7 @@ BEGIN
         AND ((next_action::jsonb->>'display_bank_transfer_instructions')::jsonb->>'currency') = item.currency
         ORDER BY id ASC
     LOOP
-        PERFORM confirm_payment_intent_by_bank_tx(each_item, item);
+        PERFORM private.confirm_payment_intent_by_bank_tx(each_item, item);
     END LOOP;   
 END;
 $$ LANGUAGE plpgsql;
