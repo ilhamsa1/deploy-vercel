@@ -7,9 +7,10 @@ import Dialog from '@/components/dialog'
 type Props = {
   openDialog: boolean
   onCloseDialog: () => void
+  emailSend: string
 }
 
-const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) => {
+const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, emailSend }) => {
   return (
     <Dialog
       open={openDialog}
@@ -26,7 +27,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog }) =
           fontWeight="bold"
           variant="body1"
         >
-          mcjordan@org.co
+          {emailSend}
         </Typography>
       </Stack>
     </Dialog>

@@ -1,5 +1,5 @@
 import Stack from '@mui/material/Stack'
-import { ComponentType } from 'react'
+import { ComponentType, useState } from 'react'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import toast from 'react-hot-toast'
 import zod from 'zod'
@@ -12,7 +12,7 @@ import Dialog from '@/components/dialog'
 import Button from '@/components/button'
 import Typography from '@/components/typography'
 import TextField from '@/components/textfield'
-import { FormField, FormItem, FormMessage, FormControl, Form } from '@/components/form'
+import { FormField, FormItem, FormMessage, Form } from '@/components/form'
 
 import { useDialogShowState } from '@/hooks'
 
@@ -32,6 +32,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
     onCloseDialog: onCloseDialogSentInvite,
     onOpenDialog: onOpenDialogSentInvite,
   } = useDialogShowState()
+  const [emailSend, setEmailSend] = useState('')
 
   const form = useForm<zod.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -42,6 +43,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
 
   const onSubmit = (data: zod.infer<typeof FormSchema>) => {
     console.log(data)
+    setEmailSend(data.email)
     onOpenDialogSentInvite()
     onCloseDialog()
   }
@@ -97,17 +99,15 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <TextField
-                        variant="filled"
-                        placeholder="example@gmail.com"
-                        fullWidth
-                        {...field}
-                        type="email"
-                        onChange={field.onChange}
-                      />
-                    </FormControl>
+                  <FormItem style={{ width: '100%' }}>
+                    <TextField
+                      variant="filled"
+                      placeholder="example@gmail.com"
+                      fullWidth
+                      {...field}
+                      type="email"
+                      onChange={field.onChange}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -118,6 +118,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
               color="primary"
               variant="contained"
               size="small"
+              style={{ height: '48px' }}
               endIcon={<ArrowForwardIcon />}
             >
               Send
@@ -128,6 +129,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
       <DialogSentInviteUser
         openDialog={openDialogSentInvite}
         onCloseDialog={onCloseDialogSentInvite}
+        emailSend={emailSend}
       />
     </>
   )
