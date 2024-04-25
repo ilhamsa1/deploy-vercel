@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.handler_bank_tx_trigger() 
+CREATE OR REPLACE FUNCTION private.handler_bank_tx_trigger() 
 RETURNS TRIGGER
 SECURITY definer
 SET search_path = public
@@ -17,4 +17,4 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER on_insert_bank_tx_trigger
 AFTER INSERT ON public.payment_intent
 FOR EACH ROW
-EXECUTE FUNCTION public.handler_bank_tx_trigger();
+EXECUTE FUNCTION private.handler_bank_tx_trigger();

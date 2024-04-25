@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE FUNCTION public.confirm_payment_intent_by_bank_tx(payment_intent_item payment_intent, bank_tx_item public.bank_tx) RETURNS BOOLEAN AS $$
+CREATE OR REPLACE FUNCTION private.confirm_payment_intent_by_bank_tx(payment_intent_item payment_intent, bank_tx_item public.bank_tx) RETURNS BOOLEAN AS $$
 {
     // Define constants
     const PAYMENT_INTENT_STATUS = {
@@ -42,7 +42,6 @@ CREATE OR REPLACE FUNCTION public.confirm_payment_intent_by_bank_tx(payment_inte
               ]
             )[0];
           
-     
             // Update payment_intent table with new status, next action, and payment method
             plv8.execute(
               "UPDATE payment_intent SET " +

@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.bank_payment_matchings(item public.bank_tx) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION private.bank_payment_matchings(item public.bank_tx) RETURNS VOID AS $$
 DECLARE
     each_item payment_intent;
 BEGIN
