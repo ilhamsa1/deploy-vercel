@@ -1,8 +1,7 @@
-CREATE OR REPLACE FUNCTION private.handle_cancel(payment_intent_id UUID) RETURNS BOOLEAN AS $$
+CREATE OR REPLACE FUNCTION private.cancel_payment_intent(payment_intent_id UUID) RETURNS BOOLEAN AS $$
 {
     // Define constants
     const ERROR_MESSAGES = {
-        CANNOT_CANCEL: 'Cannot cancel payment intent',
         AUTO_CONFIRM_IN_PROGRESS: 'Cannot be cancelled as auto-confirm already in progress'
     };
 

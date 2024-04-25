@@ -9,6 +9,11 @@ CREATE OR REPLACE FUNCTION private.confirm_payment_manually(
         REQUIRES_ACTION: 'requires_action'
     };
 
+    const PAYMENT_TX_STATUS = {
+      SUCCEEDED: 'succeeded',
+      FAILED: 'failed'
+    };
+
     try {
         plv8.subtransaction(function(){
             // Retrieve payment intent
@@ -54,9 +59,9 @@ CREATE OR REPLACE FUNCTION private.confirm_payment_manually(
                 [
                     row.id,
                     row.org_id,
-                    row.amount,
-                    row.amount_e,
-                    row.currency,
+                    bank_tx_row.amount,
+                    bank_tx_row.amount_e,
+                    bank_tx_row.currency,
                     row.payment_method,
                     PAYMENT_TX_STATUS.SUCCEEDED
                 ]
