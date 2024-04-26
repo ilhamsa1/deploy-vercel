@@ -7,7 +7,16 @@ import {
   DataGrid,
   GridSortModel,
 } from '@mui/x-data-grid'
-import React, { Dispatch, SetStateAction, useRef } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import Box from '@mui/material/Box'
 
 import { formatDateNameShortMonth } from '@/lib/date'
 
@@ -18,7 +27,7 @@ type Props = {
   setSortModel: Dispatch<SetStateAction<GridSortModel>>
   setPaginationModel: Dispatch<SetStateAction<GridPaginationModel>>
   paginationModel: GridPaginationModel
-  hasNextPage: string
+  hasNextPage: boolean
 }
 
 const List = ({
@@ -30,11 +39,18 @@ const List = ({
   paginationModel,
   hasNextPage,
 }: Props) => {
+  // Some API clients return undefined while loading
+  // Following lines are here to prevent `rowCountState` from being undefined during the loading
+  const [rowCountState, setRowCountState] = useState(totalRowCount || 0)
+  const prevEstimatedRowCount = useRef<number | undefined>(undefined)
+  const paginationMetaRef = useRef<GridPaginationMeta>()
+
   const columns = [
     {
       field: 'display_name',
       flex: 1,
       minWidth: 150,
+      sortable: false,
       headerName: 'Name',
       renderCell: (data: GridCellParams) => {
         return <Typography>{data.row?.user?.display_name || 'N/A'}</Typography>
@@ -44,6 +60,7 @@ const List = ({
       field: 'email',
       headerName: 'Email',
       flex: 1,
+      sortable: false,
       minWidth: 150,
       renderCell: (data: GridCellParams) => {
         return (
@@ -82,37 +99,53 @@ const List = ({
     },
   ]
 
-  const handleSortModelChange = React.useCallback((sortModel: GridSortModel) => {
+  const handleSortModelChange = useCallback((sortModel: GridSortModel) => {
     // Here you save the data you need from the sort model
     setSortModel([...sortModel])
   }, [])
 
-  const paginationMetaRef = useRef<GridPaginationMeta>()
-
   // Memoize to avoid flickering when the `hasNextPage` is `undefined` during refetch
-  const paginationMeta = React.useMemo(() => {
-    if (hasNextPage !== undefined && paginationMetaRef.current?.hasNextPage !== !!hasNextPage) {
-      paginationMetaRef.current = { hasNextPage: !!hasNextPage }
+  const paginationMeta = useMemo(() => {
+    if (hasNextPage !== undefined && paginationMetaRef.current?.hasNextPage !== hasNextPage) {
+      paginationMetaRef.current = { hasNextPage }
     }
     return paginationMetaRef.current
   }, [hasNextPage])
 
+  useEffect(() => {
+    if (paginationMeta?.hasNextPage) setRowCountState(-1)
+  }, [paginationMeta?.hasNextPage])
+
+  const estimatedRowCount = useMemo(() => {
+    if (totalRowCount !== 0) {
+      if (prevEstimatedRowCount.current === undefined) {
+        prevEstimatedRowCount.current = totalRowCount / 2
+      }
+      return totalRowCount / 2
+    }
+    return prevEstimatedRowCount.current
+  }, [totalRowCount])
+
   return (
-    <DataGrid
-      rows={users}
-      columns={columns}
-      sortingMode="server"
-      paginationMode="server"
-      pageSizeOptions={[1, 10, 20, 50, 100]}
-      initialState={{ pagination: { rowCount: -1 } }}
-      onSortModelChange={handleSortModelChange}
-      loading={isLoading}
-      getRowId={(row: GridRowModel) => row.user_id}
-      paginationModel={paginationModel}
-      onPaginationModelChange={setPaginationModel}
-      paginationMeta={paginationMeta}
-      rowCount={totalRowCount}
-    />
+    <Box sx={{ mt: '1rem' }}>
+      <DataGrid
+        rows={users}
+        autoHeight
+        columns={columns}
+        sortingMode="server"
+        paginationMode="server"
+        pageSizeOptions={[10]}
+        onSortModelChange={handleSortModelChange}
+        loading={isLoading}
+        getRowId={(row: GridRowModel) => row.user_id}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        paginationMeta={paginationMeta}
+        rowCount={rowCountState}
+        onRowCountChange={(newRowCount) => setRowCountState(newRowCount)}
+        estimatedRowCount={estimatedRowCount}
+      />
+    </Box>
   )
 }
 

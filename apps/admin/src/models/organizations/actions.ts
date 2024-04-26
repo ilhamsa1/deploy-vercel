@@ -106,18 +106,20 @@ export const getUserList = async ({
 
   let next_cursor: typeof cursor = ''
   let prev_cursor: typeof cursor = ''
+  let has_next_page = false
 
   if (!!result.data && result.data.length > 0) {
     const firstItem = result.data[0]
     prev_cursor = getPrevCursor(orderEntries, firstItem, 'user_id')
 
     if (result.data.length >= pageSize) {
+      has_next_page = true
       const lastItem = result.data[result.data.length - 1]
       next_cursor = getNextCursor(orderEntries, lastItem, 'user_id')
     }
   }
 
-  return { ...result, next_cursor, prev_cursor } as QueryData<UserListT>
+  return { ...result, next_cursor, prev_cursor, has_next_page } as QueryData<UserListT>
 }
 
 export const getOrgInvites = async (): Promise<ResponseData<OrgInviteT> | null> => {

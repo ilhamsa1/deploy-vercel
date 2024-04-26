@@ -20,7 +20,7 @@ const UserList = () => {
   const [data, setData] = useState<UserListT[]>([])
   const [count, setCount] = useState<number>(0)
   const [nextCursor, setNextCursor] = useState<string>('')
-  const [hasNextPage, setHasNextPage] = useState<string>('')
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false)
 
   const [searchDisplayName, setSearchDisplayName] = useState('')
   const mapPageToNextCursor = useRef<{ [page: number]: string }>({})
@@ -54,11 +54,12 @@ const UserList = () => {
     startTransition(async () => {
       try {
         const res = await getUserList(queryOptions)
+        setCount(res?.count || 0)
+        setNextCursor(res?.next_cursor || '')
+        setHasNextPage(res?.has_next_page || false)
+
         if (!res?.data.length) return
         setData(res.data as UserListT[])
-        setCount(res.count || 0)
-        setNextCursor(res.next_cursor || '')
-        setHasNextPage(res.prev_cursor || '')
       } catch (e: unknown) {
         toast.error((e as Error)?.message)
       }

@@ -18,6 +18,7 @@ export type ResponseData<T> = {
   error: any
   next_cursor?: string
   prev_cursor?: string
+  has_next_page?: boolean
 }
 
 export function processAmountWithCurrency(amount: number | string, currency: string) {

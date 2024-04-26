@@ -68,7 +68,7 @@ export function getCursor(
     // Determine if the current column is sorted ascending, default is true
     const isColumnAsc = options?.ascending || true
     // Special handling if the column is 'id'
-    if (column === 'id') {
+    if (column === keyId) {
       isIdColumnAsc = isColumnAsc
     }
     const columnValue = firstOrlastItem[column]
