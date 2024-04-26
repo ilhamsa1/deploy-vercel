@@ -116,12 +116,13 @@ const List = ({
     if (paginationMeta?.hasNextPage) setRowCountState(-1)
   }, [paginationMeta?.hasNextPage])
 
+  // Memoize to avoid flickering when the `totalRowCount` is `0` during refetch
   const estimatedRowCount = useMemo(() => {
     if (totalRowCount !== 0) {
       if (prevEstimatedRowCount.current === undefined) {
-        prevEstimatedRowCount.current = totalRowCount / 2
+        prevEstimatedRowCount.current = totalRowCount
       }
-      return totalRowCount / 2
+      return totalRowCount
     }
     return prevEstimatedRowCount.current
   }, [totalRowCount])
@@ -134,7 +135,7 @@ const List = ({
         columns={columns}
         sortingMode="server"
         paginationMode="server"
-        pageSizeOptions={[10]}
+        pageSizeOptions={[10, 20, 50, 100]}
         onSortModelChange={handleSortModelChange}
         loading={isLoading}
         getRowId={(row: GridRowModel) => row.user_id}

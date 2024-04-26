@@ -88,7 +88,8 @@ export function getCursor(
   }
 
   // Construct the last part of cursor using the 'id' column's sort direction
-  const lastCondition = `${keyId}.${isIdColumnAsc ? 'gt' : 'lt'}.${firstOrlastItem[keyId]}`
+  const operator: string = isNext ? (isIdColumnAsc ? 'gt' : 'lt') : isIdColumnAsc ? 'lt' : 'gt'
+  const lastCondition = `${keyId}.${operator}.${firstOrlastItem[keyId]}`
 
   // Construct a nested AND condition combining all previous EQ conditions and add to OR conditions
   accOrConditions.push(`and(${accEqConditions.join(',')},${lastCondition})`)
@@ -96,7 +97,7 @@ export function getCursor(
   // Combine OR conditions to construct the cursor
   return Buffer.from(
     // or=(c1, and(eq1, c2), and(eq1, eq2, c3), and(eq1, eq2, eq3, cId))
-    `or=(${accOrConditions.join(',')})`,
+    `${isNext ? 'n' : 'p'}=(${accOrConditions.join(',')})`,
   ).toString('base64url')
 }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
 
 import { createClient } from '../utils/supabase/client'
@@ -45,8 +45,8 @@ export const useDebounceFn = () => {
 export function useDialogShowState() {
   const [openDialog, setOpenDialog] = useState(false)
 
-  const onOpenDialog = () => setOpenDialog(true)
-  const onCloseDialog = () => setOpenDialog(false)
+  const onOpenDialog = useCallback(() => setOpenDialog(true), [setOpenDialog])
+  const onCloseDialog = useCallback(() => setOpenDialog(false), [setOpenDialog])
 
   return { openDialog, onOpenDialog, onCloseDialog }
 }
@@ -58,4 +58,17 @@ export function useDialogShowState() {
  */
 export const useSupabase = (): SupabaseClient => {
   return useMemo(createClient, [])
+}
+
+export const usePreviousPage = ({ page }: { page: number }) => {
+  // const [isNextPage, setIsNextPage] = useState(false)
+  const [prevPage, setPrevPage] = useState<number | null>(null)
+
+  if (page !== prevPage) {
+    // Row changed since last render. Update isScrollingDown.
+    // setIsNextPage(prevPage !== null && page > prevPage)
+    setPrevPage(page)
+  }
+
+  return prevPage
 }

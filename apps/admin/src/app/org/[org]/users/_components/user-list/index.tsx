@@ -1,13 +1,20 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import { ChangeEvent, useEffect, useMemo, useRef, useState, useTransition } from 'react'
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
 import toast from 'react-hot-toast'
 import { GridSortModel } from '@mui/x-data-grid'
 
-import { useDebounceFn, useDialogShowState } from '@/hooks'
+import { useDebounceFn, useDialogShowState, usePreviousPage } from '@/hooks'
 import { UserListT } from '@/models/organizations/types'
-import { sortModelArrayToString } from '@/lib/common'
 
 import Filters from './_components/filters'
 import Datagrid from './_components/datagrid'
@@ -18,45 +25,49 @@ import { getUserList } from './actions'
 const UserList = () => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
   const [data, setData] = useState<UserListT[]>([])
-  const [count, setCount] = useState<number>(0)
-  const [nextCursor, setNextCursor] = useState<string>('')
   const [hasNextPage, setHasNextPage] = useState<boolean>(false)
 
   const [searchDisplayName, setSearchDisplayName] = useState('')
-  const mapPageToNextCursor = useRef<{ [page: number]: string }>({})
+  const [estimatedRowCount, setEstimatedRowCount] = useState(0)
+  const mapPageToCursors = useRef<{ [page: number]: [string, string] }>({})
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 10,
+    pageSize: 1,
   })
+  const prevPage = usePreviousPage(paginationModel)
   const [sortModel, setSortModel] = useState<GridSortModel>([{ field: 'created_at', sort: 'asc' }])
+
   const [isLoading, startTransition] = useTransition()
 
   const { debounce } = useDebounceFn()
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value || ''
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     debounce(() => {
-      setSearchDisplayName(newValue)
+      setSearchDisplayName(`${e.target.name}=ilike.%${e.target.value}%`)
     })
-  }
+  }, [])
 
-  const queryOptions = useMemo(
-    () => ({
-      cursor: mapPageToNextCursor.current[paginationModel.page - 1] || '',
+  const queryOptions = useMemo(() => {
+    const currentPage = paginationModel.page
+    const [_prev_cursor, next_cursor] = mapPageToCursors.current[currentPage - 1] || []
+    return {
+      cursor: next_cursor,
       pageSize: paginationModel.pageSize,
-      sortModel: sortModelArrayToString(sortModel) || '',
-    }),
-    [paginationModel, sortModel],
-  )
+      sortModel,
+      search: searchDisplayName,
+    }
+  }, [prevPage, paginationModel, sortModel, searchDisplayName])
 
   const fetchUsers = () => {
     startTransition(async () => {
       try {
         const res = await getUserList(queryOptions)
-        setCount(res?.count || 0)
-        setNextCursor(res?.next_cursor || '')
-        setHasNextPage(res?.has_next_page || false)
+        if (!res) return
+
+        mapPageToCursors.current[paginationModel.page] = [res.prev_cursor, res.next_cursor]
+        setHasNextPage(res.has_next_page || false)
+        setEstimatedRowCount((count) => (count ? count : res.count))
 
         if (!res?.data.length) return
         setData(res.data as UserListT[])
@@ -70,13 +81,6 @@ const UserList = () => {
     fetchUsers()
   }, [queryOptions])
 
-  useEffect(() => {
-    if (!isLoading && nextCursor) {
-      // We add nextCursor when available
-      mapPageToNextCursor.current[paginationModel.page] = nextCursor
-    }
-  }, [paginationModel.page, isLoading, nextCursor])
-
   return (
     <Box>
       <Filters
@@ -87,11 +91,11 @@ const UserList = () => {
       <Datagrid
         isLoading={isLoading}
         users={data}
-        totalRowCount={count}
         paginationModel={paginationModel}
         setPaginationModel={setPaginationModel}
         setSortModel={setSortModel}
         hasNextPage={hasNextPage}
+        totalRowCount={estimatedRowCount}
       />
       <DialogAdd
         openDialog={openDialog}

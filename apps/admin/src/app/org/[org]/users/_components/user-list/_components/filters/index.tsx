@@ -33,6 +33,7 @@ const Filter: ComponentType<Props> = ({ onOpenDialog, searchDisplayName, handleC
           fullWidth
           size="small"
           placeholder="Search"
+          name="user.display_name"
           defaultValue={searchDisplayName}
           onChange={handleChange}
         />
