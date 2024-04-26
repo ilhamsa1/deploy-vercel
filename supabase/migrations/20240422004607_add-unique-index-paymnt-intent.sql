@@ -6,5 +6,5 @@ ON payment_intent (
     payment_method
 )
 WHERE next_action IS NOT NULL 
-    AND status = 'requires_payment_method' 
+    AND status = 'requires_action' 
     AND payment_method IS NOT NULL;
