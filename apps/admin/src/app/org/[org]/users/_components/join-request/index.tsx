@@ -22,7 +22,7 @@ const OrgJoinRequestList = () => {
     startTransition(async () => {
       try {
         const res = await getOrgJoinRequests()
-        if (!res) return
+        if (!res?.data.length) return
         setData(res.data as OrgJoinRequestT[])
         setCount(res.count || 0)
       } catch (e: unknown) {

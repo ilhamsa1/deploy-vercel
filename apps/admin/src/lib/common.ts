@@ -1,3 +1,4 @@
+import { PaginationParam } from '@/interfaces'
 import { amountCurrency } from './constant'
 
 export const computeMutation = <T extends Record<string, unknown>>(
@@ -23,4 +24,14 @@ export function processAmountWithCurrency(amount: number | string, currency: str
   }
 
   return { amount, amount_e }
+}
+
+export const calculatePageAndPageSize = ({ page, pageSize }: PaginationParam) => {
+  const currentPage = Number(page) === 0 ? 1 : Number(page)
+  const pageLimit = Number(pageSize)
+
+  const from = (currentPage - 1) * pageLimit
+  const to = currentPage * pageLimit - 1
+
+  return { from, to }
 }

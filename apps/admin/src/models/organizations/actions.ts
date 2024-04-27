@@ -1,9 +1,10 @@
 import { QueryData, SupabaseClient } from '@supabase/supabase-js'
 
-import { ResponseData } from '@/lib/common'
+import { calculatePageAndPageSize, ResponseData } from '@/lib/common'
 import { createClient } from '@/utils/supabase/server'
 
 import { OrganizationModels, OrgT, OrgInviteT, UserOrgT, UserListT, OrgJoinRequestT } from './types'
+import { PaginationParam } from '@/interfaces'
 
 export const getUserAuth = async () => {
   const supabase = createClient()
@@ -51,22 +52,38 @@ export const getUserOrganizationListByUser = async () => {
   return data as UserOrgT[]
 }
 
-export const getUserList = async (): Promise<ResponseData<UserListT> | null> => {
+export const getUserList = async ({
+  page,
+  pageSize,
+  searchDisplayName,
+}: PaginationParam & { searchDisplayName?: string }): Promise<ResponseData<UserListT> | null> => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
   const orgId = userData.user?.user_metadata?.org?.id
   if (!orgId) return null
-  const data = await supabase
+
+  const { from, to } = calculatePageAndPageSize({ page, pageSize })
+
+  let query = supabase
     .from('user_orgs')
     .select(
       `
-    *,
-    org (*),
-    user (*)
-  `,
+      *,
+      org(*),
+      user(*)
+    `,
       { count: 'exact' },
     )
+    .throwOnError()
     .eq('org_id', orgId)
+    .range(from, to)
+
+  if (searchDisplayName) {
+    query = query.ilike('user.display_name', `%${searchDisplayName}%`)
+  }
+
+  const data = await query
+
   return data as QueryData<UserListT>
 }
 
