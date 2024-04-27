@@ -1,3 +1,5 @@
+-- Ref: https://github.com/supabase/pg_net?tab=readme-ov-file#retrying-failed-requests
+
 CREATE TABLE request_tracker (
   method TEXT,
   url TEXT,
