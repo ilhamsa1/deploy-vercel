@@ -4,8 +4,6 @@ LANGUAGE plpgsql
 SECURITY definer 
 SET search_path = private
 AS $$
-DECLARE
-  webhook_endpoint_item RECORD;
 BEGIN
   -- Retrieve webhook endpoints for the organization and enabled event
   FOR webhook_endpoint_item IN 
