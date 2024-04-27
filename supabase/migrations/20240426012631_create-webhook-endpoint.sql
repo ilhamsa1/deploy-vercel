@@ -10,7 +10,7 @@ CREATE TABLE public.webhook_endpoint (
   id UUID_ULID NOT NULL DEFAULT uuid_generate_v7(),
   org_id INTEGER REFERENCES org NOT NULL,
   account_id BIGINT NOT NULL REFERENCES business_account ON DELETE CASCADE,
-  enabled_events TEXT,
+  enabled_events event_type[],
   status TEXT,
   url TEXT,
   description TEXT,

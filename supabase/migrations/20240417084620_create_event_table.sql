@@ -5,7 +5,7 @@ CREATE TABLE public.event (
   request_id UUID REFERENCES request ON DELETE CASCADE,
   account_id BIGINT NOT NULL REFERENCES business_account ON DELETE CASCADE,
   api_version TEXT,
-  type TEXT,
+  type event_type,
   data JSONB,
   request JSONB,
   pending_webhooks INTEGER,
