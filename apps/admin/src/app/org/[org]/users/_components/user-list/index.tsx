@@ -36,7 +36,7 @@ const UserList = () => {
     pageSize: 1,
   })
   const prevPage = usePreviousPage(paginationModel)
-  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: 'created_at', sort: 'asc' }])
+  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: 'created_at', sort: 'desc' }])
 
   const [isLoading, startTransition] = useTransition()
 
@@ -52,7 +52,7 @@ const UserList = () => {
     const currentPage = paginationModel.page
     const [_prev_cursor, next_cursor] = mapPageToCursors.current[currentPage - 1] || []
     return {
-      cursor: next_cursor,
+      cursor: next_cursor || '',
       pageSize: paginationModel.pageSize,
       sortModel,
       search: searchDisplayName,
@@ -64,7 +64,6 @@ const UserList = () => {
       try {
         const res = await getUserList(queryOptions)
         if (!res) return
-
         mapPageToCursors.current[paginationModel.page] = [res.prev_cursor, res.next_cursor]
         setHasNextPage(res.has_next_page || false)
         setEstimatedRowCount((count) => (count ? count : res.count))
@@ -85,8 +84,9 @@ const UserList = () => {
     <Box>
       <Filters
         searchDisplayName={searchDisplayName || ''}
-        onOpenDialog={onOpenDialog}
         handleChange={handleChange}
+        onOpenDialog={onOpenDialog}
+        onReload={fetchUsers}
       />
       <Datagrid
         isLoading={isLoading}

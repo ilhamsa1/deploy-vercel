@@ -42,7 +42,6 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
   })
 
   const onSubmit = (data: zod.infer<typeof FormSchema>) => {
-    console.log(data)
     setEmailSend(data.email)
     onOpenDialogSentInvite()
     onCloseDialog()

@@ -1,16 +1,24 @@
 import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
+import { Cached } from '@mui/icons-material'
 import React, { ChangeEvent, ComponentType } from 'react'
 
 import Button from '@/components/button'
 
 type Props = {
   onOpenDialog: () => void
+  onReload: () => void
   searchDisplayName: string
   handleChange: (_e: ChangeEvent<HTMLInputElement>) => void
 }
 
-const Filter: ComponentType<Props> = ({ onOpenDialog, searchDisplayName, handleChange }) => {
+const Filter: ComponentType<Props> = ({
+  onOpenDialog,
+  onReload,
+  searchDisplayName,
+  handleChange,
+}) => {
   return (
     <Grid
       container
@@ -51,6 +59,14 @@ const Filter: ComponentType<Props> = ({ onOpenDialog, searchDisplayName, handleC
         >
           Add User
         </Button>
+      </Grid>
+      <Grid item>
+        <IconButton
+          size="small"
+          onClick={onReload}
+        >
+          <Cached />
+        </IconButton>
       </Grid>
     </Grid>
   )

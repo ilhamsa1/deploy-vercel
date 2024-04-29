@@ -1,6 +1,6 @@
 import { QueryData, SupabaseClient } from '@supabase/supabase-js'
 
-import { ResponseData, sortModelArrayToString } from '@/lib/common'
+import { ResponseData } from '@/lib/common'
 import { createClient } from '@/utils/supabase/server'
 
 import {
@@ -8,7 +8,7 @@ import {
   extractOperandAndOperatorFilter,
   getNextCursor,
   getPrevCursor,
-  orderParamToOrderOptions,
+  sortModelToOrderOptions,
 } from '@/lib/pagination'
 
 import { OrganizationModels, OrgT, OrgInviteT, UserOrgT, UserListT, OrgJoinRequestT } from './types'
@@ -77,8 +77,7 @@ export const getUserList = async ({
   if (!orgId) return null
 
   const searchParams = new URLSearchParams(search)
-  const orderParam = sortModelArrayToString(sortModel) || ''
-  const orderEntries = orderParamToOrderOptions(orderParam || '')
+  const orderEntries = sortModelToOrderOptions(sortModel) || ''
 
   let query = supabase
     .from('user_orgs')
@@ -113,16 +112,7 @@ export const getUserList = async ({
   }
 
   for (const [column, options] of orderEntries) {
-    if (isNext) {
-      query = query.order(column, options)
-    } else {
-      if (options) {
-        options.ascending = !options.ascending
-        query = query.order(column, options)
-      } else {
-        query = query.order(column, { ascending: false })
-      }
-    }
+    query = query.order(column, options)
   }
 
   const result = await query.limit(pageSize || 10)
@@ -138,12 +128,12 @@ export const getUserList = async ({
     }
 
     const firstItem = result.data[0]
-    prev_cursor = getPrevCursor(orderEntries, firstItem, 'user_id')
+    prev_cursor = getPrevCursor(orderEntries, firstItem)
 
     if (result.data.length >= pageSize) {
       has_next_page = true
       const lastItem = result.data[result.data.length - 1]
-      next_cursor = getNextCursor(orderEntries, lastItem, 'user_id')
+      next_cursor = getNextCursor(orderEntries, lastItem)
     }
   }
 

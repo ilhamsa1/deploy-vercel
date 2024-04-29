@@ -61,7 +61,7 @@ const List = ({
       headerName: 'Email',
       flex: 1,
       sortable: false,
-      minWidth: 150,
+      minWidth: 200,
       renderCell: (data: GridCellParams) => {
         return (
           <Typography
@@ -76,14 +76,23 @@ const List = ({
     },
     {
       field: 'role',
-      flex: 1,
-      minWidth: 150,
+      minWidth: 120,
       headerName: 'Role',
+      renderCell: (data: GridCellParams) => {
+        return (
+          <Typography
+            sx={{
+              textTransform: 'uppercase',
+            }}
+          >
+            {data.row?.role || '-'}
+          </Typography>
+        )
+      },
     },
     {
       field: 'created_at',
-      flex: 1,
-      minWidth: 150,
+      minWidth: 120,
       headerName: 'Joined Date',
       renderCell: (data: GridCellParams) => {
         return (
