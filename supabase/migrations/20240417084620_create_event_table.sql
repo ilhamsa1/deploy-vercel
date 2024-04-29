@@ -1,3 +1,13 @@
+CREATE OR REPLACE FUNCTION private.count_pending_webhooks(event_id UUID)
+RETURNS INTEGER AS $$
+DECLARE
+  pending_webhooks INTEGER;
+BEGIN
+  SELECT COUNT(*) INTO pending_webhooks FROM public.request_tracker rt WHERE (rt.body->>'id')::UUID = event_id::UUID;
+  RETURN pending_webhooks;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 -- create a public.event table for storing event information
 CREATE TABLE public.event (
   id UUID_ULID NOT NULL DEFAULT uuid_generate_v7(),
@@ -8,7 +18,7 @@ CREATE TABLE public.event (
   type event_type,
   data JSONB,
   request JSONB,
-  pending_webhooks INTEGER,
+  pending_webhooks INTEGER GENERATED ALWAYS AS (private.count_pending_webhooks(id)) STORED,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY(id)
 );
