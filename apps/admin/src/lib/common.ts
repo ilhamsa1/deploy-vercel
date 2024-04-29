@@ -1,5 +1,3 @@
-import { GridSortModel } from '@mui/x-data-grid'
-
 import { amountCurrency } from './constant'
 
 export const computeMutation = <T extends Record<string, unknown>>(
@@ -33,10 +31,6 @@ export function processAmountWithCurrency(amount: number | string, currency: str
   }
 
   return { amount, amount_e }
-}
-
-export function sortModelArrayToString(arr: GridSortModel): string {
-  return arr.map((item) => `${item.field}.${item.sort}`).join(',')
 }
 
 export function removeParentheses(str: string) {
