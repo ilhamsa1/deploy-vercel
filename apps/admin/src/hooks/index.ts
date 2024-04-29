@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
 
 import { createClient } from '../utils/supabase/client'
@@ -60,15 +60,77 @@ export const useSupabase = (): SupabaseClient => {
   return useMemo(createClient, [])
 }
 
-export const usePreviousPage = ({ page }: { page: number }) => {
-  // const [isNextPage, setIsNextPage] = useState(false)
-  const [prevPage, setPrevPage] = useState<number | null>(null)
+export function usePaginationCursor(
+  paginationModel: any,
+  originPaginationModel: any,
+  sortModel: any,
+) {
+  const mapPageToCursors = useRef<{ [page: number]: [string | null, string | null] }>({})
 
-  if (page !== prevPage) {
-    // Row changed since last render. Update isScrollingDown.
-    // setIsNextPage(prevPage !== null && page > prevPage)
-    setPrevPage(page)
-  }
+  // Reset mapPageToCursors if sortModel or pageSize changed
+  useEffect(() => {
+    mapPageToCursors.current = {}
+  }, [sortModel, paginationModel.pageSize])
 
-  return prevPage
+  const originPage = originPaginationModel.page
+  const currentPage = paginationModel.page
+
+  const cursor = useMemo<string | undefined>(() => {
+    const prevPage = currentPage - 1
+    const nextPage = currentPage + 1
+
+    // Get cursors to current page
+    const [, nextCursor] = mapPageToCursors.current[prevPage] || []
+    const [prevCursor] = mapPageToCursors.current[nextPage] || []
+
+    let _cursor = ''
+    if (currentPage > originPage) {
+      // Handle special case when nextCursor is null, because
+      // someone emptied the previous page, while we are paginating.
+      // Use prev_cursor from next page instead.
+      _cursor = nextCursor || prevCursor || ''
+    } else if (currentPage < originPage) {
+      // Handle special case when prevCursor is null, because
+      // someone emptied the next page, while we are paginating.
+      // Use next_cursor from previous page instead.
+      _cursor = prevCursor || nextCursor || ''
+    } else if (currentPage === originPage) {
+      // Prefer nextCursor, if only pageSize was changed, so first item in page is static.
+      _cursor = ''
+    }
+
+    return _cursor
+  }, [originPage, currentPage])
+
+  const getPageCursors = useCallback((page: number, isStrict = true) => {
+    const pageCursors = mapPageToCursors.current[page]
+    if (pageCursors === undefined || isStrict) {
+      return pageCursors
+    }
+
+    let [prevCursor, nextCursor] = pageCursors || []
+    if (!prevCursor && !nextCursor) {
+      const pageNumbers = Object.keys(mapPageToCursors.current).map((k) => +k)
+      const pageWithPrevCursor =
+        pageNumbers.filter((p) => p > page).find((p) => mapPageToCursors.current[p][0]) || 0
+      const pageWithNextCursor =
+        pageNumbers.filter((p) => p < page).find((p) => mapPageToCursors.current[p][1]) || 0
+      prevCursor = mapPageToCursors.current[pageWithPrevCursor]?.[0]
+      nextCursor = mapPageToCursors.current[pageWithNextCursor]?.[1]
+    }
+
+    return [prevCursor, nextCursor]
+  }, [])
+
+  const setPageCursors = useCallback(
+    (page: number, prevCursor: string | undefined, nextCursor: string | undefined) => {
+      // Use setCursors() after query...
+      // setting prevCursor to null (or empty string) if page is empty
+      // setting nextCursor to null (or empty string) if page is empty
+      mapPageToCursors.current[page] = [prevCursor || null, nextCursor || null]
+    },
+    [],
+  )
+
+  return { cursor, getPageCursors, setPageCursors, mapPageToCursors }
 }

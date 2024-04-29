@@ -112,7 +112,16 @@ export const getUserList = async ({
   }
 
   for (const [column, options] of orderEntries) {
-    query = query.order(column, options)
+    if (isNext) {
+      query = query.order(column, options)
+    } else {
+      if (options) {
+        options.ascending = !options.ascending
+        query = query.order(column, options)
+      } else {
+        query = query.order(column, { ascending: false })
+      }
+    }
   }
 
   const result = await query.limit(pageSize || 10)
@@ -128,12 +137,12 @@ export const getUserList = async ({
     }
 
     const firstItem = result.data[0]
-    prev_cursor = getPrevCursor(orderEntries, firstItem)
+    prev_cursor = getPrevCursor(orderEntries, firstItem, 'user_id')
 
     if (result.data.length >= pageSize) {
       has_next_page = true
       const lastItem = result.data[result.data.length - 1]
-      next_cursor = getNextCursor(orderEntries, lastItem)
+      next_cursor = getNextCursor(orderEntries, lastItem, 'user_id')
     }
   }
 

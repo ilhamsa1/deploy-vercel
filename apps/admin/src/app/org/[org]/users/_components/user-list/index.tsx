@@ -1,19 +1,11 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
-import { GridSortModel } from '@mui/x-data-grid'
+import { GridPaginationModel, GridSortModel } from '@mui/x-data-grid'
 
-import { useDebounceFn, useDialogShowState, usePreviousPage } from '@/hooks'
+import { useDebounceFn, useDialogShowState, usePaginationCursor } from '@/hooks'
 import { UserListT } from '@/models/organizations/types'
 
 import Filters from './_components/filters'
@@ -29,14 +21,18 @@ const UserList = () => {
 
   const [searchDisplayName, setSearchDisplayName] = useState('')
   const [estimatedRowCount, setEstimatedRowCount] = useState(0)
-  const mapPageToCursors = useRef<{ [page: number]: [string, string] }>({})
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 1,
+    pageSize: 10,
   })
-  const prevPage = usePreviousPage(paginationModel)
-  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: 'created_at', sort: 'desc' }])
+  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: 'created_at', sort: 'asc' }])
+  const [originPaginationModel, setOriginPaginationModel] = useState(paginationModel)
+  const { cursor, getPageCursors, setPageCursors } = usePaginationCursor(
+    paginationModel,
+    originPaginationModel,
+    sortModel,
+  )
 
   const [isLoading, startTransition] = useTransition()
 
@@ -49,22 +45,33 @@ const UserList = () => {
   }, [])
 
   const queryOptions = useMemo(() => {
-    const currentPage = paginationModel.page
-    const [_prev_cursor, next_cursor] = mapPageToCursors.current[currentPage - 1] || []
     return {
-      cursor: next_cursor || '',
+      cursor,
       pageSize: paginationModel.pageSize,
       sortModel,
       search: searchDisplayName,
     }
-  }, [prevPage, paginationModel, sortModel, searchDisplayName])
+  }, [paginationModel, sortModel, searchDisplayName])
 
   const fetchUsers = () => {
     startTransition(async () => {
       try {
+        // Do query with cursor and pageSize
         const res = await getUserList(queryOptions)
+        // // Update cursors after query (even if res.data is empty)
+        setPageCursors(paginationModel.page, res?.prev_cursor, res?.next_cursor)
         if (!res) return
-        mapPageToCursors.current[paginationModel.page] = [res.prev_cursor, res.next_cursor]
+
+        // After cursors updated...
+        // if changing page and no items/rows in result, redirect back to origin page.
+        if (paginationModel.page !== originPaginationModel.page && res.data.length === 0) {
+          // This is skipped, if the first page is empty (on initial load).
+          // This is also skipped, if the current page becomes empty (on reload).
+          setPaginationModel(originPaginationModel)
+          // This redirect is required if the next page becomes empty,
+          // or if the previous page becomes empty,
+          // while we are paginating.
+        }
         setHasNextPage(res.has_next_page || false)
         setEstimatedRowCount((count) => (count ? count : res.count))
 
@@ -75,6 +82,36 @@ const UserList = () => {
       }
     })
   }
+
+  // <DataGrid onPaginationModelChange={handlePaginationModelChange} ... />
+  // This handler is called when the next page button is pressed
+  const handlePaginationModelChange = useCallback(
+    (newPaginationModel: GridPaginationModel) => {
+      const currentPage = paginationModel.page
+      const targetPage = newPaginationModel.page
+
+      const [, nextCursor] = getPageCursors(targetPage - 1, true) || []
+      const [prevCursor] = getPageCursors(targetPage + 1, true) || []
+
+      if ((targetPage > currentPage && nextCursor) || prevCursor) {
+        // If we have the next_cursor, we can allow the page to change.
+        setOriginPaginationModel(paginationModel)
+        setPaginationModel(newPaginationModel)
+      } else if ((targetPage < currentPage && prevCursor) || nextCursor) {
+        // If we have the prev_cursor, we can allow the page to change.
+        setOriginPaginationModel(paginationModel)
+        setPaginationModel(newPaginationModel)
+      } else if (targetPage === currentPage) {
+        // If page not changed, we allow only the pageSize to change.
+        setOriginPaginationModel(paginationModel)
+        setPaginationModel(newPaginationModel)
+      } else {
+        // Else, ignore the change.
+        setPaginationModel({ ...paginationModel }) // trigger reload the same page
+      }
+    },
+    [paginationModel, setPaginationModel, setOriginPaginationModel, getPageCursors],
+  )
 
   useEffect(() => {
     fetchUsers()
@@ -92,7 +129,7 @@ const UserList = () => {
         isLoading={isLoading}
         users={data}
         paginationModel={paginationModel}
-        setPaginationModel={setPaginationModel}
+        handlePaginationModelChange={handlePaginationModelChange}
         setSortModel={setSortModel}
         hasNextPage={hasNextPage}
         totalRowCount={estimatedRowCount}

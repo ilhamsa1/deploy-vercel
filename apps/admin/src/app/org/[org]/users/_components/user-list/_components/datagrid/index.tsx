@@ -25,7 +25,7 @@ type Props = {
   totalRowCount: number
   isLoading: boolean
   setSortModel: Dispatch<SetStateAction<GridSortModel>>
-  setPaginationModel: Dispatch<SetStateAction<GridPaginationModel>>
+  handlePaginationModelChange: any
   paginationModel: GridPaginationModel
   hasNextPage: boolean
 }
@@ -35,7 +35,7 @@ const List = ({
   totalRowCount,
   isLoading,
   setSortModel,
-  setPaginationModel,
+  handlePaginationModelChange,
   paginationModel,
   hasNextPage,
 }: Props) => {
@@ -125,6 +125,10 @@ const List = ({
     if (paginationMeta?.hasNextPage) setRowCountState(-1)
   }, [paginationMeta?.hasNextPage])
 
+  useEffect(() => {
+    if (totalRowCount) setRowCountState(totalRowCount)
+  }, [totalRowCount])
+
   // Memoize to avoid flickering when the `totalRowCount` is `0` during refetch
   const estimatedRowCount = useMemo(() => {
     if (totalRowCount !== 0) {
@@ -149,7 +153,7 @@ const List = ({
         loading={isLoading}
         getRowId={(row: GridRowModel) => row.user_id}
         paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
+        onPaginationModelChange={handlePaginationModelChange}
         paginationMeta={paginationMeta}
         rowCount={rowCountState}
         onRowCountChange={(newRowCount) => setRowCountState(newRowCount)}

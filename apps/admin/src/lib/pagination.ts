@@ -71,7 +71,7 @@ export function getCursor(
   // Loop over each order entry which defines column and sorting direction
   for (const [column, options] of orderEntries) {
     // Determine if the current column is sorted ascending, default is true
-    const isColumnAsc = options?.ascending as boolean
+    const isColumnAsc = options?.ascending || true
     // Special handling if the column is 'id'
     if (keyId && column === keyId) {
       isIdColumnAsc = isColumnAsc
