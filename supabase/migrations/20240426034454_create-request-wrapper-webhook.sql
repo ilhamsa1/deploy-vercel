@@ -6,7 +6,8 @@ CREATE TABLE request_tracker (
   params JSONB,
   body JSONB,
   headers JSONB,
-  request_id BIGINT
+  request_id BIGINT,
+  metadata JSONB
 );
 
 CREATE OR REPLACE FUNCTION request_wrapper(
@@ -14,7 +15,8 @@ CREATE OR REPLACE FUNCTION request_wrapper(
   url TEXT,
   params JSONB DEFAULT '{}'::JSONB,
   body JSONB DEFAULT '{}'::JSONB,
-  headers JSONB DEFAULT '{}'::JSONB
+  headers JSONB DEFAULT '{}'::JSONB,
+  metadata JSONB DEFAULT '{}'::JSONB
 )
 RETURNS BIGINT
 AS $$
@@ -44,8 +46,8 @@ BEGIN
       RAISE EXCEPTION 'Method must be DELETE, POST, or GET';
   END IF;
 
-  INSERT INTO request_tracker (method, url, params, body, headers, request_id)
-  VALUES (method, url, params, body, headers, request_id);
+  INSERT INTO request_tracker (method, url, params, body, headers, request_id, metadata)
+  VALUES (method, url, params, body, headers, request_id, metadata);
 
   RETURN request_id;
 END;
