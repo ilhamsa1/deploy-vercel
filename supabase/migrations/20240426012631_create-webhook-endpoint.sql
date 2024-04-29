@@ -29,7 +29,7 @@ END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 CREATE TABLE public.webhook_endpoint (
-  id UUID NOT NULL DEFAULT uuid_generate_v7(),  -- Corrected the type to UUID
+  id UUID_ULID NOT NULL DEFAULT uuid_generate_v7(),
   org_id BIGINT NOT NULL GENERATED ALWAYS AS (private.select_org_id(account_id)) STORED,
   account_id BIGINT NOT NULL REFERENCES public.business_account ON DELETE CASCADE,
   enabled_events event_type_array,
@@ -38,8 +38,8 @@ CREATE TABLE public.webhook_endpoint (
   description TEXT,
   metadata JSONB DEFAULT '{}'::JSONB,
   secret TEXT DEFAULT generate_secret(),
-  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP WITHOUT TIME ZONE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP,
   PRIMARY KEY(id)
 );
 
