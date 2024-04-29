@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
-import { GridPaginationModel, GridSortModel } from '@mui/x-data-grid'
+import { GridSortModel } from '@mui/x-data-grid'
 
 import { useDebounceFn, useDialogShowState, usePaginationCursor } from '@/hooks'
 import { UserListT } from '@/models/organizations/types'
@@ -83,36 +83,6 @@ const UserList = () => {
     })
   }
 
-  // <DataGrid onPaginationModelChange={handlePaginationModelChange} ... />
-  // This handler is called when the next page button is pressed
-  const handlePaginationModelChange = useCallback(
-    (newPaginationModel: GridPaginationModel) => {
-      const currentPage = paginationModel.page
-      const targetPage = newPaginationModel.page
-
-      const [, nextCursor] = getPageCursors(targetPage - 1, true) || []
-      const [prevCursor] = getPageCursors(targetPage + 1, true) || []
-
-      if ((targetPage > currentPage && nextCursor) || prevCursor) {
-        // If we have the next_cursor, we can allow the page to change.
-        setOriginPaginationModel(paginationModel)
-        setPaginationModel(newPaginationModel)
-      } else if ((targetPage < currentPage && prevCursor) || nextCursor) {
-        // If we have the prev_cursor, we can allow the page to change.
-        setOriginPaginationModel(paginationModel)
-        setPaginationModel(newPaginationModel)
-      } else if (targetPage === currentPage) {
-        // If page not changed, we allow only the pageSize to change.
-        setOriginPaginationModel(paginationModel)
-        setPaginationModel(newPaginationModel)
-      } else {
-        // Else, ignore the change.
-        setPaginationModel({ ...paginationModel }) // trigger reload the same page
-      }
-    },
-    [paginationModel, setPaginationModel, setOriginPaginationModel, getPageCursors],
-  )
-
   useEffect(() => {
     fetchUsers()
   }, [queryOptions])
@@ -129,7 +99,9 @@ const UserList = () => {
         isLoading={isLoading}
         users={data}
         paginationModel={paginationModel}
-        handlePaginationModelChange={handlePaginationModelChange}
+        setOriginPaginationModel={setOriginPaginationModel}
+        setPaginationModel={setPaginationModel}
+        getPageCursors={getPageCursors}
         setSortModel={setSortModel}
         hasNextPage={hasNextPage}
         totalRowCount={estimatedRowCount}
