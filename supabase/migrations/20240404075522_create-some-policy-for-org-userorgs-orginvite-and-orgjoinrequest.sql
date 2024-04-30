@@ -4,7 +4,7 @@ CREATE POLICY "can only view own user data"
 ON public.user
 FOR SELECT
 TO AUTHENTICATED, ANON
-USING (SELECT private.can_user_view_other_user(auth.current_uid(), id) = true ) ;
+USING ( (SELECT private.can_user_view_other_user(auth.current_uid(), id)) = true ) ;
 
 CREATE POLICY "can only update own user data"
 ON public.user
