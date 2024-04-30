@@ -1,7 +1,6 @@
 import Typography from '@mui/material/Typography'
 import { GridCellParams, GridPaginationModel, GridRowModel, GridSortModel } from '@mui/x-data-grid'
 import React, { Dispatch, SetStateAction } from 'react'
-import Box from '@mui/material/Box'
 
 import DatagridCursorBased from '@/components/datagrid-cursor-based'
 
@@ -94,23 +93,21 @@ const List = ({
   ]
 
   return (
-    <Box sx={{ mt: '1rem' }}>
-      <DatagridCursorBased
-        rows={users}
-        autoHeight
-        noAction
-        columns={columns}
-        loading={isLoading}
-        getRowId={(row: GridRowModel) => row.user_id}
-        paginationModel={paginationModel}
-        setPaginationModel={setPaginationModel}
-        setOriginPaginationModel={setOriginPaginationModel}
-        getPageCursors={getPageCursors}
-        hasNextPage={hasNextPage}
-        totalRowCount={totalRowCount}
-        setSortModel={setSortModel}
-      />
-    </Box>
+    <DatagridCursorBased
+      rows={users}
+      autoHeight
+      noAction
+      columns={columns}
+      loading={isLoading}
+      getRowId={(row: GridRowModel) => row.user_id}
+      paginationModel={paginationModel}
+      setPaginationModel={setPaginationModel}
+      setOriginPaginationModel={setOriginPaginationModel}
+      getPageCursors={getPageCursors}
+      hasNextPage={hasNextPage}
+      totalRowCount={totalRowCount}
+      setSortModel={setSortModel}
+    />
   )
 }
 

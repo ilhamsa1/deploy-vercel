@@ -220,6 +220,7 @@ export default function Datagrid({
         {
           py: 2,
           cursor: noAction && !isAnyColumnEditable ? 'default' : 'pointer',
+          '--DataGrid-overlayHeight': '300px',
         },
         styles.editableDatagrid,
       ]}

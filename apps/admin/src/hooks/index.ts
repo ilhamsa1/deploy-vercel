@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
+import { GridPaginationModel, GridSortModel } from '@mui/x-data-grid'
 
 import { createClient } from '../utils/supabase/client'
 
@@ -61,9 +62,9 @@ export const useSupabase = (): SupabaseClient => {
 }
 
 export function usePaginationCursor(
-  paginationModel: any,
-  originPaginationModel: any,
-  sortModel: any,
+  paginationModel: GridPaginationModel,
+  originPaginationModel: GridPaginationModel,
+  sortModel: GridSortModel,
 ) {
   const mapPageToCursors = useRef<{ [page: number]: [string | null, string | null] }>({})
 

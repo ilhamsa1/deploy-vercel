@@ -47,9 +47,9 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
     onCloseDialog()
   }
 
-  const copyToClipboard = async (content: string) => {
+  const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(content)
+      await navigator.clipboard.writeText(inviteCode)
       toast.success('Copied to code')
     } catch (error) {
       toast.error('Unable to copy to code')
@@ -77,7 +77,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
             <Typography variant="caption">Invitation Code</Typography>
             <Typography variant="h2">{inviteCode}</Typography>
             <Typography
-              onClick={() => copyToClipboard('A1b2C34')}
+              onClick={() => copyToClipboard()}
               sx={{
                 cursor: 'pointer',
                 textDecoration: 'underline',
