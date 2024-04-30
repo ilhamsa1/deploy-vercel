@@ -14,7 +14,7 @@ DECLARE
   eventData JSONB;    -- JSONB object to hold event data
 BEGIN
   -- Determine the API version based on the current date
-  apiVersion := TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD');
+  apiVersion := '2024-05-01';
 
   -- Determine the event type based on the status of the payment_intent
   IF NEW.status = 'requires_payment_method' THEN
