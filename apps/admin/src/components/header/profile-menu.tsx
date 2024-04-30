@@ -1,7 +1,10 @@
+'use client'
+
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import { useRouter } from 'next/navigation'
 
 import BusinessIcon from '@mui/icons-material/Business'
 
@@ -9,9 +12,17 @@ interface ProfileMenuProps {
   anchorEl: null | HTMLElement
   handleClose: () => void
   onSignOut: () => void
+  prefixUrl: string
 }
 
-export default function ProfileMenu({ anchorEl, handleClose, onSignOut }: ProfileMenuProps) {
+export default function ProfileMenu({
+  anchorEl,
+  handleClose,
+  onSignOut,
+  prefixUrl,
+}: ProfileMenuProps) {
+  const router = useRouter()
+
   return (
     <Menu
       anchorEl={anchorEl}
@@ -48,7 +59,10 @@ export default function ProfileMenu({ anchorEl, handleClose, onSignOut }: Profil
       </MenuItem>
       <MenuItem
         sx={styles.menuItem}
-        onClick={handleClose}
+        onClick={() => {
+          router.push(`${prefixUrl}/keys`)
+          handleClose()
+        }}
       >
         <Typography variant="button">API</Typography>
       </MenuItem>
