@@ -77,17 +77,21 @@ export default function Dialog({
       })}
       {...props}
     >
-      <DialogTitle>
-        {title}
-        {onClose && (
-          <IconButton
-            onClick={onClose}
-            sx={styles.iconButton}
-            iconName="close"
-          />
-        )}
-      </DialogTitle>
-      <Divider />
+      {title && onClose && (
+        <>
+          <DialogTitle>
+            {title}
+            {onClose && (
+              <IconButton
+                onClick={onClose}
+                sx={styles.iconButton}
+                iconName="close"
+              />
+            )}
+          </DialogTitle>
+          <Divider />
+        </>
+      )}
       <DialogContent>{children}</DialogContent>
 
       {hasActions && (

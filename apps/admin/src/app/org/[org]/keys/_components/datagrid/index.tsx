@@ -1,4 +1,3 @@
-'use client'
 import Box from '@mui/material/Box'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { GridActionsCellItem, GridCellParams, GridPaginationModel } from '@mui/x-data-grid'

@@ -1,17 +1,7 @@
-import Box from '@mui/material/Box'
-
-import SectionHeader from './_components/header'
-import SectionDatagrid from './_components/datagrid'
-// import EmptyKeys from './_components/empty'
+import KeysComponent from './_components/'
 
 const KeysPage = () => {
-  return (
-    <Box>
-      <SectionHeader />
-      <SectionDatagrid />
-      {/* <EmptyKeys /> */}
-    </Box>
-  )
+  return <KeysComponent />
 }
 
 export default KeysPage

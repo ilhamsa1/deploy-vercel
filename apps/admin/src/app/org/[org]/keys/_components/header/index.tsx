@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid'
 
 import Button from '@/components/button'
 
-const SectionHeader = () => {
+const SectionHeader = ({ onOpenDialogCreateApi }: any) => {
   return (
     <Grid
       container
@@ -39,6 +39,7 @@ const SectionHeader = () => {
           fullWidth
           size="small"
           variant="contained"
+          onClick={onOpenDialogCreateApi}
         >
           Generate Secret Key
         </Button>
