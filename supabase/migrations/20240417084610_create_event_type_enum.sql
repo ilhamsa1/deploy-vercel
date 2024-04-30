@@ -3,7 +3,11 @@ CREATE TYPE event_type_enum AS ENUM (
   '*',
   'payment_intent.created',
   'payment_intent.requires_action',
-  'payment_intent.amount_capturable_updated'
+  'payment_intent.amount_capturable_updated',
+  'payment_intent.processing',
+  'payment_intent.cancelled',
+  'payment_intent.succeeded',
+  'payment_intent.pending'
 );
 
 -- Create the DOMAIN based on the ENUM type
