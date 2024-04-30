@@ -1,25 +1,41 @@
 import Typography from '@mui/material/Typography'
-import { GridCellParams, GridPaginationModel, GridRowModel } from '@mui/x-data-grid'
+import { GridCellParams, GridPaginationModel, GridRowModel, GridSortModel } from '@mui/x-data-grid'
 import React, { Dispatch, SetStateAction } from 'react'
+import Box from '@mui/material/Box'
 
-import Datagrid from '@/components/data-grid'
+import DatagridCursorBased from '@/components/datagrid-cursor-based'
+
 import { formatDateNameShortMonth } from '@/lib/date'
-import { PaginationParam } from '@/interfaces'
 
 type Props = {
   users: GridRowModel[]
-  count: number
+  totalRowCount: number
   isLoading: boolean
-  setPaginationModel: Dispatch<SetStateAction<PaginationParam>>
-  paginationModel: PaginationParam
+  setSortModel: Dispatch<SetStateAction<GridSortModel>>
+  setOriginPaginationModel: Dispatch<SetStateAction<GridPaginationModel>>
+  setPaginationModel: Dispatch<SetStateAction<GridPaginationModel>>
+  getPageCursors: (_page: number, _isStrict: boolean) => (string | null)[]
+  paginationModel: GridPaginationModel
+  hasNextPage: boolean
 }
 
-const List = ({ users, count, isLoading, setPaginationModel, paginationModel }: Props) => {
+const List = ({
+  users,
+  totalRowCount,
+  isLoading,
+  setSortModel,
+  paginationModel,
+  hasNextPage,
+  setOriginPaginationModel,
+  setPaginationModel,
+  getPageCursors,
+}: Props) => {
   const columns = [
     {
       field: 'display_name',
       flex: 1,
       minWidth: 150,
+      sortable: false,
       headerName: 'Name',
       renderCell: (data: GridCellParams) => {
         return <Typography>{data.row?.user?.display_name || 'N/A'}</Typography>
@@ -29,7 +45,8 @@ const List = ({ users, count, isLoading, setPaginationModel, paginationModel }: 
       field: 'email',
       headerName: 'Email',
       flex: 1,
-      minWidth: 150,
+      sortable: false,
+      minWidth: 200,
       renderCell: (data: GridCellParams) => {
         return (
           <Typography
@@ -44,14 +61,23 @@ const List = ({ users, count, isLoading, setPaginationModel, paginationModel }: 
     },
     {
       field: 'role',
-      flex: 1,
-      minWidth: 150,
+      minWidth: 120,
       headerName: 'Role',
+      renderCell: (data: GridCellParams) => {
+        return (
+          <Typography
+            sx={{
+              textTransform: 'uppercase',
+            }}
+          >
+            {data.row?.role || '-'}
+          </Typography>
+        )
+      },
     },
     {
       field: 'created_at',
-      flex: 1,
-      minWidth: 150,
+      minWidth: 120,
       headerName: 'Joined Date',
       renderCell: (data: GridCellParams) => {
         return (
@@ -67,22 +93,24 @@ const List = ({ users, count, isLoading, setPaginationModel, paginationModel }: 
     },
   ]
 
-  const handlePaginationModelChange = (newPaginationModel: GridPaginationModel) => {
-    setPaginationModel((prev) => ({ ...prev, ...newPaginationModel }))
-  }
-
   return (
-    <Datagrid
-      noAction
-      rows={users}
-      loading={isLoading}
-      columns={columns}
-      page={Number(paginationModel.page)}
-      pageSize={Number(paginationModel.pageSize)}
-      rowCount={count}
-      getRowId={(row: GridRowModel) => row.user_id}
-      handlePaginationModelChange={handlePaginationModelChange}
-    />
+    <Box sx={{ mt: '1rem' }}>
+      <DatagridCursorBased
+        rows={users}
+        autoHeight
+        noAction
+        columns={columns}
+        loading={isLoading}
+        getRowId={(row: GridRowModel) => row.user_id}
+        paginationModel={paginationModel}
+        setPaginationModel={setPaginationModel}
+        setOriginPaginationModel={setOriginPaginationModel}
+        getPageCursors={getPageCursors}
+        hasNextPage={hasNextPage}
+        totalRowCount={totalRowCount}
+        setSortModel={setSortModel}
+      />
+    </Box>
   )
 }
 

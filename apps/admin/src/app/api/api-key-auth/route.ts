@@ -29,7 +29,6 @@ export async function GET(req: NextRequest) {
 
   // Assuming there's a table called 'users' and you're querying based on the user's API key
   const { data, error } = await supabase.from('user').select('*').maybeSingle() // .maybeSingle() returns either one record or null if none found
-  console.log(data)
   if (error) {
     const formattedError: PostgrestError = {
       message: error.message,

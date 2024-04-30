@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
   // Vertical Column Filtering: https://postgrest.org/en/v12/references/api/tables_views.html#vertical-filtering
   let query = supabase
     .from('payment_intent')
-    .select<typeof select, Record<string, unknown>>(select, { count: 'exact' })
+    .select<typeof select, Record<string, unknown>>(select, { count: 'estimated' })
 
   // Horizontal Row Filtering: https://postgrest.org/en/v12/references/api/tables_views.html#horizontal-filtering
   for (const [key, value] of searchParams.entries()) {
@@ -71,11 +71,11 @@ export async function GET(request: NextRequest) {
 
   if (!!data && data.length > 0) {
     const firstItem = data[0]
-    prev_cursor = getPrevCursor(orderEntries, firstItem)
+    prev_cursor = getPrevCursor(orderEntries, firstItem, 'id')
 
     if (data.length >= limit) {
       const lastItem = data[data.length - 1]
-      next_cursor = getNextCursor(orderEntries, lastItem)
+      next_cursor = getNextCursor(orderEntries, lastItem, 'id')
     }
   }
 
