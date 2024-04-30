@@ -1,10 +1,18 @@
 import { QueryData, SupabaseClient } from '@supabase/supabase-js'
 
-import { calculatePageAndPageSize, ResponseData } from '@/lib/common'
+import { ResponseData } from '@/lib/common'
 import { createClient } from '@/utils/supabase/server'
 
+import {
+  extractOperandAndOperatorCursor,
+  extractOperandAndOperatorFilter,
+  getNextCursor,
+  getPrevCursor,
+  sortModelToOrderOptions,
+} from '@/lib/pagination'
+
 import { OrganizationModels, OrgT, OrgInviteT, UserOrgT, UserListT, OrgJoinRequestT } from './types'
-import { PaginationParam } from '@/interfaces'
+import { GridSortModel } from '@mui/x-data-grid'
 
 export const getUserAuth = async () => {
   const supabase = createClient()
@@ -53,16 +61,23 @@ export const getUserOrganizationListByUser = async () => {
 }
 
 export const getUserList = async ({
-  page,
+  cursor,
   pageSize,
-  searchDisplayName,
-}: PaginationParam & { searchDisplayName?: string }): Promise<ResponseData<UserListT> | null> => {
+  sortModel,
+  search,
+}: {
+  cursor: string | undefined
+  pageSize: number
+  sortModel: GridSortModel
+  search: string
+}): Promise<ResponseData<UserListT> | null> => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
   const orgId = userData.user?.user_metadata?.org?.id
   if (!orgId) return null
 
-  const { from, to } = calculatePageAndPageSize({ page, pageSize })
+  const searchParams = new URLSearchParams(search)
+  const orderEntries = sortModelToOrderOptions(sortModel) || ''
 
   let query = supabase
     .from('user_orgs')
@@ -72,19 +87,66 @@ export const getUserList = async ({
       org(*),
       user(*)
     `,
-      { count: 'exact' },
+      { count: 'estimated' },
     )
     .throwOnError()
     .eq('org_id', orgId)
-    .range(from, to)
 
-  if (searchDisplayName) {
-    query = query.ilike('user.display_name', `%${searchDisplayName}%`)
+  for (const [key, value] of searchParams.entries()) {
+    const { operator, operand } = extractOperandAndOperatorFilter(value)
+    query = query.filter(key, operator, operand)
   }
 
-  const data = await query
+  let isNext = true
+  if (cursor) {
+    const { operator, operand } = extractOperandAndOperatorCursor(cursor)
+    if (operator === 'n') {
+      query = query.or(operand)
+      isNext = true
+    } else if (operator === 'p') {
+      query = query.or(operand)
+      isNext = false
+    } else {
+      throw new Error('Invalid cursor')
+    }
+  }
 
-  return data as QueryData<UserListT>
+  for (const [column, options] of orderEntries) {
+    if (isNext) {
+      query = query.order(column, options)
+    } else {
+      if (options) {
+        options.ascending = !options.ascending
+        query = query.order(column, options)
+      } else {
+        query = query.order(column, { ascending: false })
+      }
+    }
+  }
+
+  const result = await query.limit(pageSize || 10)
+
+  let next_cursor: typeof cursor = ''
+  let prev_cursor: typeof cursor = ''
+  let has_next_page = false
+
+  if (!!result.data && result.data.length > 0) {
+    if (!isNext) {
+      // Workaround for no query.limit(-pageSize || -10)
+      result.data.reverse()
+    }
+
+    const firstItem = result.data[0]
+    prev_cursor = getPrevCursor(orderEntries, firstItem, 'user_id')
+
+    if (result.data.length >= pageSize) {
+      has_next_page = true
+      const lastItem = result.data[result.data.length - 1]
+      next_cursor = getNextCursor(orderEntries, lastItem, 'user_id')
+    }
+  }
+
+  return { ...result, prev_cursor, next_cursor, has_next_page } as QueryData<UserListT>
 }
 
 export const getOrgInvites = async (): Promise<ResponseData<OrgInviteT> | null> => {

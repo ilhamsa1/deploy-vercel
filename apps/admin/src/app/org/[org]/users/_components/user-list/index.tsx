@@ -1,45 +1,82 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import { ChangeEvent, useEffect, useState, useTransition } from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
+import { GridSortModel } from '@mui/x-data-grid'
 
-import { useDebounceFn, useDialogShowState } from '@/hooks'
+import { useDebounceFn, useDialogShowState, usePaginationCursor } from '@/hooks'
 import { UserListT } from '@/models/organizations/types'
+
 import Filters from './_components/filters'
 import Datagrid from './_components/datagrid'
 import DialogAdd from './_components/dialog/add'
 
 import { getUserList } from './actions'
-import { PaginationParam } from '@/interfaces'
 
 const UserList = () => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
   const [data, setData] = useState<UserListT[]>([])
-  const [count, setCount] = useState<number>(0)
-  const [paramsModel, setParamsModel] = useState<PaginationParam & { searchDisplayName?: string }>({
-    page: 1,
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false)
+
+  const [searchDisplayName, setSearchDisplayName] = useState('')
+  const [estimatedRowCount, setEstimatedRowCount] = useState(0)
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
     pageSize: 10,
-    searchDisplayName: '',
   })
+  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: 'created_at', sort: 'asc' }])
+  const [originPaginationModel, setOriginPaginationModel] = useState(paginationModel)
+  const { cursor, getPageCursors, setPageCursors } = usePaginationCursor(
+    paginationModel,
+    originPaginationModel,
+    sortModel,
+  )
+
   const [isLoading, startTransition] = useTransition()
 
   const { debounce } = useDebounceFn()
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value || ''
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     debounce(() => {
-      setParamsModel((prev) => ({ ...prev, searchDisplayName: newValue }))
+      setSearchDisplayName(`${e.target.name}=ilike.%${e.target.value}%`)
     })
-  }
+  }, [])
+
+  const queryOptions = useMemo(() => {
+    return {
+      cursor,
+      pageSize: paginationModel.pageSize,
+      sortModel,
+      search: searchDisplayName,
+    }
+  }, [paginationModel, sortModel, searchDisplayName])
 
   const fetchUsers = () => {
     startTransition(async () => {
       try {
-        const res = await getUserList(paramsModel)
+        // Do query with cursor and pageSize
+        const res = await getUserList(queryOptions)
+        // // Update cursors after query (even if res.data is empty)
+        setPageCursors(paginationModel.page, res?.prev_cursor, res?.next_cursor)
+        if (!res) return
+
+        // After cursors updated...
+        // if changing page and no items/rows in result, redirect back to origin page.
+        if (paginationModel.page !== originPaginationModel.page && res.data.length === 0) {
+          // This is skipped, if the first page is empty (on initial load).
+          // This is also skipped, if the current page becomes empty (on reload).
+          setPaginationModel(originPaginationModel)
+          // This redirect is required if the next page becomes empty,
+          // or if the previous page becomes empty,
+          // while we are paginating.
+        }
+        setHasNextPage(res.has_next_page || false)
+        setEstimatedRowCount((count) => (count ? count : res.count))
+
         if (!res?.data.length) return
         setData(res.data as UserListT[])
-        setCount(res.count || 0)
       } catch (e: unknown) {
         toast.error((e as Error)?.message)
       }
@@ -48,21 +85,26 @@ const UserList = () => {
 
   useEffect(() => {
     fetchUsers()
-  }, [paramsModel])
+  }, [queryOptions])
 
   return (
     <Box>
       <Filters
-        searchDisplayName={paramsModel.searchDisplayName || ''}
-        onOpenDialog={onOpenDialog}
+        searchDisplayName={searchDisplayName || ''}
         handleChange={handleChange}
+        onOpenDialog={onOpenDialog}
+        onReload={fetchUsers}
       />
       <Datagrid
         isLoading={isLoading}
         users={data}
-        count={count}
-        paginationModel={paramsModel}
-        setPaginationModel={setParamsModel}
+        paginationModel={paginationModel}
+        setOriginPaginationModel={setOriginPaginationModel}
+        setPaginationModel={setPaginationModel}
+        getPageCursors={getPageCursors}
+        setSortModel={setSortModel}
+        hasNextPage={hasNextPage}
+        totalRowCount={estimatedRowCount}
       />
       <DialogAdd
         openDialog={openDialog}
