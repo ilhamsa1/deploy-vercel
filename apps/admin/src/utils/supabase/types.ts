@@ -551,14 +551,14 @@ export type Database = {
           id_of_user: string
           key_description: string
         }
-        Returns: boolean
+        Returns: string
       }
       get_api_key: {
         Args: {
           id_of_user: string
           secret_id: string
         }
-        Returns: object
+        Returns: string
       }
       revoke_api_key: {
         Args: {

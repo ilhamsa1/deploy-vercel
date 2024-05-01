@@ -2,7 +2,7 @@
 
 import toast from 'react-hot-toast'
 import Box from '@mui/material/Box'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 import { useDialogShowState } from '@/hooks'
 
@@ -16,16 +16,19 @@ import { getApiKeyList } from './actions'
 const KeysPage = () => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
   const [data, setData] = useState([])
+  const [isLoading, startTransition] = useTransition()
 
-  const fetchApiKeys = useCallback(async () => {
-    try {
-      const res = await getApiKeyList()
-      if (!res.length) return
-      setData(res)
-    } catch (e: unknown) {
-      toast.error((e as Error)?.message)
-    }
-  }, [])
+  const fetchApiKeys = () => {
+    startTransition(async () => {
+      try {
+        const res = await getApiKeyList()
+        if (!res.length) return
+        setData(res)
+      } catch (e: unknown) {
+        toast.error((e as Error)?.message)
+      }
+    })
+  }
 
   useEffect(() => {
     fetchApiKeys()
@@ -36,12 +39,16 @@ const KeysPage = () => {
       {data.length ? (
         <>
           <SectionHeader onOpenDialogCreateApi={onOpenDialog} />
-          <SectionDatagrid keys={data} />
+          <SectionDatagrid
+            isLoading={isLoading}
+            keys={data}
+          />
         </>
       ) : (
-        <EmptyKeys />
+        <EmptyKeys onOpenDialogCreateApi={onOpenDialog} />
       )}
       <DialogCreateApi
+        fetchApiKeys={fetchApiKeys}
         openDialog={openDialog}
         onCloseDialog={onCloseDialog}
       />

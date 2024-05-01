@@ -16,8 +16,6 @@ const SectionHeader = ({ onOpenDialogCreateApi }: any) => {
       justifyContent="flex-end"
       sx={{
         pt: '1.25rem',
-        pr: '1.25rem',
-        pl: '1.25rem',
       }}
     >
       <Grid
@@ -26,9 +24,9 @@ const SectionHeader = ({ onOpenDialogCreateApi }: any) => {
         sm={9}
       >
         <Box>
-          <Typography variant="h5">Secret Keys</Typography>
+          <Typography variant="h5">Access Keys</Typography>
           <Typography>
-            Secret keys are used to authenticate API request coming from your servers
+            Access keys are used to authenticate API request coming from your servers
           </Typography>
         </Box>
       </Grid>

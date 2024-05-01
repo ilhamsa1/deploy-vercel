@@ -6,7 +6,7 @@ export const createApiKey = async (key_description: string) => {
 
   if (!userData?.user) throw new Error('No Authorization')
 
-  const { error } = await supabase.rpc('create_api_key', {
+  const { data, error } = await supabase.rpc('create_api_key', {
     id_of_user: userData.user.id,
     key_description,
   })
@@ -15,7 +15,7 @@ export const createApiKey = async (key_description: string) => {
     throw new Error(error.message)
   }
 
-  return true
+  return data
 }
 
 export const listApiKey = async () => {

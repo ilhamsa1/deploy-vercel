@@ -100,6 +100,7 @@ export default function Dialog({
           {cancelButton && (
             <BtnCancel
               variant="outlined"
+              size="small"
               onClick={onClose}
             >
               cancel
@@ -109,6 +110,7 @@ export default function Dialog({
             <Button
               variant="contained"
               color="primary"
+              size="small"
               disabled={disableAccept}
               isLoading={loadingButton}
               onClick={(event) => {

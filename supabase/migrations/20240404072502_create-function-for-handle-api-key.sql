@@ -67,7 +67,7 @@ CREATE TRIGGER on_user_deleted__remove_user_vault_secrets AFTER DELETE
 
 -- This function creates an API key for a given user and stores it securely in the database.
 CREATE OR REPLACE FUNCTION create_api_key(id_of_user UUID, key_description TEXT)
-RETURNS BOOLEAN
+RETURNS TEXT
 LANGUAGE plpgsql
 SECURITY definer
 SET search_path = extensions
@@ -119,10 +119,10 @@ BEGIN
     -- Associate the JWT with the user in the authentication table
     INSERT INTO auth.jwts (secret_id, user_id) VALUES (jwt_record_id, id_of_user);
 
-    RETURN true;
+    RETURN jwt_record_id;
   END IF;
 
-  RETURN false;
+  RETURN NULL;
 END;
 $$;
 

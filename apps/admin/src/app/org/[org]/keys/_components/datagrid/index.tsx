@@ -8,7 +8,7 @@ import { GridActionsCellItem, GridCellParams } from '@mui/x-data-grid'
 import Datagrid from '@/components/data-grid'
 import { formatDateWithTime } from '@/lib/date'
 
-const ListKeys = ({ keys }: any) => {
+const ListKeys = ({ keys, isLoading }: any) => {
   const columns = [
     {
       field: 'description',
@@ -54,6 +54,7 @@ const ListKeys = ({ keys }: any) => {
       autoHeight
       rows={keys}
       columns={columns}
+      loading={isLoading}
       hideFooter
     />
   )
