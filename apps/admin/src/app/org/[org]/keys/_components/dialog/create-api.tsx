@@ -1,3 +1,4 @@
+'use client'
 import { ComponentType } from 'react'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'

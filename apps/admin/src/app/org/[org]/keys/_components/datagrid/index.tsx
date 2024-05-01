@@ -1,22 +1,17 @@
-import Box from '@mui/material/Box'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { GridActionsCellItem, GridCellParams, GridPaginationModel } from '@mui/x-data-grid'
-import React, { useState } from 'react'
-import CancelIcon from '@mui/icons-material/Cancel'
+'use client'
+
+import React from 'react'
+import Typography from '@mui/material/Typography'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import { GridActionsCellItem, GridCellParams } from '@mui/x-data-grid'
 
 import Datagrid from '@/components/data-grid'
+import { formatDateWithTime } from '@/lib/date'
 
-const ListKeys = () => {
-  const [page] = useState(1)
-  const [pageSize] = useState(20)
-  const isLoading = false
-  const count = 0
-
-  const onOpenDialog = () => console.log('Open')
-
+const ListKeys = ({ keys }: any) => {
   const columns = [
     {
-      field: 'name',
+      field: 'description',
       headerName: 'Key Name',
       flex: 1,
       minWidth: 240,
@@ -26,6 +21,9 @@ const ListKeys = () => {
       flex: 1,
       minWidth: 250,
       headerName: 'Created',
+      renderCell: (data: GridCellParams) => {
+        return <Typography>{formatDateWithTime(data.row?.created_at)}</Typography>
+      },
     },
     {
       field: 'last_updated_at',
@@ -39,43 +37,24 @@ const ListKeys = () => {
       width: 100,
       renderCell: (data: GridCellParams) => {
         return (
-          <Box>
-            <GridActionsCellItem
-              icon={<CheckCircleIcon />}
-              label="Edit"
-              className="textPrimary"
-              onClick={() => {
-                onOpenDialog()
-                console.log(data.id)
-              }}
-              color="inherit"
-            />
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Delete"
-              onClick={() => console.log(data.id)}
-              color="inherit"
-            />
-          </Box>
+          <GridActionsCellItem
+            icon={<DeleteOutlineIcon />}
+            label="Delete"
+            onClick={() => console.log(data.id)}
+            color="inherit"
+          />
         )
       },
     },
   ]
 
-  const handlePaginationModelChange = (paginationModel: GridPaginationModel) => {
-    console.log(paginationModel)
-  }
-
   return (
     <Datagrid
       noAction
-      rows={[]}
-      loading={isLoading}
+      autoHeight
+      rows={keys}
       columns={columns}
-      page={page}
-      pageSize={pageSize}
-      rowCount={count}
-      handlePaginationModelChange={handlePaginationModelChange}
+      hideFooter
     />
   )
 }

@@ -1,12 +1,15 @@
 import { createClient } from '@/utils/supabase/server'
 
-export const createApiKey = async (keyDescription: string) => {
+export const createApiKey = async (key_description: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
 
   if (!userData?.user) throw new Error('No Authorization')
 
-  const { error } = await supabase.rpc('create_api_key', { userData.user.id, keyDescription })
+  const { error } = await supabase.rpc('create_api_key', {
+    id_of_user: userData.user.id,
+    key_description,
+  })
 
   if (error) {
     throw new Error(error.message)
@@ -21,7 +24,7 @@ export const listApiKey = async () => {
 
   if (!userData?.user) throw new Error('No Authorization')
 
-  const { data, error } = await supabase.rpc('list_api_keys', { userData.user.id })
+  const { data, error } = await supabase.rpc('list_api_keys', { id_of_user: userData.user.id })
 
   if (error) {
     throw new Error(error.message)
@@ -30,13 +33,16 @@ export const listApiKey = async () => {
   return data
 }
 
-export const getApiKey = async (secretId: string) => {
+export const getApiKey = async (secret_id: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
 
   if (!userData?.user) throw new Error('No Authorization')
 
-  const { error, data } = await supabase.rpc('get_api_key', { userData.user.id, secretId })
+  const { error, data } = await supabase.rpc('get_api_key', {
+    id_of_user: userData.user.id,
+    secret_id,
+  })
 
   if (error) {
     throw new Error(error.message)
@@ -45,13 +51,16 @@ export const getApiKey = async (secretId: string) => {
   return data
 }
 
-export const revokeApiKey = async (secretId: string) => {
+export const revokeApiKey = async (secret_id: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
 
   if (!userData?.user) throw new Error('No Authorization')
 
-  const { error } = await supabase.rpc('revoke_api_key', { userData.user.id, secretId })
+  const { error } = await supabase.rpc('revoke_api_key', {
+    id_of_user: userData.user.id,
+    secret_id,
+  })
 
   if (error) {
     throw new Error(error.message)

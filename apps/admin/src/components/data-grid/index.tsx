@@ -34,9 +34,9 @@ export interface DatagridProps extends Omit<DataGridProps, 'onPaginationModelCha
 
   handleRowClick?: (_params: any) => void
 
-  page: number
-  pageSize: number
-  rowCount: number
+  page?: number
+  pageSize?: number
+  rowCount?: number
   handlePaginationModelChange?: (_item: GridPaginationModel) => void
   selectedRowIds?: string[]
   onSortModelChange?: (_item: GridSortModel) => void
@@ -212,8 +212,8 @@ export default function Datagrid({
       onRowSelectionModelChange={onRowSelected}
       hideFooter={hideFooter}
       paginationModel={{
-        page,
-        pageSize,
+        page: page || 0,
+        pageSize: pageSize || 0,
       }}
       getRowHeight={() => 'auto'}
       sx={[

@@ -3,6 +3,7 @@
 CREATE TABLE auth.jwts (
   secret_id UUID NOT NULL,                            -- UUID for the JWT secret
   user_id UUID NULL,                                  -- UUID for the user (nullable)
+  created_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ,
   CONSTRAINT jwts_pkey PRIMARY KEY (secret_id),       -- Primary key constraint
   CONSTRAINT jwts_secret_id_fkey FOREIGN KEY (secret_id) REFERENCES vault.secrets (id) ON DELETE RESTRICT,    -- Foreign key constraint referencing vault.secrets
@@ -127,12 +128,12 @@ $$;
 
 -- This function retrieves the API keys associated with a given user from the database.
 CREATE OR REPLACE FUNCTION list_api_keys(id_of_user UUID)
-RETURNS TABLE (id TEXT, description TEXT)
+RETURNS TABLE (id TEXT, description TEXT, created_at TIMESTAMPTZ)
 LANGUAGE sql
 SECURITY definer
 SET search_path = extensions
 AS $$
-  SELECT j.secret_id, s.description
+  SELECT j.secret_id, s.description, j.created_at
     FROM auth.jwts j
     LEFT JOIN vault.decrypted_secrets s ON s.id = j.secret_id
     WHERE auth.uid() = id_of_user AND user_id = id_of_user;
