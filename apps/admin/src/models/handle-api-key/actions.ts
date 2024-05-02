@@ -68,3 +68,22 @@ export const revokeApiKey = async (key_secret_id: string) => {
 
   return true
 }
+
+export const securityConfirmAccess = async (email_user: string, password_user: string) => {
+  const supabase = createClient()
+  const { data: userData } = await supabase.auth.getUser()
+
+  if (!userData?.user) throw new Error('No Authorization')
+
+  const { data } = await supabase.rpc('security_confirm', {
+    id_of_user: userData.user.id,
+    email_user,
+    password_user,
+  })
+
+  if (!data) {
+    throw new Error('Wrong email & password')
+  }
+
+  return true
+}

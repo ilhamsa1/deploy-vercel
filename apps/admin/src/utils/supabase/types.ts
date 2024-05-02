@@ -567,6 +567,14 @@ export type Database = {
         }
         Returns: object
       }
+      security_confirm: {
+        Args: {
+          id_of_user: string
+          email_user: string
+          password_user: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
