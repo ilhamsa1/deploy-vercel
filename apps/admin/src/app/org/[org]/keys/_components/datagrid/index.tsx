@@ -8,7 +8,7 @@ import { GridActionsCellItem, GridCellParams } from '@mui/x-data-grid'
 import Datagrid from '@/components/data-grid'
 import { formatDateWithTime } from '@/lib/date'
 
-const ListKeys = ({ keys, isLoading }: any) => {
+const ListKeys = ({ keys, isLoading, onOpenDeleteKeyDialog }: any) => {
   const columns = [
     {
       field: 'description',
@@ -40,7 +40,7 @@ const ListKeys = ({ keys, isLoading }: any) => {
           <GridActionsCellItem
             icon={<DeleteOutlineIcon />}
             label="Delete"
-            onClick={() => console.log(data.id)}
+            onClick={() => onOpenDeleteKeyDialog(data)}
             color="inherit"
           />
         )

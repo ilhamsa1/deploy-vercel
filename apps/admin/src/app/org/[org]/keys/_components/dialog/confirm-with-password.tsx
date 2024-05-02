@@ -88,7 +88,7 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
       <Dialog
         open={openDialog}
         onClose={handleClose}
-        title="Security Confirmation "
+        title="Security Confirmation"
         footer={
           <Button
             fullWidth

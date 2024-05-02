@@ -563,7 +563,7 @@ export type Database = {
       revoke_api_key: {
         Args: {
           id_of_user: string
-          secret_id: string
+          key_secret_id: string
         }
         Returns: object
       }

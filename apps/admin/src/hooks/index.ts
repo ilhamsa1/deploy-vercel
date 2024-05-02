@@ -45,11 +45,19 @@ export const useDebounceFn = () => {
 
 export function useDialogShowState() {
   const [openDialog, setOpenDialog] = useState(false)
+  const [selected, setSelected] = useState(null)
 
-  const onOpenDialog = useCallback(() => setOpenDialog(true), [setOpenDialog])
+  const onOpenDialog = useCallback(
+    (data?: null) => {
+      setOpenDialog(true)
+      if (data) setSelected(data)
+    },
+    [setOpenDialog],
+  )
+
   const onCloseDialog = useCallback(() => setOpenDialog(false), [setOpenDialog])
 
-  return { openDialog, onOpenDialog, onCloseDialog }
+  return { openDialog, onOpenDialog, onCloseDialog, selected }
 }
 
 /**

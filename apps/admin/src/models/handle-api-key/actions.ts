@@ -51,7 +51,7 @@ export const getApiKey = async (secret_id: string) => {
   return data
 }
 
-export const revokeApiKey = async (secret_id: string) => {
+export const revokeApiKey = async (key_secret_id: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
 
@@ -59,7 +59,7 @@ export const revokeApiKey = async (secret_id: string) => {
 
   const { error } = await supabase.rpc('revoke_api_key', {
     id_of_user: userData.user.id,
-    secret_id,
+    key_secret_id,
   })
 
   if (error) {

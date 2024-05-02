@@ -1,11 +1,11 @@
 'use server'
 
-import { listApiKey, createApiKey, getApiKey } from '@/models/handle-api-key/actions'
+import { listApiKey, createApiKey, getApiKey, revokeApiKey } from '@/models/handle-api-key/actions'
 import { getUserAuth } from '@/models/organizations/actions'
 import { createClient } from '@/utils/supabase/server'
 
 export const getApiKeyList = listApiKey
-export const createKey = createApiKey
+export const revokeKey = revokeApiKey
 export const getUser = getUserAuth
 
 export async function login(formData: { email: string; password: string; description: string }) {

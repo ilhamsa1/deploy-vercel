@@ -6,7 +6,7 @@ CREATE TABLE auth.jwts (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ,
   CONSTRAINT jwts_pkey PRIMARY KEY (secret_id),       -- Primary key constraint
-  CONSTRAINT jwts_secret_id_fkey FOREIGN KEY (secret_id) REFERENCES vault.secrets (id) ON DELETE RESTRICT,    -- Foreign key constraint referencing vault.secrets
+  CONSTRAINT jwts_secret_id_fkey FOREIGN KEY (secret_id) REFERENCES vault.secrets (id) ON DELETE CASCADE,    -- Foreign key constraint referencing vault.secrets
   CONSTRAINT user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE                  -- Foreign key constraint referencing auth.users
 ) tablespace pg_default;
 
@@ -170,7 +170,7 @@ $$;
 
 -- This function revokes (deletes) an API key associated with a specific secret ID for a given user from the database.
 -- Password/secret record will be deleted from vault table
-CREATE OR REPLACE FUNCTION revoke_api_key(id_of_user UUID, secret_id UUID)
+CREATE OR REPLACE FUNCTION revoke_api_key(id_of_user UUID, key_secret_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
 SECURITY definer
@@ -179,9 +179,9 @@ AS $$
 BEGIN
   -- Check if the authenticated user matches the provided user ID
   IF auth.uid() = id_of_user THEN
-    UPDATE auth.jwts SET deleted_at = NOW() WHERE secret_id=secret_id;
+    UPDATE auth.jwts SET deleted_at = NOW() WHERE secret_id=key_secret_id;
     -- Delete the API key from the vault using the provided secret ID
-    DELETE FROM vault.secrets WHERE id=secret_id;
+    DELETE FROM vault.secrets WHERE id=key_secret_id;
   END IF;
 END;
 $$;
