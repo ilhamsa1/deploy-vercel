@@ -145,7 +145,7 @@ export function usePaginationCursor(
   return { cursor, getPageCursors, setPageCursors, mapPageToCursors }
 }
 
-export const userCopyClipboard = (text: string) => {
+export const useCopyClipboard = (text: string) => {
   const onCopyToClipboard = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text)

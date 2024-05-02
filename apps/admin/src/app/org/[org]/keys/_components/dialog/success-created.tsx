@@ -3,12 +3,11 @@ import Typography from '@mui/material/Typography'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import Stack from '@mui/material/Stack'
 
-import Dialog from '@/components/dialog'
-import TextField from '@/components/textfield'
-
 import Button from '@/components/button'
 import ContentDetails from '@/components/content-details'
-import { userCopyClipboard } from '@/hooks'
+import Dialog from '@/components/dialog'
+import TextField from '@/components/textfield'
+import { useCopyClipboard } from '@/hooks'
 
 type Props = {
   openDialog: boolean
@@ -23,7 +22,7 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
   description,
   accessKey,
 }) => {
-  const onCopyToClipboard = userCopyClipboard(accessKey)
+  const onCopyToClipboard = useCopyClipboard(accessKey)
   return (
     <Dialog
       cancelButton
