@@ -1,14 +1,15 @@
 CREATE OR REPLACE FUNCTION private.update_succeeded_payment_intent(item public.bank_tx) RETURNS VOID AS $$
 {
-    // Check if the posted_at field is null, throw an error if it is
+    // Verify that posted_at is not null
     if (item.posted_at === null) {
-        plv8.elog(ERROR, 'This bank tx cannot be processed because posted_at is null.');
+        plv8.elog(ERROR, 'This bank transaction cannot be processed because posted_at is null.');
         return;
     }
 
     plv8.subtransaction(function() {
+        // Retrieve bank payment transaction and associated payment transaction
         const bpt = plv8.execute(
-            "SELECT ptx FROM bank_payment_tx WHERE btx = $1",
+            "SELECT pt.id as pt_id, pt.pi_id as pi_id FROM bank_payment_tx bpt JOIN payment_tx pt ON bpt.ptx = pt.id WHERE btx = $1",
             [item.id]
         );
 
@@ -17,36 +18,36 @@ CREATE OR REPLACE FUNCTION private.update_succeeded_payment_intent(item public.b
             return;
         }
 
-        // Update payment transactions to succeeded
+        // Update payment transactions to 'succeeded'
         bpt.forEach(function(entry) {
             plv8.execute(
                 "UPDATE payment_tx SET status = 'succeeded' WHERE id = $1",
-                [entry.ptx]
+                [entry.pt_id]
             );
         });
 
-        // Fetch the associated payment intent that has not yet succeeded
+        // Assuming bpt[0].pi_id points to the correct payment_intent
         const payment_intent = plv8.execute(
             "SELECT * FROM payment_intent WHERE id = $1 AND status <> 'succeeded'",
-            [bpt[0].ptx]  // Assuming bpt[0].ptx is the payment_intent id
-        );
+            [bpt[0].pi_id]
+        )[0];
 
-        if (payment_intent.length === 0) {
+        if (!payment_intent) {
             plv8.elog(ERROR, 'No valid payment_intent found or it is already succeeded.');
             return;
         }
 
-        // Sum the amount of all payment transactions
+        // Sum the amount of all related payment transactions
         const payment_tx_sum = plv8.execute(
-            "SELECT sum(amount) as sum FROM payment_tx WHERE pi_id = $1",
-            [bpt[0].ptx]  // Assuming the payment_tx is related to the payment_intent by pi_id
+            "SELECT SUM(amount) AS sum FROM payment_tx WHERE pi_id = $1",
+            [payment_intent.id]
         )[0].sum;
 
         // Compare sum and update payment_intent status if conditions are met
-        if (payment_tx_sum >= payment_intent[0].amount) {
+        if (payment_tx_sum >= payment_intent.amount) {
             plv8.execute(
                 "UPDATE payment_intent SET status = 'succeeded' WHERE id = $1",
-                [payment_intent[0].id]
+                [payment_intent.id]
             );
         }
     });
