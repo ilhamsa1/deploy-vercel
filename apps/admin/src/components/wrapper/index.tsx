@@ -69,6 +69,7 @@ const WrapperProvider = ({ children, user }: { children: React.ReactNode; user: 
       onSignOut={onSignOut}
       openDrawer={openDrawer}
       setOpenDrawer={setOpenDrawer}
+      prefixUrl={prefixUrl}
     >
       {children}
     </Layout>

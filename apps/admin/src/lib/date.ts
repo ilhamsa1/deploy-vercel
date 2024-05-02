@@ -85,7 +85,7 @@ export const formatDate = (date: DateLikeInput = today()) => dayjs(date).format(
 export const formatDateNameWithTime = (time: DateLikeInput) =>
   dayjs(time).format('DD MMM YYYY, hh:mm A (dddd)')
 export const formatDateWithTime = (time: DateLikeInput) =>
-  dayjs(time).format('DD MMM YYYY, hh:mm A')
+  dayjs(time).format('DD/MM/YYYY, hh:mm:ss A')
 export const formatTime = (time: DateLikeInput) => dayjs(time).format('hh:mm A')
 export const formatDateDefault = (date: DateLikeInput = today()) =>
   dayjs(date).format('YYYY-MM-DDT00:00:00Z')

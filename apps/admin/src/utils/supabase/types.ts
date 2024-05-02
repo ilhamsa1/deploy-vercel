@@ -540,6 +540,41 @@ export type Database = {
         }
         Returns: Json
       }
+      list_api_keys: {
+        Args: {
+          id_of_user: string
+        }
+        Returns: []
+      }
+      create_api_key: {
+        Args: {
+          id_of_user: string
+          key_description: string
+        }
+        Returns: string
+      }
+      get_api_key: {
+        Args: {
+          id_of_user: string
+          secret_id: string
+        }
+        Returns: string
+      }
+      revoke_api_key: {
+        Args: {
+          id_of_user: string
+          key_secret_id: string
+        }
+        Returns: object
+      }
+      security_confirm: {
+        Args: {
+          id_of_user: string
+          email_user: string
+          password_user: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

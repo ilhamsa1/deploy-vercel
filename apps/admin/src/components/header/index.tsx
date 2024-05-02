@@ -19,9 +19,15 @@ interface HeaderProps {
   notificationCount?: string | number
   onClickNotification?: (_event: SyntheticEvent<HTMLElement>) => void
   onSignOut: () => void
+  prefixUrl: string
 }
 
-export default function Header({ notificationCount, onClickNotification, onSignOut }: HeaderProps) {
+export default function Header({
+  notificationCount,
+  onClickNotification,
+  onSignOut,
+  prefixUrl,
+}: HeaderProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -79,6 +85,7 @@ export default function Header({ notificationCount, onClickNotification, onSignO
               anchorEl={anchorEl}
               handleClose={handleClose}
               onSignOut={onSignOut}
+              prefixUrl={prefixUrl}
             />
           </Stack>
         </Toolbar>

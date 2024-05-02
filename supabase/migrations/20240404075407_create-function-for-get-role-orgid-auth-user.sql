@@ -27,7 +27,7 @@ as $$
 $$;
 
 -- create a function to check if user can view another user
-CREATE OR REPLACE FUNCTION private.can_user_view_other_user(auth_user_id UUID, user_id UUID)
+CREATE OR REPLACE FUNCTION private.can_user_view_other_user(auth_user_id UUID, new_user_id UUID)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY definer SET search_path = private
@@ -37,7 +37,7 @@ DECLARE
   user_id_role TEXT;
 BEGIN
   SELECT role FROM public.user_orgs WHERE user_id = auth_user_id INTO auth_user_id_role;
-  SELECT role FROM public.user_orgs WHERE user_id = user_id INTO user_id_role;
+  SELECT role FROM public.user_orgs WHERE user_id = new_user_id INTO user_id_role;
   IF auth_user_id_role = 'admin' THEN
     RETURN true;
   END IF;

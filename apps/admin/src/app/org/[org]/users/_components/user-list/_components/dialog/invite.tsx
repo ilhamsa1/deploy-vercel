@@ -1,20 +1,17 @@
 import Stack from '@mui/material/Stack'
 import { ComponentType, useState } from 'react'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import toast from 'react-hot-toast'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-
-import DialogSentInviteUser from './sent'
 
 import Dialog from '@/components/dialog'
 import Button from '@/components/button'
 import Typography from '@/components/typography'
 import TextField from '@/components/textfield'
 import { FormField, FormItem, FormMessage, Form } from '@/components/form'
-
-import { useDialogShowState } from '@/hooks'
+import { useDialogShowState, useCopyClipboard } from '@/hooks'
+import DialogSentInviteUser from './sent'
 
 type Props = {
   openDialog: boolean
@@ -33,6 +30,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
     onOpenDialog: onOpenDialogSentInvite,
   } = useDialogShowState()
   const [emailSend, setEmailSend] = useState('')
+  const onCopyToClipboard = useCopyClipboard(inviteCode)
 
   const form = useForm<zod.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -45,15 +43,6 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
     setEmailSend(data.email)
     onOpenDialogSentInvite()
     onCloseDialog()
-  }
-
-  const copyToClipboard = async (content: string) => {
-    try {
-      await navigator.clipboard.writeText(content)
-      toast.success('Copied to code')
-    } catch (error) {
-      toast.error('Unable to copy to code')
-    }
   }
 
   return (
@@ -77,7 +66,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
             <Typography variant="caption">Invitation Code</Typography>
             <Typography variant="h2">{inviteCode}</Typography>
             <Typography
-              onClick={() => copyToClipboard('A1b2C34')}
+              onClick={onCopyToClipboard}
               sx={{
                 cursor: 'pointer',
                 textDecoration: 'underline',

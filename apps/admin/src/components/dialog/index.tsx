@@ -77,17 +77,21 @@ export default function Dialog({
       })}
       {...props}
     >
-      <DialogTitle>
-        {title}
-        {onClose && (
-          <IconButton
-            onClick={onClose}
-            sx={styles.iconButton}
-            iconName="close"
-          />
-        )}
-      </DialogTitle>
-      <Divider />
+      {title && onClose && (
+        <>
+          <DialogTitle>
+            {title}
+            {onClose && (
+              <IconButton
+                onClick={onClose}
+                sx={styles.iconButton}
+                iconName="close"
+              />
+            )}
+          </DialogTitle>
+          <Divider />
+        </>
+      )}
       <DialogContent>{children}</DialogContent>
 
       {hasActions && (
@@ -96,6 +100,7 @@ export default function Dialog({
           {cancelButton && (
             <BtnCancel
               variant="outlined"
+              size="small"
               onClick={onClose}
             >
               cancel
@@ -105,6 +110,7 @@ export default function Dialog({
             <Button
               variant="contained"
               color="primary"
+              size="small"
               disabled={disableAccept}
               isLoading={loadingButton}
               onClick={(event) => {
