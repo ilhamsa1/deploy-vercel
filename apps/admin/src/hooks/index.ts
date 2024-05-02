@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { GridPaginationModel, GridSortModel } from '@mui/x-data-grid'
+import toast from 'react-hot-toast'
 
 import { createClient } from '../utils/supabase/client'
 
@@ -142,4 +143,17 @@ export function usePaginationCursor(
   )
 
   return { cursor, getPageCursors, setPageCursors, mapPageToCursors }
+}
+
+export const userCopyClipboard = (text: string) => {
+  const onCopyToClipboard = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      toast.success('copy succeeded')
+    } catch (error) {
+      toast.error('copy not successful')
+    }
+  }, [text])
+
+  return onCopyToClipboard
 }

@@ -1,7 +1,6 @@
 import Stack from '@mui/material/Stack'
 import { ComponentType, useState } from 'react'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import toast from 'react-hot-toast'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -14,7 +13,7 @@ import Typography from '@/components/typography'
 import TextField from '@/components/textfield'
 import { FormField, FormItem, FormMessage, Form } from '@/components/form'
 
-import { useDialogShowState } from '@/hooks'
+import { useDialogShowState, userCopyClipboard } from '@/hooks'
 
 type Props = {
   openDialog: boolean
@@ -33,6 +32,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
     onOpenDialog: onOpenDialogSentInvite,
   } = useDialogShowState()
   const [emailSend, setEmailSend] = useState('')
+  const onCopyToClipboard = userCopyClipboard(inviteCode)
 
   const form = useForm<zod.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -45,15 +45,6 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
     setEmailSend(data.email)
     onOpenDialogSentInvite()
     onCloseDialog()
-  }
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(inviteCode)
-      toast.success('Copied to code')
-    } catch (error) {
-      toast.error('Unable to copy to code')
-    }
   }
 
   return (
@@ -77,7 +68,7 @@ const DialogInviteUser: ComponentType<Props> = ({ openDialog, onCloseDialog, inv
             <Typography variant="caption">Invitation Code</Typography>
             <Typography variant="h2">{inviteCode}</Typography>
             <Typography
-              onClick={() => copyToClipboard()}
+              onClick={onCopyToClipboard}
               sx={{
                 cursor: 'pointer',
                 textDecoration: 'underline',

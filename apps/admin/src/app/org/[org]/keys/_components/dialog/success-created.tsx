@@ -1,7 +1,6 @@
 import { ComponentType } from 'react'
 import Typography from '@mui/material/Typography'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import toast from 'react-hot-toast'
 import Stack from '@mui/material/Stack'
 
 import Dialog from '@/components/dialog'
@@ -9,6 +8,7 @@ import TextField from '@/components/textfield'
 
 import Button from '@/components/button'
 import ContentDetails from '@/components/content-details'
+import { userCopyClipboard } from '@/hooks'
 
 type Props = {
   openDialog: boolean
@@ -23,15 +23,7 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
   description,
   accessKey,
 }) => {
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(accessKey)
-      toast.success('Copied to access key')
-    } catch (error) {
-      toast.error('Unable to copy to access key')
-    }
-  }
-
+  const onCopyToClipboard = userCopyClipboard(accessKey)
   return (
     <Dialog
       cancelButton
@@ -62,7 +54,7 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
             />
             <Button
               variant="contained"
-              onClick={copyToClipboard}
+              onClick={onCopyToClipboard}
               startIcon={<ContentCopyIcon />}
               style={{ height: '52px', width: '121px' }}
             >

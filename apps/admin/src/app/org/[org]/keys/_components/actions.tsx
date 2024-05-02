@@ -8,7 +8,11 @@ export const getApiKeyList = listApiKey
 export const revokeKey = revokeApiKey
 export const getUser = getUserAuth
 
-export async function login(formData: { email: string; password: string; description: string }) {
+export async function securityConfirm(formData: {
+  email: string
+  password: string
+  description: string
+}) {
   const supabase = createClient()
 
   // type-casting here for convenience
