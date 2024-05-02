@@ -7,7 +7,7 @@ AS $$
 BEGIN
     -- Check if 'posted_at' was previously empty and is now set
     IF (OLD.posted_at IS NULL AND NEW.posted_at IS NOT NULL) THEN
-        private.update_succeeded_payment_intent(NEW)
+        PERFORM private.update_succeeded_payment_intent(NEW);
     END IF;
 
     RETURN NEW;  -- Return the modified NEW row for the trigger
