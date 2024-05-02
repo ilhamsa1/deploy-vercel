@@ -77,7 +77,7 @@ export const getUserList = async ({
   if (!orgId) return null
 
   const searchParams = new URLSearchParams(search)
-  const orderEntries = sortModelToOrderOptions(sortModel) || ''
+  const orderEntries = sortModelToOrderOptions(sortModel) || 'created_at.asc'
 
   let query = supabase
     .from('user_orgs')

@@ -21,6 +21,7 @@ const Layout: ComponentType<Props> = ({
   onSignOut,
   openDrawer,
   setOpenDrawer,
+  prefixUrl,
 }) => {
   return (
     <RootContainer>
@@ -37,6 +38,7 @@ const Layout: ComponentType<Props> = ({
               onClickBack={onClickBack}
               onOpenDrawer={onOpenDrawer}
               onSignOut={onSignOut}
+              prefixUrl={prefixUrl}
             />
             <ContainerDetail>{children}</ContainerDetail>
           </PageContainer>

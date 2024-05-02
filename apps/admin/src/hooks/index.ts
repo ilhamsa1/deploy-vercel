@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
+import { GridPaginationModel, GridSortModel } from '@mui/x-data-grid'
+import toast from 'react-hot-toast'
 
 import { createClient } from '../utils/supabase/client'
 
@@ -42,13 +44,21 @@ export const useDebounceFn = () => {
   return { debounce }
 }
 
-export function useDialogShowState() {
+export function useDialogShowState<T>() {
   const [openDialog, setOpenDialog] = useState(false)
+  const [selected, setSelected] = useState<T>()
 
-  const onOpenDialog = useCallback(() => setOpenDialog(true), [setOpenDialog])
+  const onOpenDialog = useCallback(
+    (data?: T) => {
+      setOpenDialog(true)
+      if (data) setSelected(data)
+    },
+    [setOpenDialog],
+  )
+
   const onCloseDialog = useCallback(() => setOpenDialog(false), [setOpenDialog])
 
-  return { openDialog, onOpenDialog, onCloseDialog }
+  return { openDialog, onOpenDialog, onCloseDialog, selected }
 }
 
 /**
@@ -61,9 +71,9 @@ export const useSupabase = (): SupabaseClient => {
 }
 
 export function usePaginationCursor(
-  paginationModel: any,
-  originPaginationModel: any,
-  sortModel: any,
+  paginationModel: GridPaginationModel,
+  originPaginationModel: GridPaginationModel,
+  sortModel: GridSortModel,
 ) {
   const mapPageToCursors = useRef<{ [page: number]: [string | null, string | null] }>({})
 
@@ -133,4 +143,17 @@ export function usePaginationCursor(
   )
 
   return { cursor, getPageCursors, setPageCursors, mapPageToCursors }
+}
+
+export const useCopyClipboard = (text: string) => {
+  const onCopyToClipboard = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      toast.success('copy succeeded')
+    } catch (error) {
+      toast.error('copy not successful')
+    }
+  }, [text])
+
+  return onCopyToClipboard
 }
