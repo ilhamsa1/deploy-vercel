@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography'
 
 import Button from '@/components/button'
 
-const EmptyKeys = ({ onOpenDialogCreateApi }: any) => {
+const EmptyKeys = ({ onOpenDialogCreateApi }: { onOpenDialogCreateApi: () => void }) => {
   return (
     <Stack
       sx={{ mt: '24px' }}

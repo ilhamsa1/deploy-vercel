@@ -14,6 +14,12 @@ import EmptyKeys from '../_components/empty'
 
 import { getApiKeyList } from './actions'
 
+export type Keys = {
+  id: string
+  description: string
+  created_at: string
+}
+
 const KeysPage = () => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
   const {
@@ -21,8 +27,8 @@ const KeysPage = () => {
     onCloseDialog: onCloseDeleteKeyDialog,
     onOpenDialog: onOpenDeleteKeyDialog,
     selected: selectedDeleteKey,
-  } = useDialogShowState()
-  const [data, setData] = useState([])
+  } = useDialogShowState<Keys>()
+  const [data, setData] = useState<Keys[]>([])
   const [isLoading, startTransition] = useTransition()
 
   const fetchApiKeys = () => {
@@ -60,7 +66,7 @@ const KeysPage = () => {
         onCloseDialog={onCloseDialog}
       />
       <DialogDeleteApi
-        selectedDeleteKey={selectedDeleteKey}
+        selectedDeleteKey={selectedDeleteKey as Keys}
         fetchApiKeys={fetchApiKeys}
         openDialog={openDeleteKeyDialog}
         onCloseDialog={onCloseDeleteKeyDialog}

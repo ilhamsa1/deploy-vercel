@@ -5,12 +5,13 @@ import toast from 'react-hot-toast'
 import Dialog from '@/components/dialog'
 
 import { revokeKey } from '../actions'
+import { Keys } from '..'
 
 type Props = {
   openDialog: boolean
   onCloseDialog: () => void
   fetchApiKeys: () => void
-  selectedDeleteKey: any
+  selectedDeleteKey: Keys
 }
 
 const DialogDeleteApiKey: ComponentType<Props> = ({

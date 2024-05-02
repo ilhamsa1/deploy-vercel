@@ -1,14 +1,21 @@
 'use client'
 
-import React from 'react'
+import React, { ComponentType } from 'react'
 import Typography from '@mui/material/Typography'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { GridActionsCellItem, GridCellParams } from '@mui/x-data-grid'
 
 import Datagrid from '@/components/data-grid'
 import { formatDateWithTime } from '@/lib/date'
+import { Keys } from '..'
 
-const ListKeys = ({ keys, isLoading, onOpenDeleteKeyDialog }: any) => {
+type Props = {
+  keys: Keys[]
+  isLoading: boolean
+  onOpenDeleteKeyDialog: (_row: Keys) => void
+}
+
+const ListKeys: ComponentType<Props> = ({ keys, isLoading, onOpenDeleteKeyDialog }) => {
   const columns = [
     {
       field: 'description',
@@ -26,12 +33,6 @@ const ListKeys = ({ keys, isLoading, onOpenDeleteKeyDialog }: any) => {
       },
     },
     {
-      field: 'last_updated_at',
-      flex: 1,
-      minWidth: 250,
-      headerName: 'Last Used',
-    },
-    {
       field: 'actions',
       headerName: '',
       width: 100,
@@ -40,7 +41,7 @@ const ListKeys = ({ keys, isLoading, onOpenDeleteKeyDialog }: any) => {
           <GridActionsCellItem
             icon={<DeleteOutlineIcon />}
             label="Delete"
-            onClick={() => onOpenDeleteKeyDialog(data)}
+            onClick={() => onOpenDeleteKeyDialog(data.row)}
             color="inherit"
           />
         )

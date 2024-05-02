@@ -6,7 +6,7 @@ import Grid from '@mui/material/Grid'
 
 import Button from '@/components/button'
 
-const SectionHeader = ({ onOpenDialogCreateApi }: any) => {
+const SectionHeader = ({ onOpenDialogCreateApi }: { onOpenDialogCreateApi: () => void }) => {
   return (
     <Grid
       container
