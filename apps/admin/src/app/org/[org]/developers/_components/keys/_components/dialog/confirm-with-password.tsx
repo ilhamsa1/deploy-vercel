@@ -19,7 +19,7 @@ import { FormField, FormItem, FormMessage, Form } from '@/components/form'
 
 import DialogSuccessCreated from './success-created'
 
-import { securityConfirm } from '../actions'
+import { securityConfirm } from '../../actions'
 
 type Props = {
   openDialog: boolean

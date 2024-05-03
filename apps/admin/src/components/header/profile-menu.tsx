@@ -60,7 +60,7 @@ export default function ProfileMenu({
       <MenuItem
         sx={styles.menuItem}
         onClick={() => {
-          router.push(`${prefixUrl}/keys`)
+          router.push(`${prefixUrl}/developers`)
           handleClose()
         }}
       >

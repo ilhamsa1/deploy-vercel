@@ -7,7 +7,7 @@ import { GridActionsCellItem, GridCellParams } from '@mui/x-data-grid'
 
 import Datagrid from '@/components/data-grid'
 import { formatDateWithTime } from '@/lib/date'
-import { Keys } from '..'
+import { Keys } from '../..'
 
 type Props = {
   keys: Keys[]

@@ -6,11 +6,11 @@ import { useEffect, useState, useTransition } from 'react'
 
 import { useDialogShowState } from '@/hooks'
 
-import SectionHeader from '../_components/header'
-import SectionDatagrid from '../_components/datagrid'
-import DialogCreateApi from '../_components/dialog/create-api'
-import DialogDeleteApi from '../_components/dialog/delete-api'
-import EmptyKeys from '../_components/empty'
+import SectionHeader from './_components/header'
+import SectionDatagrid from './_components/datagrid'
+import DialogCreateApi from './_components/dialog/create-api'
+import DialogDeleteApi from './_components/dialog/delete-api'
+import EmptyKeys from './_components/empty'
 
 import { getApiKeyList } from './actions'
 
