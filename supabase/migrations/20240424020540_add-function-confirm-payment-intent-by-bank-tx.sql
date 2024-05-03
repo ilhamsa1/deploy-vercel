@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION private.confirm_payment_intent_by_bank_tx(payment_int
 
     const PAYMENT_TX_STATUS = {
       SUCCEEDED: 'succeeded',
-      FAILED: 'failed'
+      PENDING: 'pending'
     };
 
     const CONFIRMATION_METHOD = {
@@ -27,9 +27,17 @@ CREATE OR REPLACE FUNCTION private.confirm_payment_intent_by_bank_tx(payment_int
               [payment_intent_item.account_id]
             )[0];
 
+            const payment_tx_status = bank_tx_item.posted_at === null ? PAYMENT_TX_STATUS.PENDING : PAYMENT_TX_STATUS.SUCCEEDED
+            const payment_method_details = {
+              type: 'bank_account',
+              bank_account: {
+                tx: bank_tx_item.id
+              }
+            }
+        
             const paymentTxRow = plv8.execute(
-              "INSERT INTO payment_tx(pi_id, org_id, amount, amount_e, currency, payment_method, status) " +
-              "VALUES($1, $2, $3, $4, $5, $6, $7) " +
+              "INSERT INTO payment_tx(pi_id, org_id, amount, amount_e, currency, payment_method, payment_method_details, status) " +
+              "VALUES($1, $2, $3, $4, $5, $6, $7, $8) " +
               "RETURNING *",
               [
                 payment_intent_item.id,
@@ -38,7 +46,8 @@ CREATE OR REPLACE FUNCTION private.confirm_payment_intent_by_bank_tx(payment_int
                 payment_intent_item.amount_e,
                 payment_intent_item.currency,
                 payment_intent_item.payment_method,
-                PAYMENT_TX_STATUS.SUCCEEDED
+                payment_method_details,
+                payment_tx_status,
               ]
             )[0];
           
