@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import zod from 'zod'
+import { z, ZodIssue } from 'zod'
 
 import {
   getNextCursor,
@@ -23,8 +23,16 @@ export const fetchCache = 'auto'
 export async function GET(request: NextRequest) {
   const supabase = await createClientWithAuthHeader()
   const searchParams = request.nextUrl.searchParams
-  await validateGet(Object.fromEntries(searchParams.entries()))
+  const { error: errorValidate } = (await validateGet(
+    Object.fromEntries(searchParams.entries()),
+  )) as {
+    error: { name: string; message: ZodIssue[] }
+  }
   // Security issue if duplicate key: ?select=status&status=requires_action&status=&select=
+
+  if (errorValidate) {
+    return NextResponse.json({ error: errorValidate })
+  }
 
   // Select: ?select=fullName:full_name,birthDate:birth_date
   const select = searchParams.get('select') || '*'
@@ -64,7 +72,11 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const { data, count } = await query.limit(limit || 10)
+  const { data, count, error } = await query.limit(limit || 10)
+
+  if (error) {
+    return NextResponse.json({ error })
+  }
 
   let next_cursor: typeof cursor = null
   let prev_cursor: typeof cursor = null
@@ -85,18 +97,29 @@ export async function GET(request: NextRequest) {
 export async function POST(request: Request) {
   const supabase = createClientWithAuthHeader()
   const params = await request.json()
-  await validatePost(params)
+  const { error: errorValidate } = (await validatePost(params)) as {
+    error: { name: string; message: ZodIssue[] }
+  }
+
+  if (errorValidate) {
+    return NextResponse.json({ error: errorValidate })
+  }
 
   const { currency, ...item } = params
   const { amount, amount_e } = processAmountWithCurrency(item.amount, currency)
 
-  const { data: account } = await supabase
+  const { data: account, error: errorAct } = await supabase
     .from('business_account')
     .select('id, org_id')
+    .throwOnError()
     .limit(1)
     .single()
 
-  const { data } = await supabase
+  if (errorAct) {
+    return NextResponse.json({ error: errorAct })
+  }
+
+  const { data, error } = await supabase
     .from('payment_intent')
     .insert({
       ...item,
@@ -111,38 +134,60 @@ export async function POST(request: Request) {
     .throwOnError()
     .single()
 
+  if (error) {
+    return NextResponse.json({ error })
+  }
+
   return NextResponse.json({ data })
 }
 
-export const validateGet = async (payload: zod.infer<typeof QuerySchema>) => {
-  const validationResult = (await QuerySchema.safeParse(payload)) as { error?: string }
-
-  if (validationResult.error) {
-    throw new Error(validationResult.error)
+export const validateGet = async (payload: z.infer<typeof QuerySchema>) => {
+  try {
+    await QuerySchema.parse(payload)
+    return { error: null }
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return {
+        error: {
+          name: err.name,
+          message: err.issues,
+        },
+      }
+    }
   }
 }
 
-export const validatePost = async (payload: zod.infer<typeof FormSchema>) => {
-  const validationResult = (await FormSchema.safeParse(payload)) as { error?: string }
-
-  if (validationResult.error) {
-    throw new Error(validationResult.error)
+export const validatePost = async (payload: z.infer<typeof FormSchema>) => {
+  try {
+    await FormSchema.parse(payload)
+    return { error: null }
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return {
+        error: {
+          name: err.name,
+          message: err.issues,
+        },
+      }
+    }
   }
 }
 
-const QuerySchema = zod.object({
-  select: zod.string().optional(),
-  order: zod.string().optional(),
-  cursor: zod.string().optional(),
-  limit: zod.number().optional(),
-  status: zod.string().optional(), // status has DB index
-  amount: zod.number().optional(), // amount has DB index
+const QuerySchema = z.object({
+  select: z.string().optional(),
+  order: z.string().optional(),
+  cursor: z.string().optional(),
+  limit: z.number().optional(),
+  status: z.string().optional(), // status has DB index
+  amount: z.number().optional(), // amount has DB index
 })
 
-const FormSchema = zod.object({
-  currency: zod.string(),
-  amount: zod.number().or(zod.string().nonempty()),
-  metadata: zod.object({}),
-  customer: zod.string(),
-  receipt_email: zod.string(),
+const FormSchema = z.object({
+  currency: z.string({ required_error: 'currency is required' }),
+  amount: z
+    .number({ required_error: 'Amount is required' })
+    .or(z.string({ required_error: 'Amount is required' }).nonempty()),
+  metadata: z.object({}).optional(),
+  customer: z.string().optional(),
+  receipt_email: z.string().optional(),
 })
