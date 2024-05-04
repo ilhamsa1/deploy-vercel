@@ -65,7 +65,7 @@ AS $$
             const payment_method_details = {
               type: instruction_type,
               [instruction_type]: {
-                tx: bank_tx_item.id
+                tx: bank_tx_row.id
               }
             }
 
@@ -98,22 +98,22 @@ AS $$
 
         // Sum the amount of all related payment transactions
         const payment_tx_sum = plv8.execute(
-            "SELECT SUM(amount) AS sum FROM payment_tx WHERE pi_id = $1 AND status = 'succeeded' ",
-            [payment_tx_row.id]
+            "SELECT SUM(amount) AS sum FROM payment_tx WHERE pi_id = $1 ",
+            [payment_intent_id]
         )[0].sum;
 
-        if (payment_tx_sum >= payment_tx_row.amount) {
+        if (payment_tx_sum >= row.amount) {
                 // Update payment_intent table with new status
             plv8.execute(
                 "UPDATE payment_intent SET " +
                 "status = $1 " +
                 "WHERE id = $2",
-                [PAYMENT_INTENT_STATUS.PROCESSING, payment_tx_row.id]
+                [PAYMENT_INTENT_STATUS.PROCESSING, payment_intent_id]
             );
           } else {
               plv8.execute(
                 "UPDATE payment_intent SET status = 'requires_payment_method' WHERE id = $1",
-                [payment_tx_row.id]
+                [payment_intent_id]
             );
           }
 
@@ -123,7 +123,6 @@ AS $$
 
         return true;
     } catch(error) {
-      throw new Error(error)
         // TODO: CREATE LOG ERROR
         return false;
     }

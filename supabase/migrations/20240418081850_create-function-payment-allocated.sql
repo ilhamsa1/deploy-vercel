@@ -11,9 +11,8 @@ CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_i
       plv8.subtransaction(function(){
         // Retrieve payment intent and associated business account
         const row = plv8.execute(
-            "SELECT pi.*, ba.org_id::TEXT AS org_id " +
+            "SELECT * " +
             "FROM payment_intent pi " +
-            "JOIN business_account ba ON ba.id = pi.account_id " +
             "WHERE pi.id = $1 AND pi.status = $2 " +
             "LIMIT 1 " +
             "FOR UPDATE SKIP LOCKED",
@@ -95,7 +94,7 @@ CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_i
             [row.id]
         )[0].sum || 0;
 
-        const amount_remaining = BigInt(row.amount) + BigInt(payment_tx_sum) + BigInt(count_payment_intent.count)
+        const amount_remaining = (BigInt(row.amount) - BigInt(payment_tx_sum))+ BigInt(count_payment_intent.count)
 
         // Construct next action object
         const next_action = {
