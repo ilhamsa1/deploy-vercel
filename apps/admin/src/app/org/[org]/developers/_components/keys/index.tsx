@@ -21,7 +21,7 @@ export type Keys = {
   created_at: string
 }
 
-const KeysPage = ({ user }: { user: User }) => {
+const KeysPage = ({ user }: { user?: User }) => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
   const {
     openDialog: openDeleteKeyDialog,

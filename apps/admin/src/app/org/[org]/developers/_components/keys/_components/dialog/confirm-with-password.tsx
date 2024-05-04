@@ -27,7 +27,7 @@ type Props = {
   onCloseDialog: () => void
   description: string
   fetchApiKeys: () => void
-  user: User
+  user?: User
 }
 
 const FormSchema = z.object({
@@ -114,7 +114,7 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
               variant="outlined"
               label="Email"
               fullWidth
-              defaultValue={user.email}
+              defaultValue={user?.email || ''}
               disabled
             />
             <FormField

@@ -458,6 +458,60 @@ export type Database = {
           },
         ]
       }
+      webhook_endpoint: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          org_id: number
+          account_id: number
+          enabled_events?: Json | null
+          status?: string | null
+          url?: string | null
+          description?: string | null
+          metadata?: Json | null
+          secret?: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          org_id: number
+          account_id: number
+          enabled_events?: Json | null
+          status?: string | null
+          url?: string | null
+          description?: string | null
+          metadata?: Json | null
+          secret?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          org_id: number
+          account_id: number
+          enabled_events?: Json | null
+          status?: string | null
+          url?: string | null
+          description?: string | null
+          metadata?: Json | null
+          secret?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_endpoint_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "webhook_endpoint_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "business_account"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

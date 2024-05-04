@@ -17,7 +17,7 @@ type Props = {
   openDialog: boolean
   onCloseDialog: () => void
   fetchApiKeys: () => void
-  user: User
+  user?: User
 }
 
 const FormSchema = z.object({

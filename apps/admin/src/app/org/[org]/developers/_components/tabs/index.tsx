@@ -9,7 +9,7 @@ import UITabs from '@/components/tabs'
 import AccessKeyList from '../keys'
 import WebHookList from '../web-hook'
 
-const Tabs = ({ user }: { user: User }) => {
+const Tabs = ({ user }: { user?: User }) => {
   const [value, setValue] = useState(0)
 
   return (

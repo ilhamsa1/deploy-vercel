@@ -11,9 +11,5 @@ export default async function DevelopersPage() {
     redirect('/org')
   }
 
-  return (
-    <Box>
-      <Tabs user={data.user} />
-    </Box>
-  )
+  return <Box>{data?.user && <Tabs user={data?.user} />}</Box>
 }
