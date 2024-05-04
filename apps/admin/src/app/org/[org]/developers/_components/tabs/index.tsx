@@ -1,14 +1,15 @@
 'use client'
 
+import { User } from '@supabase/supabase-js'
 import Box from '@mui/material/Box'
-import { useState, ComponentType } from 'react'
+import { useState } from 'react'
 
 import UITabs from '@/components/tabs'
 
 import AccessKeyList from '../keys'
 import WebHookList from '../web-hook'
 
-const Tabs: ComponentType = () => {
+const Tabs = ({ user }: { user: User }) => {
   const [value, setValue] = useState(0)
 
   return (
@@ -20,7 +21,7 @@ const Tabs: ComponentType = () => {
           handleChange={setValue}
         />
       </Box>
-      {value === 0 && <AccessKeyList />}
+      {value === 0 && <AccessKeyList user={user} />}
       {value === 1 && <WebHookList />}
     </Box>
   )

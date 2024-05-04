@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import toast from 'react-hot-toast'
+import { User } from '@supabase/supabase-js'
 
 import { useDialogShowState } from '@/hooks'
 
@@ -26,13 +27,10 @@ type Props = {
   onCloseDialog: () => void
   description: string
   fetchApiKeys: () => void
+  user: User
 }
 
 const FormSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: 'Email is required' })
-    .email({ message: 'Please enter a valid email' }),
   password: z.string().min(1, { message: 'Password is required' }),
   description: z.string(),
 })
@@ -42,6 +40,7 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
   onCloseDialog,
   description,
   fetchApiKeys,
+  user,
 }) => {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, startTransition] = useTransition()
@@ -55,7 +54,6 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     values: {
-      email: '',
       password: '',
       description,
     },
@@ -65,7 +63,7 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
 
   const handleClose = () => {
     onCloseDialog()
-    form.reset({ email: '', password: '', description: '' })
+    form.reset({ password: '', description: '' })
   }
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -112,21 +110,12 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
             >
               We need an additional security check to authorize this action
             </Typography>
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem style={{ width: '100%' }}>
-                  <TextField
-                    variant="outlined"
-                    label="Email"
-                    fullWidth
-                    {...field}
-                    onChange={field.onChange}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
+            <TextField
+              variant="outlined"
+              label="Email"
+              fullWidth
+              defaultValue={user.email}
+              disabled
             />
             <FormField
               control={form.control}

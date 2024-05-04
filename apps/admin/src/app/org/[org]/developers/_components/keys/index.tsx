@@ -3,6 +3,7 @@
 import toast from 'react-hot-toast'
 import Box from '@mui/material/Box'
 import { useEffect, useState, useTransition } from 'react'
+import { User } from '@supabase/supabase-js'
 
 import { useDialogShowState } from '@/hooks'
 
@@ -20,7 +21,7 @@ export type Keys = {
   created_at: string
 }
 
-const KeysPage = () => {
+const KeysPage = ({ user }: { user: User }) => {
   const { openDialog, onCloseDialog, onOpenDialog } = useDialogShowState()
   const {
     openDialog: openDeleteKeyDialog,
@@ -64,6 +65,7 @@ const KeysPage = () => {
         fetchApiKeys={fetchApiKeys}
         openDialog={openDialog}
         onCloseDialog={onCloseDialog}
+        user={user}
       />
       <DialogDeleteApi
         selectedDeleteKey={selectedDeleteKey as Keys}

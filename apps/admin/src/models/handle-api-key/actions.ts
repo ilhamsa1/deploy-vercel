@@ -73,10 +73,11 @@ export const revokeApiKey = async (key_secret_id: string) => {
   return true
 }
 
-export const securityConfirmAccess = async (email_user: string, password_user: string) => {
+export const securityConfirmAccess = async (password_user: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
-  await validateConfirmAccess({ email: email_user, password: password_user })
+  const email_user = userData?.user?.email || ''
+  await validateConfirmAccess({ password: password_user })
 
   if (!userData?.user) throw new Error('No Authorization')
 
@@ -133,10 +134,6 @@ export const validateSecretKey = async (payload: z.infer<typeof FormSchemaSecret
 }
 
 const FormSchemaConfirmAccess = z.object({
-  email: z
-    .string()
-    .min(1, { message: 'Email is required' })
-    .email({ message: 'Please enter a valid email' }),
   password: z.string().min(1, { message: 'Password is required' }),
 })
 
