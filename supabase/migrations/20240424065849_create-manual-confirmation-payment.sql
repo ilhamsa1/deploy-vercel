@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION private.confirm_payment_manually(
+CREATE OR REPLACE FUNCTION public.confirm_payment_manually(
     payment_intent_id UUID,
     bank_details JSONB
 ) RETURNS BOOLEAN AS $$

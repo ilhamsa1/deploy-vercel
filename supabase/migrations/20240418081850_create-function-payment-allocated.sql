@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_intent) RETURNS BOOLEAN AS $$
+CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_intent) RETURNS BOOLEAN AS $$
 {
     const PAYMENT_INTENT_STATUS = {
       REQUIRES_PAYMENT_METHOD: "requires_payment_method",
@@ -87,16 +87,19 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
 
         // Construct payment method
         const payment_method = 'bank_account_' + selected_bank_account.id;
+        const instruction_type = 'ph_bank_transfer'
+        const action_type = 'display_bank_transfer_instructions'
 
         // Construct next action object
         const next_action = {
-            display_bank_transfer_instructions: {
+            type: action_type,
+            [action_type]: {
                 // Calculate remaining amount for bank transfer
                 amount_remaining: BigInt(row.amount) + BigInt(count_payment_intent.count),
                 amount_remaining_e: row.amount_e,
                 currency: row.currency,
-                type: payment_method,
-                [payment_method]: {
+                type: instruction_type,
+                [instruction_type]: {
                     bank_code: row_bank.tag,
                     account_number: selected_bank_account.num,
                     memo: "TODO: Memo" // Add a memo indicating the purpose of the transaction
@@ -108,7 +111,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
         plv8.execute(
             "UPDATE payment_intent SET " +
             "status = $1, next_action = $2 ," +
-            "confirmation_method = 'manual' ," +
+            "confirmation_method = 'automatic' ," +
             "payment_method = $3 " +
             "WHERE id = $4",
             [PAYMENT_INTENT_STATUS.REQUIRES_ACTION, next_action, payment_method, row.id]

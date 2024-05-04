@@ -19,7 +19,7 @@ BEGIN
   -- Determine the event type based on the status of the payment_intent
   IF NEW.status = 'requires_payment_method' THEN
     eventType := 'payment_intent.created';
-  ELSIF NEW.status = 'requires_actions' THEN
+  ELSIF NEW.status = 'requires_action' THEN
     eventType := 'payment_intent.requires_action';
   ELSIF NEW.status = 'requires_confirmation' THEN
     eventType := 'payment_intent.amount_capturable_updated';
