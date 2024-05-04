@@ -32,4 +32,4 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER on_insert_or_update_payment_intent_trigger
 AFTER INSERT OR UPDATE ON public.payment_intent
 FOR EACH ROW
-EXECUTE FUNCTION public.handler_payment_intent_trigger();
+EXECUTE FUNCTION private.handler_payment_intent_trigger();

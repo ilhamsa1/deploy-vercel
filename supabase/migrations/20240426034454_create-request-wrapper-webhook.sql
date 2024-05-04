@@ -7,7 +7,7 @@ CREATE TABLE request_tracker (
   body JSONB,
   headers JSONB,
   request_id BIGINT,
-  metadata JSONB,
+  metadata JSONB
 );
 
 CREATE INDEX request_tracker_request_id_idx ON request_tracker (request_id);
@@ -71,7 +71,7 @@ select
             request_tracker.request_id
         FROM request_tracker
         INNER JOIN net._http_response ON net._http_response.id = request_tracker.request_id
-        WHERE net._http_response.status_code >= 500 OR net._http_response.timed_out IS NULL or net._http_response.timed_out = TRUE
+        WHERE net._http_response.status_code >= 500 OR net._http_response.timed_out IS NULL OR net._http_response.timed_out = TRUE
         LIMIT 3
     ),
     retry AS (

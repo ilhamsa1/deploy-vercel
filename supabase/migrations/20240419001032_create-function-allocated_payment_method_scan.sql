@@ -1,4 +1,8 @@
-CREATE OR REPLACE FUNCTION private.allocate_payment_methods(item public.payment_intent DEFAULT NULL) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION private.allocate_payment_methods(item public.payment_intent DEFAULT NULL) 
+RETURNS VOID 
+SECURITY definer
+SET search_path = public
+AS $$
 DECLARE
     each_item payment_intent;  -- Declare as a record type for each row
 BEGIN
