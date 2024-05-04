@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack'
 
 import Button from '@/components/button'
 
-const SectionHeader = ({ onOpenWebHookDialog }: { onOpenWebHookDialog: () => void }) => {
+const SectionHeader = ({ onOpenAddWebHookDialog }: { onOpenAddWebHookDialog: () => void }) => {
   return (
     <Stack
       flexDirection="row"
@@ -19,7 +19,7 @@ const SectionHeader = ({ onOpenWebHookDialog }: { onOpenWebHookDialog: () => voi
       <Button
         size="small"
         variant="contained"
-        onClick={onOpenWebHookDialog}
+        onClick={onOpenAddWebHookDialog}
       >
         Add Endpoint
       </Button>

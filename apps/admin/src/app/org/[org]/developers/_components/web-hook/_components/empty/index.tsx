@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography'
 
 import Button from '@/components/button'
 
-const EmptyWebHook = ({ onOpenWebHookDialog }: { onOpenWebHookDialog: () => void }) => {
+const EmptyWebHook = ({ onOpenAddWebHookDialog }: { onOpenAddWebHookDialog: () => void }) => {
   return (
     <Stack
       sx={{ mt: '24px' }}
@@ -15,7 +15,7 @@ const EmptyWebHook = ({ onOpenWebHookDialog }: { onOpenWebHookDialog: () => void
         <Typography variant="h4">Please set them up first.</Typography>
       </Stack>
       <Button
-        onClick={onOpenWebHookDialog}
+        onClick={onOpenAddWebHookDialog}
         variant="contained"
         size="small"
       >

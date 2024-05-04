@@ -10,6 +10,8 @@ import { useDialogShowState } from '@/hooks'
 import EmptyWebHook from './_components/empty'
 import SectionHeader from './_components/header'
 import SectionListWebHooks from './_components/datagrid'
+import DialogAddWebHook from './_components/dialog/add-endpoint'
+
 import { getWebHooksList } from './actions'
 
 export type Keys = {
@@ -20,9 +22,9 @@ export type Keys = {
 
 const WebHooksPage = () => {
   const {
-    // openDialog: openWebHookDialog,
-    // onCloseDialog: onCloseWebHookDialog,
-    onOpenDialog: onOpenWebHookDialog,
+    openDialog: openAddWebHookDialog,
+    onCloseDialog: onCloseAddWebHookDialog,
+    onOpenDialog: onOpenAddWebHookDialog,
   } = useDialogShowState()
   const [data, setData] = useState<WebHookListT[]>([])
   const [isLoading, startTransition] = useTransition()
@@ -46,15 +48,19 @@ const WebHooksPage = () => {
     <Box>
       {data.length ? (
         <>
-          <SectionHeader onOpenWebHookDialog={onOpenWebHookDialog} />
+          <SectionHeader onOpenAddWebHookDialog={onOpenAddWebHookDialog} />
           <SectionListWebHooks
             isLoading={isLoading}
             webHooks={data}
           />
         </>
       ) : (
-        <EmptyWebHook onOpenWebHookDialog={onOpenWebHookDialog} />
+        <EmptyWebHook onOpenAddWebHookDialog={onOpenAddWebHookDialog} />
       )}
+      <DialogAddWebHook
+        openDialog={openAddWebHookDialog}
+        onCloseDialog={onCloseAddWebHookDialog}
+      />
     </Box>
   )
 }
