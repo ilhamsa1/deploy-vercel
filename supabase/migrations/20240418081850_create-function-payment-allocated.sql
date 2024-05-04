@@ -90,12 +90,19 @@ CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_i
         const instruction_type = 'ph_bank_transfer'
         const action_type = 'display_bank_transfer_instructions'
 
+        const payment_tx_sum = plv8.execute(
+            "SELECT SUM(amount) AS sum FROM payment_tx WHERE pi_id = $1 ",
+            [row.id]
+        )[0].sum || 0;
+
+        const amount_remaining = BigInt(row.amount) + BigInt(payment_tx_sum) + BigInt(count_payment_intent.count)
+
         // Construct next action object
         const next_action = {
             type: action_type,
             [action_type]: {
                 // Calculate remaining amount for bank transfer
-                amount_remaining: BigInt(row.amount) + BigInt(count_payment_intent.count),
+                amount_remaining: amount_remaining,
                 amount_remaining_e: row.amount_e,
                 currency: row.currency,
                 type: instruction_type,

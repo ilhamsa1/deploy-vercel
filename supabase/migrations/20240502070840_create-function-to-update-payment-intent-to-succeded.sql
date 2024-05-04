@@ -39,7 +39,7 @@ CREATE OR REPLACE FUNCTION private.update_succeeded_payment_intent(item public.b
 
         // Sum the amount of all related payment transactions
         const payment_tx_sum = plv8.execute(
-            "SELECT SUM(amount) AS sum FROM payment_tx WHERE pi_id = $1",
+            "SELECT SUM(amount) AS sum FROM payment_tx WHERE pi_id = $1 AND status = 'succeeded' ",
             [payment_intent.id]
         )[0].sum;
 

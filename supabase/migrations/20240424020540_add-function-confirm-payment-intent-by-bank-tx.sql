@@ -28,9 +28,11 @@ CREATE OR REPLACE FUNCTION private.confirm_payment_intent_by_bank_tx(payment_int
             )[0];
 
             const payment_tx_status = bank_tx_item.posted_at === null ? PAYMENT_TX_STATUS.PENDING : PAYMENT_TX_STATUS.SUCCEEDED
+            
+            const instruction_type = 'ph_bank_transfer'
             const payment_method_details = {
-              type: 'bank_account',
-              bank_account: {
+              type: instruction_type,
+              [instruction_type]: {
                 tx: bank_tx_item.id
               }
             }
