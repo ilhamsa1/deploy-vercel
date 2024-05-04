@@ -106,13 +106,14 @@ AS $$
                 // Update payment_intent table with new status
             plv8.execute(
                 "UPDATE payment_intent SET " +
-                "status = $1 " +
+                "status = $1, " +
+                "confirmation_method = 'manual', " +
                 "WHERE id = $2",
                 [PAYMENT_INTENT_STATUS.PROCESSING, payment_intent_id]
             );
           } else {
               plv8.execute(
-                "UPDATE payment_intent SET status = 'requires_payment_method' WHERE id = $1",
+                "UPDATE payment_intent SET status = 'requires_payment_method', confirmation_method = 'manual' WHERE id = $1",
                 [payment_intent_id]
             );
           }
