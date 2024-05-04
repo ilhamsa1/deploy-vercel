@@ -41,7 +41,7 @@ const SectionHeader = ({ onOpenDialogCreateApi }: { onOpenDialogCreateApi: () =>
           variant="contained"
           onClick={onOpenDialogCreateApi}
         >
-          Generate Secret Key
+          Generate Access Key
         </Button>
       </Grid>
     </Grid>

@@ -33,12 +33,12 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
       <Stack spacing={4}>
         <Stack alignItems="center">
           <Typography variant="h4">Success</Typography>
-          <Typography variant="body1">Secret API Key Success Created</Typography>
+          <Typography variant="body1">Access Key Created</Typography>
         </Stack>
         <Stack spacing={2}>
           <ContentDetails
             isRow
-            label="API Key Description"
+            label="Acess Key Name"
             item={description}
           />
           <Stack
@@ -61,8 +61,8 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
             </Button>
           </Stack>
           <Typography variant="caption">
-            This is the only time API key can be viewed or downloaded. Save this somewhere safe to
-            prevent unauthorized use.
+            This is the only time Access key can be viewed or downloaded. Save this somewhere safe
+            to prevent unauthorized use.
           </Typography>
         </Stack>
       </Stack>

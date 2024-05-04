@@ -19,7 +19,7 @@ type Props = {
 }
 
 const FormSchema = z.object({
-  description: z.string({ required_error: 'Description is required' }),
+  description: z.string().min(1, { message: 'Description is required' }),
 })
 
 const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetchApiKeys }) => {
@@ -32,6 +32,9 @@ const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetc
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      description: '',
+    },
   })
 
   const handleClose = () => {
@@ -50,7 +53,7 @@ const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetc
       <Dialog
         open={openDialog}
         onClose={handleClose}
-        title="Generate API Key"
+        title="Generate Access Keys"
         onAccept={form.handleSubmit(onSubmit)}
         acceptLabel="Continue"
         fullWidth
@@ -63,7 +66,7 @@ const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetc
               <FormItem style={{ width: '100%' }}>
                 <TextField
                   variant="outlined"
-                  label="API key description"
+                  label="Access Key Name"
                   fullWidth
                   {...field}
                   onChange={field.onChange}

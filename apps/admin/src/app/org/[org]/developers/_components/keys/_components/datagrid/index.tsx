@@ -19,9 +19,12 @@ const ListKeys: ComponentType<Props> = ({ keys, isLoading, onOpenDeleteKeyDialog
   const columns = [
     {
       field: 'description',
-      headerName: 'Key Name',
+      headerName: 'Access Key Name',
       flex: 1,
       minWidth: 240,
+      renderCell: (data: GridCellParams) => {
+        return <Typography>{data.row?.description || 'N/A'}</Typography>
+      },
     },
     {
       field: 'created_at',

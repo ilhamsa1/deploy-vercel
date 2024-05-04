@@ -1,8 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
+import { z, ZodIssue } from 'zod'
 
 export const createApiKey = async (key_description: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
+  await validateCreateApiKey({ description: key_description })
 
   if (!userData?.user) throw new Error('No Authorization')
 
@@ -36,6 +38,7 @@ export const listApiKey = async () => {
 export const getApiKey = async (secret_id: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
+  await validateSecretKey({ secret_id })
 
   if (!userData?.user) throw new Error('No Authorization')
 
@@ -54,6 +57,7 @@ export const getApiKey = async (secret_id: string) => {
 export const revokeApiKey = async (key_secret_id: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
+  await validateSecretKey({ secret_id: key_secret_id })
 
   if (!userData?.user) throw new Error('No Authorization')
 
@@ -72,6 +76,7 @@ export const revokeApiKey = async (key_secret_id: string) => {
 export const securityConfirmAccess = async (email_user: string, password_user: string) => {
   const supabase = createClient()
   const { data: userData } = await supabase.auth.getUser()
+  await validateConfirmAccess({ email: email_user, password: password_user })
 
   if (!userData?.user) throw new Error('No Authorization')
 
@@ -87,3 +92,58 @@ export const securityConfirmAccess = async (email_user: string, password_user: s
 
   return true
 }
+
+export const validateCreateApiKey = async (payload: z.infer<typeof FormSchemaCreateApiKey>) => {
+  try {
+    await FormSchemaCreateApiKey.parse(payload)
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const serverErrors = Object.fromEntries(
+        err?.issues?.map((issue: ZodIssue) => ['message', issue.message]) || [],
+      )
+      throw new Error(serverErrors.message)
+    }
+  }
+}
+
+export const validateConfirmAccess = async (payload: z.infer<typeof FormSchemaConfirmAccess>) => {
+  try {
+    await FormSchemaConfirmAccess.parse(payload)
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const serverErrors = Object.fromEntries(
+        err?.issues?.map((issue: ZodIssue) => ['message', issue.message]) || [],
+      )
+      throw new Error(serverErrors.message)
+    }
+  }
+}
+
+export const validateSecretKey = async (payload: z.infer<typeof FormSchemaSecretKey>) => {
+  try {
+    await FormSchemaSecretKey.parse(payload)
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const serverErrors = Object.fromEntries(
+        err?.issues?.map((issue: ZodIssue) => ['message', issue.message]) || [],
+      )
+      throw new Error(serverErrors.message)
+    }
+  }
+}
+
+const FormSchemaConfirmAccess = z.object({
+  email: z
+    .string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Please enter a valid email' }),
+  password: z.string().min(1, { message: 'Password is required' }),
+})
+
+const FormSchemaCreateApiKey = z.object({
+  description: z.string().min(1, { message: 'Description is required' }),
+})
+
+const FormSchemaSecretKey = z.object({
+  secret_id: z.string().min(1, { message: 'Secret key is required' }),
+})
