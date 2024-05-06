@@ -7,7 +7,7 @@ import { useState } from 'react'
 import UITabs from '@/components/tabs'
 
 import AccessKeyList from '../keys'
-import WebHookList from '../web-hook'
+import WebHookList from '../webhooks'
 
 const Tabs = ({ user }: { user?: User }) => {
   const [value, setValue] = useState(0)
