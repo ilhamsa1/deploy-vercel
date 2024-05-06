@@ -11,7 +11,7 @@ AS $$
 $$ LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
 SECURITY DEFINER SET search_path = 'extensions', 'public';
 
-CREATE OR REPLACE FUNCTION public.gen_memo_code(numeric, integer DEFAULT 6, varchar(512) DEFAULT '')
+CREATE OR REPLACE FUNCTION private.gen_memo_code(numeric, integer DEFAULT 6, varchar(512) DEFAULT '')
 RETURNS text AS $$
   -- gen_mask_code(id, min_char_length, tweak_or_seed)
   WITH t1(num_text) AS (

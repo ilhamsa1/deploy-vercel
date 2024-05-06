@@ -6,7 +6,7 @@ CREATE TABLE public.bank_payment_memo (
   ba_id INTEGER NOT NULL REFERENCES bank_account ON DELETE CASCADE,
   pi_id UUID NOT NULL REFERENCES payment_intent ON DELETE CASCADE,
   seq BIGINT DEFAULT nextval('bank_payment_memo_seq'),
-  code TEXT GENERATED ALWAYS AS (public.gen_memo_code(seq)) STORED,
+  code TEXT GENERATED ALWAYS AS (private.gen_memo_code(seq)) STORED,
 
   CONSTRAINT pk_bank_payment_memo PRIMARY KEY (pi_id, ba_id),
   
