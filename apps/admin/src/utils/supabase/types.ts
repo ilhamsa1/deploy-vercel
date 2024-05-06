@@ -462,36 +462,39 @@ export type Database = {
         Row: {
           created_at: string | null
           deleted_at: string | null
-          org_id: number
+          org_id?: number
           account_id: number
           enabled_events?: Json | null
           status?: string | null
           url?: string | null
           description?: string | null
+          api_version?: string | null
           metadata?: Json | null
           secret?: string | null
         }
         Insert: {
           created_at?: string | null
           deleted_at?: string | null
-          org_id: number
+          org_id?: number
           account_id: number
           enabled_events?: Json | null
           status?: string | null
           url?: string | null
           description?: string | null
+          api_version?: string | null
           metadata?: Json | null
           secret?: string | null
         }
         Update: {
           created_at?: string | null
           deleted_at?: string | null
-          org_id: number
+          org_id?: number
           account_id: number
           enabled_events?: Json | null
           status?: string | null
           url?: string | null
           description?: string | null
+          api_version?: string | null
           metadata?: Json | null
           secret?: string | null
         }
@@ -508,6 +511,42 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "business_account"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_account: {
+        Row: {
+          id: number
+          org_id: number
+          user_id: string
+          display_name?: string | null
+        }
+        Insert: {
+          id: number
+          org_id: number
+          user_id: string
+          display_name?: string | null
+        }
+        Update: {
+          id: number
+          org_id: number
+          user_id: string
+          display_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_account_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_account_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]

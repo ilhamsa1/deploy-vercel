@@ -60,6 +60,7 @@ const WebHooksPage = () => {
       <DialogAddWebHook
         openDialog={openAddWebHookDialog}
         onCloseDialog={onCloseAddWebHookDialog}
+        fetchWebHook={fetchWebHook}
       />
     </Box>
   )

@@ -39,23 +39,23 @@ export const EVENTS: Event[] = [
           'Occurs when a PaymentIntent has funds to be captured. Check the amount_capturable property on the PaymentIntent to determine the amount that can be captured. You may capture the PaymentIntent with an amount_to_capture value up to the specified amount.',
       },
       {
-        type: 'canceled',
+        type: 'cancelled',
         description: 'Occurs when a PaymentIntent is canceled.',
       },
       {
         type: 'created',
         description: 'Occurs when a new PaymentIntent is created.',
       },
-      {
-        type: 'partially_funded',
-        description:
-          'Occurs when funds are applied to a customer_balance PaymentIntent and the ‘amount_remaining’ changes.',
-      },
-      {
-        type: 'payment_failed',
-        description:
-          'Occurs when a PaymentIntent has failed the attempt to create a payment method or a payment.',
-      },
+      // {
+      //   type: 'partially_funded',
+      //   description:
+      //     'Occurs when funds are applied to a customer_balance PaymentIntent and the ‘amount_remaining’ changes.',
+      // },
+      // {
+      //   type: 'payment_failed',
+      //   description:
+      //     'Occurs when a PaymentIntent has failed the attempt to create a payment method or a payment.',
+      // },
       {
         type: 'processing',
         description: 'Occurs when a PaymentIntent has started processing.',
@@ -68,16 +68,20 @@ export const EVENTS: Event[] = [
         type: 'succeeded',
         description: 'Occurs when a PaymentIntent has successfully completed payment.',
       },
-    ],
-  },
-  {
-    key: 'payout',
-    title: 'Payout',
-    event_types: [
       {
-        type: 'created',
-        description: 'Occurs whenever a payout is created.',
+        type: 'pending',
+        description: 'Occurs when a new PaymentIntent is pending.',
       },
     ],
   },
+  // {
+  //   key: 'payout',
+  //   title: 'Payout',
+  //   event_types: [
+  //     {
+  //       type: 'created',
+  //       description: 'Occurs whenever a payout is created.',
+  //     },
+  //   ],
+  // },
 ]
