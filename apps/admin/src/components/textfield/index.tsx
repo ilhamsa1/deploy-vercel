@@ -43,6 +43,7 @@ export default function FormTextField({
         <MUITextField
           variant="filled"
           size="small"
+          required={required}
           {...props}
         />
         {errorMessage && <FormHelperText error>{errorMessage}</FormHelperText>}

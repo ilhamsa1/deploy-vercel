@@ -74,6 +74,7 @@ const DialogCreateApi: ComponentType<Props> = ({
                 <TextField
                   variant="outlined"
                   label="Access Key Name"
+                  required
                   fullWidth
                   {...field}
                   onChange={field.onChange}

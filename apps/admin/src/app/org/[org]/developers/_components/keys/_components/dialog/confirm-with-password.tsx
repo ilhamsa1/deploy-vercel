@@ -126,6 +126,7 @@ const DialogConfirmWithPassword: ComponentType<Props> = ({
                     variant="outlined"
                     label="Password"
                     fullWidth
+                    required
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">

@@ -64,7 +64,7 @@ export default function ProfileMenu({
           handleClose()
         }}
       >
-        <Typography variant="button">API</Typography>
+        <Typography variant="button">Developers</Typography>
       </MenuItem>
       <MenuItem
         sx={styles.menuItem}
