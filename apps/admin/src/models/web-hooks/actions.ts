@@ -103,12 +103,7 @@ export async function updateWebHooksById(params: {
   }
 }): Promise<ResponseData<WebHookListT> | null> {
   const supabase = createClient()
-  const { data: userData } = await supabase.auth.getUser()
   await validateWebhooks(params.data)
-
-  const org_id = userData.user?.user_metadata?.org?.id
-
-  if (!org_id) throw new Error('Organization is not found')
 
   const data = await supabase
     .from('webhook_endpoint')
@@ -124,6 +119,18 @@ export async function updateWebHooksById(params: {
   }
 
   return data as QueryData<WebHookListT>
+}
+
+export async function deleteWebHooksById(id: string) {
+  const supabase = createClient()
+
+  const data = await supabase.from('webhook_endpoint').delete().eq('id', id)
+
+  if (data.error) {
+    throw new Error(data.error.message)
+  }
+
+  return true
 }
 
 export const validateWebhooks = async (payload: z.infer<typeof FormSchemaWebHooks>) => {

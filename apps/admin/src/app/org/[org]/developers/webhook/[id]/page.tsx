@@ -9,5 +9,10 @@ export default async function WebhooksDetailPage({ params }: { params: { id: str
     redirect('/org')
   }
 
-  return <WebhooksDetail id={params?.id} />
+  return (
+    <WebhooksDetail
+      id={params?.id}
+      user={data?.user || undefined}
+    />
+  )
 }

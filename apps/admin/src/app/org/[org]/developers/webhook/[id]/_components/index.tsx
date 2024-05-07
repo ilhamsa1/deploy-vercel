@@ -5,14 +5,16 @@ import WrapperDetail from '@/components/wrapper-details'
 import Stack from '@mui/material/Stack'
 import { useEffect, useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
+import { User } from '@supabase/supabase-js'
 
 import { useDialogShowState } from '@/hooks'
 import { WebHookListT } from '@/models/web-hooks/types'
 
 import { getWebHooksById } from './actions'
 import DialogEditWebHook from './dialog/edit-endpoint'
+import DialogDeleteWebHook from './dialog/delete-endpoint'
 
-export default function WebhooksDetail({ id }: { id: string }) {
+export default function WebhooksDetail({ id, user }: { id: string; user?: User }) {
   const [data, setData] = useState<WebHookListT>()
   const [, startTransition] = useTransition()
   const {
@@ -21,10 +23,16 @@ export default function WebhooksDetail({ id }: { id: string }) {
     onOpenDialog: onOpenUpdateDialog,
   } = useDialogShowState()
 
+  const {
+    openDialog: openDeleteDialog,
+    onCloseDialog: onCloseDeleteDialog,
+    onOpenDialog: onOpenDeleteDialog,
+  } = useDialogShowState()
+
   const menus = [
     { label: 'Edit', onAction: onOpenUpdateDialog },
     { label: 'Disabled', onAction: () => console.log('test') },
-    { label: 'Delete', onAction: () => console.log('test') },
+    { label: 'Delete', onAction: onOpenDeleteDialog },
   ]
 
   const fetchWebhooksById = async () => {
@@ -72,6 +80,12 @@ export default function WebhooksDetail({ id }: { id: string }) {
         openDialog={openUpdateDialog}
         onCloseDialog={onCloseUpdateDialog}
         fetchWebhooksById={fetchWebhooksById}
+      />
+      <DialogDeleteWebHook
+        webhook={data as WebHookListT}
+        openDialog={openDeleteDialog}
+        onCloseDialog={onCloseDeleteDialog}
+        user={user}
       />
     </>
   )
