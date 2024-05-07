@@ -460,6 +460,7 @@ export type Database = {
       }
       webhook_endpoint: {
         Row: {
+          id: string
           created_at: string | null
           deleted_at: string | null
           org_id?: number
@@ -489,7 +490,7 @@ export type Database = {
           created_at?: string | null
           deleted_at?: string | null
           org_id?: number
-          account_id: number
+          account_id?: number
           enabled_events?: Json | null
           status?: string | null
           url?: string | null
