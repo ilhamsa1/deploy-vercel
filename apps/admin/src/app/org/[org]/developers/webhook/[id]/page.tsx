@@ -1,18 +1,13 @@
-import Box from '@mui/material/Box'
-
 import { getUserAuth } from '@/models/organizations/actions'
 import { redirect } from 'next/navigation'
+import WebhooksDetail from './_components'
 
-export default async function DevelopersPage() {
+export default async function WebhooksDetailPage({ params }: { params: { id: string } }) {
   const data = await getUserAuth()
 
   if (!data) {
     redirect('/org')
   }
 
-  return (
-    <Box>
-      <span>test</span>
-    </Box>
-  )
+  return <WebhooksDetail id={params?.id} />
 }

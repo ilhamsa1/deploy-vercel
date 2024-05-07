@@ -22,7 +22,7 @@ const Tabs = ({ user }: { user?: User }) => {
         />
       </Box>
       {value === 0 && <AccessKeyList user={user} />}
-      {value === 1 && <WebHookList />}
+      {value === 1 && <WebHookList user={user} />}
     </Box>
   )
 }

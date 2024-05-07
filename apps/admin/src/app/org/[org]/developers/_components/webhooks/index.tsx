@@ -3,6 +3,7 @@
 import toast from 'react-hot-toast'
 import Box from '@mui/material/Box'
 import { useEffect, useState, useTransition } from 'react'
+import { User } from '@supabase/supabase-js'
 
 import { WebHookListT } from '@/models/web-hooks/types'
 import { useDialogShowState } from '@/hooks'
@@ -20,7 +21,7 @@ export type Keys = {
   created_at: string
 }
 
-const WebHooksPage = () => {
+const WebHooksPage = ({ user }: { user?: User }) => {
   const {
     openDialog: openAddWebHookDialog,
     onCloseDialog: onCloseAddWebHookDialog,
@@ -52,6 +53,7 @@ const WebHooksPage = () => {
           <SectionListWebHooks
             isLoading={isLoading}
             webHooks={data}
+            user={user}
           />
         </>
       ) : (

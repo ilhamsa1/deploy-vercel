@@ -24,6 +24,30 @@ export const getWebHooks = async (): Promise<ResponseData<WebHookListT> | null> 
   return data as QueryData<WebHookListT>
 }
 
+export const getWebHooksById = async (id: string): Promise<ResponseData<WebHookListT> | null> => {
+  const supabase = createClient()
+  const { data: userData } = await supabase.auth.getUser()
+
+  const org_id = userData.user?.user_metadata?.org?.id
+
+  if (!org_id) throw new Error('Organization is not found')
+
+  const data = await supabase
+    .from('webhook_endpoint')
+    .select('*')
+    .eq('org_id', org_id)
+    .eq('id', id)
+    .throwOnError()
+    .limit(1)
+    .single()
+
+  if (data.error) {
+    throw new Error(data.error.message)
+  }
+
+  return data as QueryData<WebHookListT>
+}
+
 export const createWebHooks = async (formData: {
   url: string
   description: string

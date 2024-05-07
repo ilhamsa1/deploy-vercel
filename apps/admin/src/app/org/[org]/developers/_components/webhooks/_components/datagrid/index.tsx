@@ -3,6 +3,8 @@
 import React, { ComponentType } from 'react'
 import Typography from '@mui/material/Typography'
 import { GridCellParams } from '@mui/x-data-grid'
+import { useRouter } from 'next/navigation'
+import { User } from '@supabase/supabase-js'
 
 import Datagrid from '@/components/data-grid'
 import { WebHookListT } from '@/models/web-hooks/types'
@@ -10,9 +12,12 @@ import { WebHookListT } from '@/models/web-hooks/types'
 type Props = {
   webHooks: WebHookListT[]
   isLoading: boolean
+  user?: User
 }
 
-const SectionListWebHooks: ComponentType<Props> = ({ webHooks, isLoading }) => {
+const SectionListWebHooks: ComponentType<Props> = ({ webHooks, isLoading, user }) => {
+  const router = useRouter()
+
   const columns = [
     {
       field: 'url',
@@ -43,7 +48,7 @@ const SectionListWebHooks: ComponentType<Props> = ({ webHooks, isLoading }) => {
   ]
 
   const handleRowClick = (data: GridCellParams) => {
-    console.log(data.row)
+    router.push(`/org/${user?.user_metadata.org.tag}/developers/webhook/${data.row.id}`)
   }
 
   return (
