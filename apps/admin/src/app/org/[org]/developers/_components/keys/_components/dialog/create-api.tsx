@@ -9,6 +9,7 @@ import { useDialogShowState } from '@/hooks'
 import Dialog from '@/components/dialog'
 import TextField from '@/components/textfield'
 import { FormField, FormItem, FormMessage, Form } from '@/components/form'
+import { User } from '@supabase/supabase-js'
 
 import DialogConfirmWithPassword from './confirm-with-password'
 
@@ -16,13 +17,19 @@ type Props = {
   openDialog: boolean
   onCloseDialog: () => void
   fetchApiKeys: () => void
+  user?: User
 }
 
 const FormSchema = z.object({
-  description: z.string({ required_error: 'Description is required' }),
+  description: z.string().min(1, { message: 'Access key name is required' }),
 })
 
-const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetchApiKeys }) => {
+const DialogCreateApi: ComponentType<Props> = ({
+  openDialog,
+  onCloseDialog,
+  fetchApiKeys,
+  user,
+}) => {
   const {
     openDialog: openDialogConfirm,
     onCloseDialog: onCloseDialogConfirm,
@@ -32,6 +39,9 @@ const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetc
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      description: '',
+    },
   })
 
   const handleClose = () => {
@@ -50,7 +60,7 @@ const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetc
       <Dialog
         open={openDialog}
         onClose={handleClose}
-        title="Generate API Key"
+        title="Generate Access Keys"
         onAccept={form.handleSubmit(onSubmit)}
         acceptLabel="Continue"
         fullWidth
@@ -63,7 +73,8 @@ const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetc
               <FormItem style={{ width: '100%' }}>
                 <TextField
                   variant="outlined"
-                  label="API key description"
+                  label="Access Key Name"
+                  required
                   fullWidth
                   {...field}
                   onChange={field.onChange}
@@ -79,6 +90,7 @@ const DialogCreateApi: ComponentType<Props> = ({ openDialog, onCloseDialog, fetc
         openDialog={openDialogConfirm}
         onCloseDialog={onCloseDialogConfirm}
         fetchApiKeys={fetchApiKeys}
+        user={user}
       />
     </>
   )

@@ -13,12 +13,8 @@ export const getApiKeyList = listApiKey
 export const revokeKey = revokeApiKey
 export const getUser = getUserAuth
 
-export async function securityConfirm(formData: {
-  email: string
-  password: string
-  description: string
-}) {
-  await securityConfirmAccess(formData.email, formData.password)
+export async function securityConfirm(formData: { password: string; description: string }) {
+  await securityConfirmAccess(formData.password)
   const secretKey = await createApiKey(formData.description)
   const accessKey = await getApiKey(secretKey)
 
