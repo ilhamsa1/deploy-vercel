@@ -87,6 +87,14 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
 
         // Construct payment method
         const payment_method = 'bank_account_' + selected_bank_account.id;
+        
+        // Insert the memo code into bank_payment_memo
+        const bank_payment_memo = plv8.execute(
+            "INSERT INTO bank_payment_memo (ba_id, pi_id) " +
+            "VALUES ($1, $2) " +
+            "RETURNING code", // This returns the generated code
+            [selected_bank_account.id, item.id]
+        )[0];
 
         // Construct next action object
         const next_action = {
@@ -99,7 +107,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
                 [payment_method]: {
                     bank_code: row_bank.tag,
                     account_number: selected_bank_account.num,
-                    memo: "TODO: Memo" // Add a memo indicating the purpose of the transaction
+                    memo: bank_payment_memo.code // Add a memo indicating the purpose of the transaction
                 }
             }
         };
