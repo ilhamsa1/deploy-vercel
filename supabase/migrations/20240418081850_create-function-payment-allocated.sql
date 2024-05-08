@@ -99,10 +99,8 @@ CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_i
         const amount_remaining = (BigInt(row.amount) - BigInt(payment_tx_sum)) + unique_amount
 
         // a payment intent only has one memo
-        let memo
-        if (item.next_action) {
-            memo = item.next_action[action_type][instruction_type].memo
-        } else {
+        let memo = item.next_action[action_type][instruction_type].memo
+        if (!memo) {
             // Insert the memo code into bank_payment_memo
             const bank_payment_memo = plv8.execute(
                 "INSERT INTO bank_payment_memo (ba_id, pi_id) " +
@@ -155,8 +153,7 @@ CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_i
 
       return true;
     } catch(error) {
-        throw new Error(error)
-      // TODO: CREATE LOG ERROR
+      plv8.elog(ERROR, error.message);
       return false;
     }
 }
