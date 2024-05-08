@@ -8,26 +8,27 @@ import Dialog from '@/components/dialog'
 
 import { FormSchemaWebHooks } from '@/components/event/schema'
 import FormWebHook from '@/components/event/form'
-
-import { createWebHooks } from '../../actions'
+import { WebHookListT } from '@/models/web-hooks/types'
+import { updateWebHooksById } from '../actions'
 
 type Props = {
   openDialog: boolean
   onCloseDialog: () => void
-  fetchWebHook: () => void
+  webhook: WebHookListT
+  fetchWebhooksById: () => void
 }
 
-const DialogAddWebHook: ComponentType<Props> = ({ openDialog, onCloseDialog, fetchWebHook }) => {
+const DialogEditWebHook: ComponentType<Props> = ({
+  openDialog,
+  onCloseDialog,
+  webhook,
+  fetchWebhooksById,
+}) => {
   const [isLoading, startTransition] = useTransition()
 
   const form = useForm<z.infer<typeof FormSchemaWebHooks>>({
     resolver: zodResolver(FormSchemaWebHooks),
-    defaultValues: {
-      url: '',
-      description: '',
-      api_version: '',
-      enabled_events: [],
-    },
+    values: webhook as z.infer<typeof FormSchemaWebHooks>,
   })
 
   const handleClose = () => {
@@ -43,11 +44,10 @@ const DialogAddWebHook: ComponentType<Props> = ({ openDialog, onCloseDialog, fet
   const onSubmit = async (data: z.infer<typeof FormSchemaWebHooks>) => {
     startTransition(async () => {
       try {
-        const res = await createWebHooks(data)
-        if (!res) return
-        fetchWebHook()
+        await updateWebHooksById({ id: webhook?.id, data })
         handleClose()
-        toast.success('Endpoints saved successfully')
+        fetchWebhooksById()
+        toast.success('Endpoints updated successfully')
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown Error'
         toast.error(message)
@@ -60,8 +60,8 @@ const DialogAddWebHook: ComponentType<Props> = ({ openDialog, onCloseDialog, fet
       open={openDialog}
       onAccept={form.handleSubmit(onSubmit)}
       onClose={handleClose}
-      title="Add endpoint"
-      acceptLabel="Add endpoint"
+      title="Edit endpoint"
+      acceptLabel="Edit endpoint"
       loadingButton={isLoading}
       fullWidth
     >
@@ -70,4 +70,4 @@ const DialogAddWebHook: ComponentType<Props> = ({ openDialog, onCloseDialog, fet
   )
 }
 
-export default DialogAddWebHook
+export default DialogEditWebHook
