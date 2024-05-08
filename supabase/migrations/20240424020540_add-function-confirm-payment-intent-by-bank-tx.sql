@@ -36,6 +36,12 @@ CREATE OR REPLACE FUNCTION private.confirm_payment_intent_by_bank_tx(payment_int
                 tx: bank_tx_item.id
               }
             }
+            
+            const action_type = 'display_bank_transfer_instructions'
+
+            const payment_amount_remaining = payment_intent_item.next_action[action_type].amount_remaining
+            const payment_distinct_surcharge = payment_intent_item.next_action[action_type].distinct_surcharge
+            const payment_tx_amount = Number(payment_amount_remaining) - Number(payment_distinct_surcharge)
         
             const paymentTxRow = plv8.execute(
               "INSERT INTO payment_tx(pi_id, org_id, amount, amount_e, currency, payment_method, payment_method_details, status) " +
@@ -44,7 +50,7 @@ CREATE OR REPLACE FUNCTION private.confirm_payment_intent_by_bank_tx(payment_int
               [
                 payment_intent_item.id,
                 row_business_account.org_id,
-                payment_intent_item.amount,
+                payment_tx_amount,
                 payment_intent_item.amount_e,
                 payment_intent_item.currency,
                 payment_intent_item.payment_method,

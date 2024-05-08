@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION public.confirm_payment_manually(
     bank_tx_selector JSONB
 ) RETURNS BOOLEAN 
 SECURITY definer
-SET search_path = public
+SET search_path = 'public', 'private'
 AS $$
 {
     // Define constants
@@ -35,7 +35,7 @@ AS $$
                 return false;
             }
 
-            const transactedAt = bank_tx_selector.transacted_at || NULL
+            const transactedAt = bank_tx_selector.transacted_at || null;
 
             let query = "SELECT btx.* FROM bank_tx btx WHERE btx.amount = $1 AND btx.amount_e = $2 AND btx.currency = $3";
             const params = [bank_tx_selector.amount, bank_tx_selector.amount_e, bank_tx_selector.currency];
@@ -112,6 +112,7 @@ AS $$
                 [PAYMENT_INTENT_STATUS.PROCESSING, payment_intent_id]
             );
           } else {
+                // event cancel
               plv8.execute(
                 "UPDATE payment_intent SET status = 'requires_payment_method', confirmation_method = 'manual' WHERE id = $1",
                 [payment_intent_id]
