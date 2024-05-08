@@ -4,8 +4,8 @@ import toast from 'react-hot-toast'
 
 import Dialog from '@/components/dialog'
 
-import { revokeKey } from '../actions'
-import { Keys } from '..'
+import { revokeKey } from '../../actions'
+import { Keys } from '../..'
 
 type Props = {
   openDialog: boolean

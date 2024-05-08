@@ -95,6 +95,14 @@ CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_i
         )[0].sum || 0;
 
         const amount_remaining = (BigInt(row.amount) - BigInt(payment_tx_sum))+ BigInt(count_payment_intent.count)
+        
+        // Insert the memo code into bank_payment_memo
+        const bank_payment_memo = plv8.execute(
+            "INSERT INTO bank_payment_memo (ba_id, pi_id) " +
+            "VALUES ($1, $2) " +
+            "RETURNING code", // This returns the generated code
+            [selected_bank_account.id, item.id]
+        )[0];
 
         // Construct next action object
         const next_action = {
@@ -108,7 +116,7 @@ CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_i
                 [instruction_type]: {
                     bank_code: row_bank.tag,
                     account_number: selected_bank_account.num,
-                    memo: "TODO: Memo" // Add a memo indicating the purpose of the transaction
+                    memo: bank_payment_memo.code // Add a memo indicating the purpose of the transaction
                 }
             }
         };

@@ -60,11 +60,11 @@ export default function ProfileMenu({
       <MenuItem
         sx={styles.menuItem}
         onClick={() => {
-          router.push(`${prefixUrl}/keys`)
+          router.push(`${prefixUrl}/developers`)
           handleClose()
         }}
       >
-        <Typography variant="button">API</Typography>
+        <Typography variant="button">Developers</Typography>
       </MenuItem>
       <MenuItem
         sx={styles.menuItem}

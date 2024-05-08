@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography'
 
 import Button from '@/components/button'
 
-const EmptyKeys = ({ onOpenDialogCreateApi }: { onOpenDialogCreateApi: () => void }) => {
+const EmptyWebHook = ({ onOpenAddWebHookDialog }: { onOpenAddWebHookDialog: () => void }) => {
   return (
     <Stack
       sx={{ mt: '24px' }}
@@ -11,17 +11,18 @@ const EmptyKeys = ({ onOpenDialogCreateApi }: { onOpenDialogCreateApi: () => voi
       spacing={2}
     >
       <Stack alignItems="center">
-        <Typography variant="h4">You have not set up your API Keys.</Typography>
-        <Typography variant="h4">Please set it up first.</Typography>
+        <Typography variant="h4">Webhooks haven't been set up yet.</Typography>
+        <Typography variant="h4">Please set them up first.</Typography>
       </Stack>
       <Button
-        onClick={onOpenDialogCreateApi}
+        onClick={onOpenAddWebHookDialog}
         variant="contained"
+        size="small"
       >
-        Generate Secret Key
+        Add Endpoint
       </Button>
     </Stack>
   )
 }
 
-export default EmptyKeys
+export default EmptyWebHook

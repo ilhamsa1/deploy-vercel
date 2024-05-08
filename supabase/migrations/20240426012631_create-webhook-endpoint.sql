@@ -36,6 +36,7 @@ CREATE TABLE public.webhook_endpoint (
   status TEXT,
   url TEXT,
   description TEXT,
+  api_version TEXT,
   metadata JSONB DEFAULT '{}'::JSONB,
   secret TEXT DEFAULT generate_secret(),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
