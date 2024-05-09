@@ -26,7 +26,7 @@ const WaitForPayment = ({ paymentId, apiKey, onNext }: WaitForPaymentProps) => {
         },
       )
 
-      return result.data
+      return result.data.data
     },
   })
 

@@ -41,7 +41,7 @@ const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
           headers: { Authorization: `Bearer ${apiKey}` },
         },
       )
-      return response.data
+      return response.data.data
     },
   })
 

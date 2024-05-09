@@ -33,7 +33,7 @@ const PaymentCompleted: React.FC<PaymentCompletedProps> = ({ onReset }) => {
         }}
       >
         <Typography
-          variant="h4"
+          variant="h2"
           component="h1"
         >
           Payment Completed
