@@ -20,14 +20,19 @@ export type ResponseData<T> = {
 }
 
 export function processAmountWithCurrency(amount: number | string, currency: string) {
-  let amount_e = 2
+  let amount_e = 2 // Default to 2 decimal places
 
   if (typeof amount === 'string') {
+    // Split the input string into whole and fractional parts
     const [amount_w, amount_f = '00'] = amount.split('.', 2)
-    amount_e = amount_f.length
-    amount = +`${amount_w}${amount_f}`
+    const formattedFractional = (amount_f + '0').substring(0, 2) // Ensure two decimal places
+
+    // Format amount as a string with two decimal places
+    amount = `${amount_w}${formattedFractional}`
+    amount_e = formattedFractional.length // Update to reflect the actual length of formattedFractional
   } else {
-    amount_e = amountCurrency[currency.toLowerCase()]?.fractionDigits
+    // For non-string input, fetch the default fractional digits for the currency
+    amount_e = amountCurrency[currency.toLowerCase()]?.fractionDigits ?? 2 // Default to 2 if undefined
   }
 
   return { amount, amount_e }
