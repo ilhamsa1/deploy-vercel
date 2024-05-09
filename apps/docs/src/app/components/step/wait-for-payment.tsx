@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import { Container, Stack, Typography, Button, Box, CircularProgress } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import api from '../../../services/api'
 import Payload from '../payload'
 import { green, grey } from '@mui/material/colors'
+import * as animationData from '../lottie/2.json'
+import PaymentAnimation from '../lottie'
 
 interface WaitForPaymentProps {
   paymentId: string
@@ -12,6 +14,7 @@ interface WaitForPaymentProps {
 }
 
 const WaitForPayment = ({ paymentId, apiKey, onNext }: WaitForPaymentProps) => {
+  const [isAnimationStart, setIsAnimationStart] = useState(false)
   const { isLoading, error, data } = useQuery({
     queryKey: ['payment'],
     queryFn: async () => {
@@ -27,23 +30,38 @@ const WaitForPayment = ({ paymentId, apiKey, onNext }: WaitForPaymentProps) => {
     },
   })
 
-  useEffect(() => {
-    if (data) {
-      onNext()
-    }
-  }, [data, onNext])
+  // useEffect(() => {
+  //   if (data) {
+  //     onNext()
+  //   }
+  // }, [data, onNext])
 
   return (
     <Container
       maxWidth="md"
       sx={{ my: 4 }}
     >
-      <Typography
-        variant="h4"
-        sx={{ mb: 3, fontWeight: 'medium', color: green[800] }}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
       >
-        Wait for Payment Instructions
-      </Typography>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 'medium', color: green[800] }}
+        >
+          Wait for Payment Instructions
+        </Typography>
+        <Button
+          onClick={onNext}
+          variant="contained"
+          disabled={!data}
+          sx={{ bgcolor: green[400], '&:hover': { bgcolor: green[500] } }}
+        >
+          Next Step
+        </Button>
+      </Box>
       <Stack spacing={3}>
         {isLoading ? (
           <Box
@@ -65,12 +83,13 @@ const WaitForPayment = ({ paymentId, apiKey, onNext }: WaitForPaymentProps) => {
                 justifyContent: 'center',
               }}
             >
-              <Typography
-                variant="subtitle1"
-                sx={{ color: grey[800] }}
-              >
-                Process Details
-              </Typography>
+              <PaymentAnimation
+                data={animationData}
+                isStop={isAnimationStart}
+                onComplete={() => {
+                  console.log('done')
+                }}
+              />
             </Box>
             <Payload jsonData={data} />
           </Stack>

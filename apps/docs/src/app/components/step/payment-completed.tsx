@@ -2,6 +2,8 @@ import React from 'react'
 import { Button, Container, Stack, Typography, Box } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { green } from '@mui/material/colors'
+import * as animationData from '../lottie/success.json'
+import Lottie from '../lottie'
 
 interface PaymentCompletedProps {
   onReset: () => void
@@ -17,7 +19,7 @@ const PaymentCompleted: React.FC<PaymentCompletedProps> = ({ onReset }) => {
         flexDirection: 'column', // Stack children vertically
         justifyContent: 'center', // Center vertically
         alignItems: 'center', // Center horizontally
-        height: '100vh', // Take full view height to center vertically
+        height: '80vh', // Take full view height to center vertically
         textAlign: 'center',
       }}
     >
@@ -30,12 +32,11 @@ const PaymentCompleted: React.FC<PaymentCompletedProps> = ({ onReset }) => {
           mb: 2,
         }}
       >
-        <CheckCircleOutlineIcon sx={{ fontSize: 60, mr: 1 }} />
         <Typography
           variant="h4"
           component="h1"
         >
-          Payment Successfully Completed
+          Payment Completed
         </Typography>
       </Box>
       <Typography
@@ -45,6 +46,16 @@ const PaymentCompleted: React.FC<PaymentCompletedProps> = ({ onReset }) => {
         Your transaction has been processed successfully. You may continue using our services or
         perform another operation.
       </Typography>
+      <Box sx={{ maxWidth: 200, mb: 2 }}>
+        <Lottie
+          data={animationData}
+          isStop={false}
+          onComplete={() => {
+            console.log('')
+          }}
+          autoplay={true}
+        />
+      </Box>
       <Stack
         spacing={2}
         direction="column"
@@ -58,6 +69,7 @@ const PaymentCompleted: React.FC<PaymentCompletedProps> = ({ onReset }) => {
           Make Another Payment
         </Button>
       </Stack>
+   
     </Container>
   )
 }

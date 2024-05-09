@@ -23,7 +23,7 @@ export default function Index() {
   const [step, setStep] = useState<Steps>(Steps.CREATE_PAYMENT)
   const [paymentId, setPaymentId] = useState<string>('')
 
-  const advanceStep = (nextStep: Steps, delay = 5000): void => {
+  const advanceStep = (nextStep: Steps, delay = 0): void => {
     setTimeout(() => {
       setStep(nextStep)
     }, delay)

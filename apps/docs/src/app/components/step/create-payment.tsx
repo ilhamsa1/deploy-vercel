@@ -3,9 +3,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Container, Stack, Typography, TextField, Button, Box } from '@mui/material'
+import { green, grey } from '@mui/material/colors'
 import api from '../../../services/api'
 import Payload from '../payload'
-import { green, grey } from '@mui/material/colors'
+import * as animationData from '../lottie/1.json'
+import PaymentAnimation from '../lottie'
 
 // Define a schema for the form data using Zod
 const formSchema = z.object({
@@ -34,6 +36,7 @@ export default function CreatePayment({
     resolver: zodResolver(formSchema),
   })
   const [response, setResponse] = useState({})
+  const [isAnimationStart, setIsAnimationStart] = useState(false)
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -42,10 +45,13 @@ export default function CreatePayment({
         { amount: data.amount, currency: 'php' },
         { headers: { Authorization: `Bearer ${data.apiKey}` } },
       )
-      setResponse(result?.data.data)
-      if (result) {
-        onCreate(result?.data.data) // Assuming onCreate expects the data directly
-      }
+      setIsAnimationStart(true)
+      setTimeout(() => {
+        setResponse(result?.data?.data || {})
+        if (result) {
+          onCreate(result?.data?.data || {}) // Assuming onCreate expects the data directly
+        }
+      }, 1000)
     } catch (error) {
       console.error('Error creating payment:', error)
     }
@@ -104,8 +110,14 @@ export default function CreatePayment({
           >
             Create
           </Button>
-          <Box sx={{ bgcolor: grey[100], width: '100%', height: 200, p: 2, borderRadius: 2 }}>
-            <Typography sx={{ color: grey[800] }}>Process</Typography>
+          <Box sx={{ bgcolor: grey[100], width: '100%', p: 2, borderRadius: 2 }}>
+            <PaymentAnimation
+              data={animationData}
+              isStop={isAnimationStart}
+              onComplete={() => {
+                console.log('done')
+              }}
+            />
           </Box>
           <Payload jsonData={response} />
         </Stack>

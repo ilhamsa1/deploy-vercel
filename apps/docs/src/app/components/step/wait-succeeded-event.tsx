@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Stack, Typography, Box, CircularProgress } from '@mui/material'
+import Button from '@mui/material/Button'
 import api from '../../../services/api'
 import Payload from '../payload'
 import { useQuery } from '@tanstack/react-query'
 import { green } from '@mui/material/colors'
+import * as animationData from '../lottie/5.json'
+import PaymentAnimation from '../lottie'
 
 interface WaitForSucceededEventProps {
   paymentId: string
@@ -16,6 +19,9 @@ const WaitForSucceededEvent: React.FC<WaitForSucceededEventProps> = ({
   apiKey,
   onNext,
 }) => {
+  const [isAnimationStart, setIsAnimationStart] = useState(false)
+  const [canNext, setCanNext] = useState(false)
+
   const { isLoading, error, data } = useQuery<any, Error>({
     queryKey: ['payment_intent_success', paymentId], // Make the key more specific to this event
     queryFn: async () => {
@@ -33,7 +39,9 @@ const WaitForSucceededEvent: React.FC<WaitForSucceededEventProps> = ({
   useEffect(() => {
     if (data?.status === 'succeeded') {
       // Assuming status is part of the returned data object
-      setTimeout(onNext, 5000) // Fire onNext after a delay if the condition is met
+      setTimeout(() => {
+        setCanNext(true)
+      }, 5000) // Fire onNext after a delay if the condition is met
     }
   }, [data, onNext])
 
@@ -64,12 +72,27 @@ const WaitForSucceededEvent: React.FC<WaitForSucceededEventProps> = ({
       maxWidth="md"
       sx={{ marginTop: 4, marginBottom: 4 }}
     >
-      <Typography
-        variant="h4"
-        sx={{ marginBottom: 2, color: green[700], }}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
       >
-        Wait for Payment Succeeded Event
-      </Typography>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 'medium', color: green[800] }}
+        >
+          Wait for Payment Succeeded Event
+        </Typography>
+        <Button
+          onClick={onNext}
+          variant="contained"
+          disabled={!canNext}
+          sx={{ bgcolor: green[400], '&:hover': { bgcolor: green[500] } }}
+        >
+          Complete
+        </Button>
+      </Box>
       <Stack spacing={2}>
         <Box
           sx={{
@@ -83,7 +106,13 @@ const WaitForSucceededEvent: React.FC<WaitForSucceededEventProps> = ({
             boxShadow: 1,
           }}
         >
-          <Typography sx={{ color: 'text.secondary' }}>Processing...</Typography>
+           <PaymentAnimation
+            data={animationData}
+            isStop={isAnimationStart}
+            onComplete={() => {
+              console.log('done')
+            }}
+          />
         </Box>
         <Payload jsonData={data} />
       </Stack>

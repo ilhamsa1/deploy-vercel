@@ -1,10 +1,20 @@
-import React, { useEffect } from 'react'
-import { Container, Stack, Typography, Box, CircularProgress, useTheme } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import {
+  Container,
+  Stack,
+  Typography,
+  Box,
+  CircularProgress,
+  useTheme,
+  Button,
+} from '@mui/material'
 import api from '../../../services/api'
 import Payload from '../payload'
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/utils/supabase/client'
 import { green } from '@mui/material/colors'
+import * as animationData from '../lottie/4.json'
+import PaymentAnimation from '../lottie'
 
 interface WaitForProcessingEventProps {
   paymentId: string
@@ -18,7 +28,8 @@ const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
   onNext,
 }) => {
   const supabase = createClient()
-  const theme = useTheme()
+  const [isAnimationStart, setIsAnimationStart] = useState(false)
+  const [canNext, setCanNext] = useState(false)
 
   const { isLoading, error, data } = useQuery({
     queryKey: ['payment_intent_status'],
@@ -37,7 +48,9 @@ const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
   useEffect(() => {
     const handleUpdate = (response: { new: { status: string } }) => {
       if (response.new.status === 'succeeded') {
-        setTimeout(() => onNext(response.new), 3000)
+        setTimeout(() => {
+          setCanNext(true)
+        }, 3000)
       }
     }
 
@@ -62,12 +75,27 @@ const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
       maxWidth="md"
       sx={{ marginTop: 4, marginBottom: 4 }}
     >
-      <Typography
-        variant="h4"
-        sx={{ color: green[700], marginBottom: 2 }}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
       >
-        Wait for Payment Processing Event
-      </Typography>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 'medium', color: green[800] }}
+        >
+          Wait for Payment Processing Event
+        </Typography>
+        <Button
+          onClick={onNext}
+          variant="contained"
+          disabled={!canNext}
+          sx={{ bgcolor: green[400], '&:hover': { bgcolor: green[500] } }}
+        >
+          Next Step
+        </Button>
+      </Box>
       <Stack spacing={2}>
         <Typography variant="h6">Listen for Event via Realtime</Typography>
         <Typography variant="body2">
@@ -87,12 +115,13 @@ const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
             boxShadow: 1,
           }}
         >
-          <Typography
-            variant="body1"
-            sx={{ color: theme.palette.text.secondary }}
-          >
-            Processing...
-          </Typography>
+          <PaymentAnimation
+            data={animationData}
+            isStop={isAnimationStart}
+            onComplete={() => {
+              console.log('done')
+            }}
+          />
         </Box>
         <Payload jsonData={data} />
       </Stack>

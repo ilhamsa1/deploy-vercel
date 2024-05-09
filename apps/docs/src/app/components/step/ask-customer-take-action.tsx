@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react'
-import { Container, Stack, Typography, Box, CircularProgress } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Container, Button, Stack, Typography, Box, CircularProgress } from '@mui/material'
 import { green, grey } from '@mui/material/colors'
 import api from '../../../services/api'
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/utils/supabase/client'
+
+import * as animationDataA from '../lottie/3a.json'
+import * as animationDataB from '../lottie/3b.json'
+import PaymentAnimation from '../lottie'
 
 // Define TypeScript interfaces or types
 interface AskCustomerProps {
@@ -46,7 +50,7 @@ const changeCentToPrice = (value: string): string => {
 
 const AskCustomerToTakeAction: React.FC<AskCustomerProps> = ({ paymentId, apiKey, onNext }) => {
   const supabase = createClient()
-
+  const [canNext, setCanNext] = useState(false)
   const { isLoading, error, data } = useQuery({
     queryKey: ['paymentDetails'],
     queryFn: async () => {
@@ -65,10 +69,12 @@ const AskCustomerToTakeAction: React.FC<AskCustomerProps> = ({ paymentId, apiKey
     const handleUpdate = (response: any) => {
       // This should also be typed based on your real-time system structure
       const paymentAmount = data?.next_action.display_bank_transfer_instructions.amount_remaining
-      const responseAmount = response?.new.next_action.display_bank_transfer_instructions.amount_remaining
+      const responseAmount =
+        response?.new.next_action.display_bank_transfer_instructions.amount_remaining
       if (responseAmount === paymentAmount && response?.new.status === 'processing') {
         setTimeout(() => {
-          onNext(response.new)
+          setCanNext(true)
+          // onNext(response.new)
         }, 3000)
       }
     }
@@ -97,12 +103,27 @@ const AskCustomerToTakeAction: React.FC<AskCustomerProps> = ({ paymentId, apiKey
       maxWidth="md"
       sx={{ my: 4, bgcolor: grey[100], p: 3, borderRadius: 2, boxShadow: 1 }}
     >
-      <Typography
-        variant="h4"
-        sx={{ mb: 2, color: green[700] }}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
       >
-        Ask Customer to take action
-      </Typography>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 'medium', color: green[800] }}
+        >
+          Ask Customer to take action
+        </Typography>
+        <Button
+          onClick={onNext}
+          variant="contained"
+          disabled={!canNext}
+          sx={{ bgcolor: green[400], '&:hover': { bgcolor: green[500] } }}
+        >
+          Next Step
+        </Button>
+      </Box>
       <Stack spacing={3}>
         <Typography
           variant="body2"
@@ -137,7 +158,28 @@ const AskCustomerToTakeAction: React.FC<AskCustomerProps> = ({ paymentId, apiKey
           Wait for customer to perform the Bank Transfer:
         </Typography>
         <Box sx={{ bgcolor: 'white', p: 2, borderRadius: 1 }}>
-          <Typography>Processing...</Typography>
+          <PaymentAnimation
+            data={animationDataA}
+            isStop={false}
+            onComplete={() => {
+              console.log('done')
+            }}
+          />
+        </Box>
+        <Typography
+          variant="body2"
+          fontWeight="bold"
+        >
+          {"Wait for Fund Transfer / Transaction to arrive (in Lexupay's bank account)"}
+        </Typography>
+        <Box sx={{ bgcolor: 'white', p: 2, borderRadius: 1 }}>
+          <PaymentAnimation
+            data={animationDataB}
+            isStop={false}
+            onComplete={() => {
+              console.log('done')
+            }}
+          />
         </Box>
       </Stack>
     </Container>
