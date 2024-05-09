@@ -23,7 +23,7 @@ export function processAmountWithCurrency(amount: number | string, currency: str
   let amount_e = 2
 
   if (typeof amount === 'string') {
-    const [amount_w, amount_f] = amount.split('.', 2)
+    const [amount_w, amount_f = '00'] = amount.split('.', 2)
     amount_e = amount_f.length
     amount = +`${amount_w}${amount_f}`
   } else {
