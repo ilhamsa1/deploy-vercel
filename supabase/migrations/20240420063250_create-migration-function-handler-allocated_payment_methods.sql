@@ -1,13 +1,13 @@
-CREATE OR REPLACE FUNCTION public.handler_payment_intent_trigger() 
+CREATE OR REPLACE FUNCTION private.handler_payment_intent_trigger() 
 RETURNS TRIGGER
 SECURITY definer
-SET search_path = public
+SET search_path = private
 AS $$
 BEGIN
     -- Check the status of the new row
     IF NEW.status = 'requires_payment_method' THEN
         -- Allocate payment methods if status is 'requires_payment_method'
-        PERFORM public.allocate_payment_methods(NEW);
+        PERFORM private.allocate_payment_methods(NEW);
         
     -- TODO: Handle other status changes conditions
     -- ELSIF NEW.status = 'requires_confirmation' THEN
@@ -32,4 +32,4 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER on_insert_or_update_payment_intent_trigger
 AFTER INSERT OR UPDATE ON public.payment_intent
 FOR EACH ROW
-EXECUTE FUNCTION public.handler_payment_intent_trigger();
+EXECUTE FUNCTION private.handler_payment_intent_trigger();

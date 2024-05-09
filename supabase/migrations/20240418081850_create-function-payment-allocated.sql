@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_intent) RETURNS BOOLEAN AS $$
+CREATE OR REPLACE FUNCTION private.allocate_payment_method_single(item payment_intent) RETURNS BOOLEAN AS $$
 {
     const PAYMENT_INTENT_STATUS = {
       REQUIRES_PAYMENT_METHOD: "requires_payment_method",
@@ -11,9 +11,8 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
       plv8.subtransaction(function(){
         // Retrieve payment intent and associated business account
         const row = plv8.execute(
-            "SELECT pi.*, ba.org_id::TEXT AS org_id " +
+            "SELECT * " +
             "FROM payment_intent pi " +
-            "JOIN business_account ba ON ba.id = pi.account_id " +
             "WHERE pi.id = $1 AND pi.status = $2 " +
             "LIMIT 1 " +
             "FOR UPDATE SKIP LOCKED",
@@ -87,28 +86,46 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
 
         // Construct payment method
         const payment_method = 'bank_account_' + selected_bank_account.id;
-        
-        // Insert the memo code into bank_payment_memo
-        const bank_payment_memo = plv8.execute(
-            "INSERT INTO bank_payment_memo (ba_id, pi_id) " +
-            "VALUES ($1, $2) " +
-            "RETURNING code", // This returns the generated code
-            [selected_bank_account.id, item.id]
-        )[0];
+        const instruction_type = 'ph_bank_transfer'
+        const action_type = 'display_bank_transfer_instructions'
+
+        const payment_tx_sum = plv8.execute(
+            "SELECT SUM(amount) AS sum FROM payment_tx WHERE pi_id = $1 ",
+            [row.id]
+        )[0].sum || 0;
+
+        const unique_amount = BigInt(count_payment_intent.count)
+
+        const amount_remaining = (BigInt(row.amount) - BigInt(payment_tx_sum)) + unique_amount
+
+        // a payment intent only has one memo
+        let memo = item.next_action[action_type][instruction_type].memo
+        if (!memo) {
+            // Insert the memo code into bank_payment_memo
+            const bank_payment_memo = plv8.execute(
+                "INSERT INTO bank_payment_memo (ba_id, pi_id) " +
+                "VALUES ($1, $2) " +
+                "RETURNING code", // This returns the generated code
+                [selected_bank_account.id, item.id]
+            )[0];
+            memo = bank_payment_memo.code
+        }
 
         // Construct next action object
         const next_action = {
-            display_bank_transfer_instructions: {
+            type: action_type,
+            [action_type]: {
                 // Calculate remaining amount for bank transfer
-                amount_remaining: BigInt(row.amount) + BigInt(count_payment_intent.count),
+                amount_remaining: amount_remaining,
                 amount_remaining_e: row.amount_e,
                 currency: row.currency,
-                type: payment_method,
-                [payment_method]: {
+                type: instruction_type,
+                [instruction_type]: {
                     bank_code: row_bank.tag,
                     account_number: selected_bank_account.num,
-                    memo: bank_payment_memo.code // Add a memo indicating the purpose of the transaction
-                }
+                    memo // Add a memo indicating the purpose of the transaction
+                },
+                distinct_surcharge: unique_amount,
             }
         };
 
@@ -116,7 +133,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
         plv8.execute(
             "UPDATE payment_intent SET " +
             "status = $1, next_action = $2 ," +
-            "confirmation_method = 'manual' ," +
+            "confirmation_method = 'automatic' ," +
             "payment_method = $3 " +
             "WHERE id = $4",
             [PAYMENT_INTENT_STATUS.REQUIRES_ACTION, next_action, payment_method, row.id]
@@ -136,7 +153,7 @@ CREATE OR REPLACE FUNCTION public.allocate_payment_method_single(item payment_in
 
       return true;
     } catch(error) {
-      // TODO: CREATE LOG ERROR
+      plv8.elog(ERROR, error.message);
       return false;
     }
 }

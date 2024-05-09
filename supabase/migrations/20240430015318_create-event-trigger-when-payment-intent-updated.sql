@@ -17,9 +17,12 @@ BEGIN
   apiVersion := '2024-05-01';
 
   -- Determine the event type based on the status of the payment_intent
-  IF NEW.status = 'requires_payment_method' THEN
+  IF NEW.status = 'requires_payment_method' AND OLD.status = 'requires_action' THEN
+    -- TODO: last_payment_error need add in payment intent
+    eventType := 'payment_intent.failed';
+  ELSEIF NEW.status = 'requires_payment_method' THEN
     eventType := 'payment_intent.created';
-  ELSIF NEW.status = 'requires_actions' THEN
+  ELSIF NEW.status = 'requires_action' THEN
     eventType := 'payment_intent.requires_action';
   ELSIF NEW.status = 'requires_confirmation' THEN
     eventType := 'payment_intent.amount_capturable_updated';
