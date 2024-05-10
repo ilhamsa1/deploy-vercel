@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { Container, Stack, Typography, Box, CircularProgress } from '@mui/material'
 import Button from '@mui/material/Button'
@@ -7,6 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import { green } from '@mui/material/colors'
 import * as animationData from '../lottie/5.json'
 import PaymentAnimation from '../lottie'
+import { createClient } from '@/utils/supabase/client'
 
 interface WaitForSucceededEventProps {
   paymentId: string
@@ -21,8 +23,8 @@ const WaitForSucceededEvent: React.FC<WaitForSucceededEventProps> = ({
 }) => {
   const [isAnimationStart, setIsAnimationStart] = useState(false)
   const [canNext, setCanNext] = useState(false)
-
-  const { isLoading, error, data } = useQuery<any, Error>({
+  const supabase = createClient()
+  const { isLoading, error, data, refetch } = useQuery<any, Error>({
     queryKey: ['payment_intent_success', paymentId], // Make the key more specific to this event
     queryFn: async () => {
       const response = await api.get(
@@ -32,18 +34,31 @@ const WaitForSucceededEvent: React.FC<WaitForSucceededEventProps> = ({
           headers: { Authorization: `Bearer ${apiKey}` },
         },
       )
-      return response.data.data
+      return (response.data as any).data
     },
   })
 
   useEffect(() => {
-    if (data?.status === 'succeeded') {
-      // Assuming status is part of the returned data object
-      setTimeout(() => {
-        setCanNext(true)
-      }, 5000) // Fire onNext after a delay if the condition is met
+    const handleUpdate = (response: { new: { status: string } }) => {
+      if (response.new.status === 'succeeded') {
+        setTimeout(() => {
+          refetch()
+          setCanNext(true)
+        }, 3000)
+      }
     }
-  }, [data, onNext])
+
+    supabase
+      .channel('payment_intent')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'payment_intent' },
+        handleUpdate,
+      )
+      .subscribe()
+
+    // return () => subscription.unsubscribe()
+  }, [onNext, paymentId, supabase])
 
   if (isLoading) {
     return (
@@ -106,7 +121,7 @@ const WaitForSucceededEvent: React.FC<WaitForSucceededEventProps> = ({
             boxShadow: 1,
           }}
         >
-           <PaymentAnimation
+          <PaymentAnimation
             data={animationData}
             isStop={isAnimationStart}
             onComplete={() => {

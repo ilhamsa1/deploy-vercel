@@ -16,26 +16,19 @@ interface AskCustomerProps {
   onNext: (newData: any) => void // Define a proper type based on what onNext actually expects
 }
 
-interface BankDetails {
-  bank_code: string
-  account_number: string
-  amount_remaining: number
-  memo: string
-}
-
-interface PaymentIntent {
-  data: {
-    next_action: {
-      display_bank_transfer_instructions: {
-        type: string
-        [key: string]: BankDetails
-      }
-    }
-  }
-}
+// interface PaymentIntent {
+//   data: {
+//     next_action: {
+//       display_bank_transfer_instructions: {
+//         type: string
+//         [key: string]: BankDetails
+//       }
+//     }
+//   }
+// }
 
 const changeCentToPrice = (value: string): string => {
-  const numberValue = parseFloat(value.replace(/[\$,]/g, '')) / 100
+  const numberValue = parseFloat(value.replace(/[$,]/g, '')) / 100
   if (!isNaN(numberValue)) {
     const formatter = new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -54,14 +47,14 @@ const AskCustomerToTakeAction: React.FC<AskCustomerProps> = ({ paymentId, apiKey
   const { isLoading, error, data } = useQuery({
     queryKey: ['paymentDetails'],
     queryFn: async () => {
-      const response = await api.get<PaymentIntent>(
+      const response = await api.get(
         `/payment_intent/${paymentId}`,
         {},
         {
           headers: { Authorization: `Bearer ${apiKey}` },
         },
       )
-      return response?.data?.data
+      return (response?.data as any).data as any
     },
   })
 
@@ -121,7 +114,7 @@ const AskCustomerToTakeAction: React.FC<AskCustomerProps> = ({ paymentId, apiKey
           disabled={!canNext}
           sx={{ bgcolor: green[400], '&:hover': { bgcolor: green[500] } }}
         >
-          Next Step
+          Next
         </Button>
       </Box>
       <Stack spacing={3}>

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Container, Stack, Typography, Box } from '@mui/material'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { green } from '@mui/material/colors'
 import * as animationData from '../lottie/success.json'
 import Lottie from '../lottie'
@@ -69,7 +68,6 @@ const PaymentCompleted: React.FC<PaymentCompletedProps> = ({ onReset }) => {
           Make Another Payment
         </Button>
       </Stack>
-   
     </Container>
   )
 }

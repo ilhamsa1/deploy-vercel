@@ -1,17 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import {
-  Container,
-  Stack,
-  Typography,
-  Box,
-  CircularProgress,
-  useTheme,
-  Button,
-} from '@mui/material'
+import { Container, Stack, Typography, Box, CircularProgress } from '@mui/material'
+import Button from '@mui/material/Button'
 import api from '../../../services/api'
 import Payload from '../payload'
 import { useQuery } from '@tanstack/react-query'
-import { createClient } from '@/utils/supabase/client'
 import { green } from '@mui/material/colors'
 import * as animationData from '../lottie/4.json'
 import PaymentAnimation from '../lottie'
@@ -19,7 +12,7 @@ import PaymentAnimation from '../lottie'
 interface WaitForProcessingEventProps {
   paymentId: string
   apiKey: string
-  onNext: (update: { status: string }) => void // More specific type for updates.
+  onNext: () => void // More specific type for updates.
 }
 
 const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
@@ -27,7 +20,6 @@ const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
   apiKey,
   onNext,
 }) => {
-  const supabase = createClient()
   const [isAnimationStart, setIsAnimationStart] = useState(false)
   const [canNext, setCanNext] = useState(false)
 
@@ -41,30 +33,18 @@ const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
           headers: { Authorization: `Bearer ${apiKey}` },
         },
       )
-      return response.data.data
+      return (response.data as any).data
     },
   })
 
   useEffect(() => {
-    const handleUpdate = (response: { new: { status: string } }) => {
-      if (response.new.status === 'succeeded') {
-        setTimeout(() => {
-          setCanNext(true)
-        }, 3000)
-      }
+    if (data?.status === 'processing') {
+      // Assuming status is part of the returned data object
+      setTimeout(() => {
+        setCanNext(true)
+      }, 5000) // Fire onNext after a delay if the condition is met
     }
-
-    supabase
-      .channel('payment_intent')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'payment_intent' },
-        handleUpdate,
-      )
-      .subscribe()
-
-    // return () => subscription.unsubscribe()
-  }, [onNext, paymentId, supabase])
+  }, [data, onNext])
 
   if (isLoading) return <CircularProgress />
 
@@ -93,7 +73,7 @@ const WaitForProcessingEvent: React.FC<WaitForProcessingEventProps> = ({
           disabled={!canNext}
           sx={{ bgcolor: green[400], '&:hover': { bgcolor: green[500] } }}
         >
-          Next Step
+          Next
         </Button>
       </Box>
       <Stack spacing={2}>

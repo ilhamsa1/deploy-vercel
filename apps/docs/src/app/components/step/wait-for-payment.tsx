@@ -14,8 +14,8 @@ interface WaitForPaymentProps {
 }
 
 const WaitForPayment = ({ paymentId, apiKey, onNext }: WaitForPaymentProps) => {
-  const [isAnimationStart, setIsAnimationStart] = useState(false)
-  const { isLoading, error, data } = useQuery({
+  const [isAnimationStart] = useState(false)
+  const { isLoading, data } = useQuery({
     queryKey: ['payment'],
     queryFn: async () => {
       const result = await api.get(
@@ -26,7 +26,7 @@ const WaitForPayment = ({ paymentId, apiKey, onNext }: WaitForPaymentProps) => {
         },
       )
 
-      return result.data.data
+      return (result.data as any).data
     },
   })
 
@@ -59,7 +59,7 @@ const WaitForPayment = ({ paymentId, apiKey, onNext }: WaitForPaymentProps) => {
           disabled={!data}
           sx={{ bgcolor: green[400], '&:hover': { bgcolor: green[500] } }}
         >
-          Next Step
+          Next
         </Button>
       </Box>
       <Stack spacing={3}>

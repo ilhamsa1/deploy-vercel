@@ -35,7 +35,7 @@ export default function CreatePayment({
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
   })
-  const [response, setResponse] = useState({})
+  const [response, setResponse] = useState<any>({})
   const [isAnimationStart, setIsAnimationStart] = useState(false)
 
   const onSubmit = async (data: FormData) => {
@@ -47,9 +47,9 @@ export default function CreatePayment({
       )
       setIsAnimationStart(true)
       setTimeout(() => {
-        setResponse(result?.data?.data || {})
+        setResponse((result?.data as any).data || {})
         if (result) {
-          onCreate(result?.data?.data || {}) // Assuming onCreate expects the data directly
+          onCreate((result?.data as any).data || {}) // Assuming onCreate expects the data directly
         }
       }, 1000)
     } catch (error) {
@@ -80,7 +80,7 @@ export default function CreatePayment({
           disabled={!response?.id}
           sx={{ bgcolor: green[400], '&:hover': { bgcolor: green[500] } }}
         >
-          Next Step
+          Next
         </Button>
       </Box>
       <form onSubmit={handleSubmit(onSubmit)}>
